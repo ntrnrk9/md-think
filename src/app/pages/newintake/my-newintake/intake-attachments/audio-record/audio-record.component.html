@@ -1,0 +1,71 @@
+<div class="modal fade in" id="upload-attachment" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog"
+  style="display: block;">
+  <div class="modal-dialog modal-dialog-w1050" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button *ngIf="id" type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="stopRecording()" [routerLink]="['/pages/newintake/my-newintake/' + id]">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        <button *ngIf="!id" type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="stopRecording()" [routerLink]="['/pages/newintake/my-newintake/']">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Record Audio
+        </h4>
+      </div>
+      <div class="modal-body bg-grey-fill">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="wizard">
+              <div class="wizard-inner">
+                <div class="connecting-line"></div>
+                <ul class="nav nav-tabs" role="tablist">
+                  <li role="presentation" [ngClass]="!tabActive ? 'active' : 'disabled'">
+                    <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Upload">
+                      <span class="round-tab">
+                        <i class="glyphicon glyphicon-folder-open"></i>
+                      </span>
+                    </a>
+                  </li>
+                  <li role="presentation" [ngClass]="tabActive ? 'active' : 'disabled'">
+                    <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Complete">
+                      <span class="round-tab">
+                        <i class="glyphicon glyphicon-ok"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <form role="form">
+                <div class="tab-content">
+                  <div class="tab-pane active" role="tabpanel" id="step1">
+                    <div class="audio-wrap">
+                      <audio #audio class="audio"></audio>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="btn-group">
+                      <button *ngIf="!record" class="btn btn-custom" (click)="startRecording()">
+                        <img src="assets/images/start-record.png">
+                      </button>
+                      <button *ngIf="record" class="btn btn-custom" (click)="stopRecording()">
+                        <img src="assets/images/stop-record.png">
+                      </button>
+                    </div>
+                    <ul class="list-inline pull-right">
+                      <li>
+                        <button class="btn-pri next-step" [disabled]="!enableSave || record" (click)="startUpload()">Save and continue</button>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="tab-pane" role="tabpanel" id="complete">
+                    <attachment-detail (modalDismiss)="modalDismiss()"></attachment-detail>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+[
+    {
+        "moduleId": "36614098-49eb-47eb-89a7-c5572eabff5e",
+        "moduleName": "pages",
+        "canAccess": true,
+        "fieldPermissions": [
+            {
+                "fieldId": "5c40e7aa-7fdf-4fff-9df4-52a5168c7b57",
+                "fieldName": "daType",
+                "fieldType": "select",
+                "fieldAttributes": [
+                    {
+                        "key": "disabled",
+                        "value": "disabled"
+                    },
+                    {
+                        "key": "selected",
+                        "value": "c0ac4cef-f219-4784-beb4-d3673f2f8522"
+                    }
+                ]
+            },
+            {
+                "fieldId": "93c05a13-3884-4a1a-97d3-bbfb5ec72c05",
+                "fieldName": "displayvalue",
+                "fieldType": "input",
+                "fieldAttributes": [
+                    {
+                        "key": "display",
+                        "value": "none"
+                    }
+                ]
+            },
+            {
+                "fieldId": "0b3c8365-2e28-4448-8595-ba8058359880",
+                "fieldName": "user-role",
+                "fieldType": "div",
+                "fieldAttributes": [
+                    {
+                        "key": "display",
+                        "value": "none"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "moduleId": "4be749f0-639b-461c-b273-7e14328badd9",
+        "moduleName": "menus",
+        "canAccess": true,
+        "fieldPermissions": [
+            {
+                "fieldId": "93c05a13-3884-4a1a-97d3-bbfb5ec72c05",
+                "fieldName": "manage",
+                "fieldType": "a",
+                "fieldAttributes": [
+                    {
+                        "key": "display",
+                        "value": "none"
+                    }
+                ]
+            },
+            {
+                "fieldId": "93c05a13-3884-4a1a-97d3-bbfb5ec72c05",
+                "fieldName": "intake",
+                "fieldType": "a",
+                "fieldAttributes": [
+                    {
+                        "key": "display",
+                        "value": "none"
+                    }
+                ]
+            },
+            {
+                "fieldId": "0b3c8365-2e28-4448-8595-ba8058359880",
+                "fieldName": "teams",
+                "fieldType": "a",
+                "fieldAttributes": [
+                    {
+                        "key": "display",
+                        "value": "none"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,150 @@
+<!-- <div class="modal fade in" id="upload-attachment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> -->
+<div class="modal fade in" id="upload-attachment" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog">
+  <div class="modal-dialog modal-lg custom-wid" role="document">
+    <div class="modal-content Persons-Involved">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearAllUpload()">
+          <span aria-hidden="true">X</span>
+        </button>
+        <!-- <button *ngIf="!id" type="button" class="close" data-dismiss="modal" aria-label="Close" [routerLink]="['/pages/newintake/my-newintake/']">
+            <span aria-hidden="true">X</span>
+          </button> -->
+        <h4 class="modal-title">Upload Files</h4>
+      </div>
+      <div class="modal-body">
+        <h4 class="modal-header">BROWSE FILES</h4>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="uploaded-files">
+              <div class="upload-sec">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="block drop-container" (ngxf-drop)="uploadFile($event)" drop-class="drop" [ngxf-validate]="{ size: { min: 5 } }"
+                      multiple>
+                      <p>Drop file(s) to upload or
+                        <label class="btn-bs-file">
+                          browse
+                          <!-- <i class="fa fa-cloud-upload" aria-hidden="true"></i> -->
+
+                          <input type="file" (ngxf-select)="uploadFile($event)" [ngxf-validate]="{ size: { min: 5 } }" multiple/>
+                        </label>
+                        to upload</p>
+                      <label class="btn-pri btn-bs-file">
+                        <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                        <input type="file" (ngxf-select)="uploadFile($event)" [ngxf-validate]="{ size: { min: 5 } }" multiple/>Upload</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h4>Uploaded Files</h4>
+              <div class="upload-wrap dd-overflow-inherit" *ngIf="uploadedFile.length !== 0">
+                <div class="uploaded-form" *ngFor="let upload of uploadedFile; let i=index">
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <div class="upload-number">
+                        <span>{{i+1}}</span>
+                      </div>
+                      <div class="media">
+                        <div class="media-left">
+                          <!-- <a href="#"> -->
+                          <span>
+                            <i class="fa fa-file"></i>
+                          </span>
+                          <!-- </a> -->
+                        </div>
+                        <div class="media-body">
+                          <h4 class="media-heading">{{upload?.name}}</h4>
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-primary" role="progressbar" attr.aria-valuenow="{{upload.percentage}}" aria-valuemin="0"
+                              aria-valuemax="100" [ngStyle]="{width:upload.percentage+'%'}">
+                              <span class="sr-only">{{upload.percentage}}% Complete (success)</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- <h6 class="upldr-name">Created By
+                          <span>{{token.user.userprofile.displayname}}</span>
+                        </h6> -->
+
+                    </div>
+                    <div class="col-sm-9">
+                      <div class="row">
+                        <div class="col-sm-3 required">
+                          <!-- <label class="required"></label> -->
+                          <input type="text" [class]="upload.invalidTitle ? 'form-control error-brd' : 'form-control'" (focusout)="titleUpdate($event, i)"
+                            placeholder="Title">
+
+                        </div>
+                        <!-- <div class="col-sm-3">
+                            <div class="no-pad clsIntake dpnew" style="width: 180px;">
+                              <input class="form-control" (focusout)="docDateUpdate($event, i)" placeholder="MM/DD/YYYY HH:MM" a2e-datetimepicker [options]="{ 'maxDate': null}"
+                              />
+                              <i class=" fa fa-calendar" aria-hidden="True"></i>
+                            </div>
+                          </div> -->
+                        <div class="col-sm-4 required">
+                          <div class="select-icon">
+                            <select name="" [class]="upload.invalidAttachmentType ? 'form-control error-brd' : 'form-control'" (change)="typeUpdate($event, i)">
+                              <option value="">Attachment Type {{upload.attachmenttypekey}}</option>
+                              <option *ngFor="let attachment of attachmentTypeDropdown$ | async" [value]="attachment.value">{{attachment.text}}</option>
+                            </select>
+                          </div>
+
+                        </div>
+                        <div class="col-sm-4 required">
+                          <div class="select-icon">
+                            <select name="" [class]="upload.invalidAttachmentClassify ? 'form-control error-brd' : 'form-control'" (change)="categoryUpdate($event, i)">
+                              <option value="">Category {{upload.attachmentclassificationtypekey}}</option>
+                              <option *ngFor="let attachment of attachmentClassificationTypeDropDown$ | async" [value]="attachment.value">{{attachment.text}}</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-7">
+                          <textarea name="" class="form-control" rows="7" spellcheck="True" placeholder="Description" (input)="descUpdate($event, i)"
+                            maxlength="150"></textarea>
+                          <small *ngIf="upload.description && upload.description.length >= 150" class="text-danger">You have reached a maximum of 150 chraracters</small>
+                        </div>
+                        <div class="col-sm-5">
+                          <h6 class="upldr-name">Uploaded Date
+                            <span>{{curDate | date: 'MM/dd/yyyy H:mm:ss'}}</span>
+                          </h6>
+                          <h6 class="upldr-name">Uploaded By
+                            <span>{{token.user.userprofile.displayname}}</span>
+                          </h6>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-1">
+                      <div class="remove-upld">
+                        <span (click)="deleteUpload(i)">
+                          <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="" *ngIf="uploadedFile.length === 0">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="no-file">
+                      <h6>No Files Uploaded</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer wizard-buttons">
+        <!-- <button class="btn-bg">Upload</button> -->
+        <!-- <button class="btn-bg" [disabled]="uploadedFile.length === 0" (click)="clearAllUpload()">Clear All</button> -->
+        <!-- <button *ngIf="id" class="btn-pri" (click)="saveAttachmentDetails()" [routerLink]="['/pages/newintake/my-newintake/' + id]">Upload</button>
+          <button *ngIf="!id" class="btn-pri" (click)="saveAttachmentDetails()" [routerLink]="['/pages/newintake/my-newintake']">Upload</button> -->
+
+        <button class="btn-pri" [disabled]="uploadedFile.length === 0" (click)="saveAttachmentDetails()">Add Files</button>
+      </div>
+    </div>
+  </div>
+</div>

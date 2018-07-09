@@ -1,0 +1,11 @@
+// .modal-dialog .modal-header{padding: 5px 10px;border-radius: 6px 6px 0 0;}
+.video{max-height: 450px;}
+.btn.active, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus{outline: none; outline:0; box-shadow:none;}
+
+.wizard .nav-tabs>li {
+    width: calc(50% - 5px);
+    padding: 10px;
+    background: #585858;
+}
+.wizard .nav-tabs>li.active{background: #1bbc9b;}
+.wizard .nav-tabs>li:first-child{margin-right: 10px;}

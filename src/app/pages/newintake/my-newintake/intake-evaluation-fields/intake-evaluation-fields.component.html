@@ -1,0 +1,150 @@
+<form [formGroup]="intakeNarrativeForm">
+  <div class="cnt-min-height">
+    <div class="col-sm-8 no-pad">
+      <h4 class="mt-0">Evaluation</h4>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-4" style="margin:8px 0px">
+            <label class="control control--checkbox disp-inline">
+              <input type="checkbox" formControlName="requestdetention">
+              <div class="control__indicator"></div>
+            </label> Request Detention ?
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field>
+              <input type="text"  formControlName="wvrnumber" matInput placeholder="WVR-sequence number" (focusout)="onChange($event)">
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="petitionid" placeholder="Petition ID" (focusout)="onChange($event)">
+                </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="offenselocation" placeholder="Location of Offense(s)" (focusout)="onChange($event)">
+                </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="adultpetitionid" placeholder="Adult Petition ID" (focusout)="onChange($event)">
+                </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+              <div class="no-pad clsIntake dpnew ">
+                  <mat-form-field>
+                      <input matInput formControlName="complaintrcddate" [matDatepicker]="complaintrcddatepicker" placeholder="Complaint Received Date - MM/DD/YYYY">
+                      <mat-datepicker-toggle matSuffix [for]="complaintrcddatepicker"></mat-datepicker-toggle>
+                      <mat-datepicker #complaintrcddatepicker></mat-datepicker>
+                  </mat-form-field>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <mat-select placeholder="County of Occurrence" formControlName="countyid">
+                      <mat-option *ngFor="let item of mdCountys$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                  </mat-select>
+              </mat-form-field> 
+          </div>
+          <div class="col-sm-4">
+              <div class="no-pad clsIntake dpnew ">
+                  <mat-form-field>
+                      <input matInput formControlName="arrestdate" [max]="maxDate" [matDatepicker]="picker" placeholder="Arrest Date - MM/DD/YYYY">
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+              </div>    
+          </div>
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="sourceagency" placeholder="Source Agency" (focusout)="onChange($event)">
+                      </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="zipcode" placeholder="Zip Code" (focusout)="onChange($event)">
+                  </mat-form-field>
+            
+          </div>
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <input type="text"  matInput formControlName="complaintid" placeholder="Complaint ID" (focusout)="onChange($event)">
+                  </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+              <mat-form-field>
+                  <mat-select placeholder="Alleged Offense" formControlName="allegedoffense">
+                      <mat-option *ngFor="let item of offenceCategories$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                  </mat-select>
+              </mat-form-field>    
+            </div>
+        </div>
+      </div>
+    </div>
+   
+    
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row" style="margin-top: 20px; margin-bottom: 20px">
+          <div class="col-sm-6">
+            <label class="control control--checkbox disp-inline">
+              <input type="checkbox" formControlName="dateUnknown" (change)="onIncidentDateOptionChange($event.target.checked , 'unknown')">
+              <div class="control__indicator"></div>
+            </label> Unknown Date
+            <label class="control control--checkbox disp-inline" style="margin-left: 30px">
+              <input type="checkbox" formControlName="dateRange" (change)="onIncidentDateOptionChange($event.target.checked, 'range')">
+              <div class="control__indicator"></div>
+            </label> Range Date
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="col-sm-6">
+            <mat-form-field *ngIf="incidentDateOption==0">
+                <input matInput formControlName="allegedoffensedate" [max]="maxDate" [matDatepicker]="picker" placeholder="Alleged Offence Date - MM/DD/YYYY">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field *ngIf="incidentDateOption==2">
+                <input matInput formControlName="allegedoffensedate" [max]="maxDate" [matDatepicker]="picker" placeholder="Begin Date - MM/DD/YYYY">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-6">
+            <mat-form-field *ngIf="incidentDateOption==2">
+                <input matInput formControlName="allegedoffensetodate" [max]="maxDate" [matDatepicker]="picker" placeholder="End Date - MM/DD/YYYY">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

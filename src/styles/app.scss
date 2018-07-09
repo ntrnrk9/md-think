@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "spinner";
+@import "utils";
+@import "rtl";
+@import "responsive";
+@import url("./../../node_modules/bootstrap/dist/css/bootstrap.min.css");
+@import url("../assets/css/theme.css");
+
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+@import url("../assets/css/toastr.css");
+@import url("../assets/css/style.css");
+@import url("../assets/css/bootstrap-datetimepicker.min.css");
+@import url("../assets/css/wizard.css");
+@import url("../assets/css/jquery.scrolling-tabs.css");
+@import './../../node_modules/angular-tree-component/dist/angular-tree-component.css';
+@import url("./../../node_modules/angular-calendar/css/angular-calendar.css");
+@import "~@ng-select/ng-select/themes/default.theme.css";

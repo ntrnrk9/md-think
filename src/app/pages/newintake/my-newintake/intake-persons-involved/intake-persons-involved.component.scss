@@ -1,0 +1,177 @@
+.cont-field {
+    position: relative;
+}
+.cont-field ul {
+    position: absolute;
+    border: 1px solid #ddd;
+    width: 100%;
+    top: 33px;
+    z-index: 99999;
+    background: #fff;
+    list-style: none;
+}
+.cont-field ul li {
+    list-style: none;
+    cursor: pointer;
+}
+
+.cont-field ul {
+    padding: 0;
+}
+.cont-field ul li {
+    padding: 5px;
+    background: #fcfcfc;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.scrolling thead th:nth-child(1),
+.scrolling thead th:nth-child(2) {
+    top: 20px;
+}
+.select-icon .ng-select {
+    margin-bottom: 18px;
+}
+.tab-content.no-shadow {
+    box-shadow: none;
+    padding: 0 15px;
+}
+
+.person-panel {
+    border: 2px solid #e2e2e2;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.person-panel .media-left {
+    width: 100%;
+    color: #039be6;
+}
+.person-panel .media-left h4 {
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    margin-top:0;
+}
+.person-panel .media-left span {
+    margin-bottom: 0;
+    display: block;
+    border: 2px solid #039be6;
+    width: 130px;
+    text-align: center;
+    border-radius: 15px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 5px;
+}
+.person-panel .media-body ul li a i {
+    font-size: 18px;
+    color: #777;
+}
+// .person-panel .media-body ul li a i {
+//     font-size: 20px;
+//     color: #777;
+//     padding: 5px;
+// }
+.person-panel .panel-heading {
+    padding: 15px;
+    background: #fff;
+    border-bottom: 2px solid #e2e2e2;
+}
+.person-panel .panel-title {
+    color: #57595a;
+    font-weight: 600;
+    font-size: 16px;
+    min-height: 36px;
+}
+
+.person-panel .panel-heading span.f-size {
+    padding-left: 30px;
+    font-size: 13px;
+}
+span.categori-name {
+    font-size: 12px;
+    margin-right: 15px;
+    border: 1px solid #0277bd;
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+.person-panel .panel-body dl dt,
+.person-panel .panel-body dl dd {
+    font-weight: 600;
+    color: #676767;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+.person-panel .panel-body dl {
+    margin-bottom: 8px;
+}
+.person-panel .panel-body dl dd {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.person-panel .panel-footer {
+    background: #fff;
+    padding: 15px 15px 30px 15px;
+    border-top: 2px solid #e2e2e2;
+    color: #039be6;
+}
+.panel-footer ul li {
+    width: 50%;
+    float: left;
+    text-align: center;
+}
+.panel-footer ul li a {
+    font-size: 22px;
+    font-weight: 600;
+    padding: 15px 25px;
+}
+.m-t-20 {
+    margin-top: 20px;
+}
+.m-t-15 {
+    margin-top: 15px;
+}
+.theme {
+    color: #039be6;
+}
+.person-wrap {
+    width: 100%;
+    float: left;
+    max-height: 420px;
+    overflow-y: auto;
+}
+.cus-tab-section li {
+    width: 27%;
+}
+.modal-header {
+    border-bottom: 0px solid #e5e5e5;
+}
+.cus-tab-section li {
+    width: 27%;
+}
+.added-adds {
+    padding-left: 50px;
+}
+.added-adds table thead {
+    background: #f1f2f4;
+}
+.cus-tab-section li:last-child {
+    width: 15%;
+    // text-align: right;
+    // float: right;
+}
+.added-adds table th:first-child {
+    width: 220px;
+}
+.added-adds table td:last-child {
+    text-align: center;
+}
+.modal-height-body {
+    max-height: 350px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.media-left h4 {
+    margin-top: 0px !important;
+}

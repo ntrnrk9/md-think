@@ -1,0 +1,653 @@
+<div role="tabpanel" class="tab-pane dd-overflow-inherit" id="add-intake-persons-involved">
+    <div class="cnt-min-height">
+        <div class="row">
+            <div class="col-sm-8">
+                <h4>Person Involved</h4>
+                <p> Find or Add new intividuals involved with this case.</p>
+            </div>
+            <div class="col-sm-4 text-right btns-top">
+                <button type="submit" class="btn-pri" data-target="#intake-findperson" data-toggle="modal">Find</button>
+                <!-- <button type="button" class="btn-pri" (click)="toggleAddPopup('Add New')">Add</button> -->
+            </div>
+            <div class="col-md-12" *ngIf="addedPersons?.length!== 0">
+                <div class="person-wrap">
+                    <div class="col-sm-3" *ngFor="let person of addedPersons; let i=index">
+                        <div class="panel panel-default person-panel">
+                            <div class="panel-heading">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <h4 class="media-heading">{{person.Firstname}} {{person.Lastname}}</h4>
+                                        <span>
+                                            <mat-select [(ngModel)]="person.Role" disabled>
+                                                <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <dl>
+                                    <dt>D.O.B</dt>
+                                    <dd class="single-wrap">{{person.DobFormatted}}</dd>
+                                </dl>
+                                <dl>
+                                    <dt>GENDER</dt>
+                                    <dd>
+                                        <mat-form-field>
+                                            <mat-select [(ngModel)]="person.Gender" disabled>
+                                                <mat-option *ngFor="let item of genderDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>ADDRESS</dt>
+                                    <dd *ngIf="person.personAddressInput && person.personAddressInput.length !==0">
+                                        {{person.personAddressInput[0].addressDetail[0].addressLine1}} {{person.personAddressInput[0].addressDetail[0].addressLine2}}
+                                        {{person.personAddressInput[0].addressDetail[0].city}} {{person.personAddressInput[0].addressDetail[0].state}}
+                                        {{person.personAddressInput[0].addressDetail[0].county}}
+                                    </dd>
+                                    <dd *ngIf="person.personAddressInput && person.personAddressInput.length ===0">
+                                        N/A
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>Phone</dt>
+                                    <dd>{{(person.phoneNumber && person.phoneNumber.length !== 0) ? person.phoneNumber[0].phone
+                                        : 'N/A'}}</dd>
+                                </dl>
+                            </div>
+                            <div class="panel-footer">
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <a class="icon">
+                                            <span data-toggle="modal" (click)="editPerson(person, i, 'Edit')">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="icon">
+                                            <span data-toggle="modal" (click)="confirmDelete(person, i)">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-md-12" *ngIf="!addedPersons || addedPersons?.length === 0">
+                <div class="person-wrap">
+                    No Persons Added
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-modal" id="delete-person-popup" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"> Confirm Delete </h4>
+            </div>
+            <div class="modal-body">
+                <p> Are you sure you want to delete this person? </p>
+                <div class="text-right big-bot-space right-mspace-15">
+                    <button type="button" value="No" class="btn-pri" name="" data-dismiss="modal"> No </button>
+                    <button type="button" value="Yes" class="btn-bg " name="" (click)="deletePerson()"> Yes </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<intake-person-search [intakeNumber]="intakeNumberNarrative" (newPersonAdd)="toggleAddPopup('Add New')" (intakePersonAdd)="searchAddPerson($event)"></intake-person-search>
+
+<div class="modal fade in" id="intake-addperson" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg custom-wid" role="document">
+        <div class="modal-content Persons-Involved">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearPerson()">
+                    <span aria-hidden="true">X</span>
+                </button>
+                <h4 class="modal-title">{{addEditLabel}} Person Involved</h4>
+            </div>
+            <div class="modal-body ">
+                <div class="">
+                    <ul class="nav nav-tabs mrg-btm25 cus-tab-section">
+                        <li class="active">
+                            <a data-toggle="tab" href="#add-Profile-info" id="profile-click">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Profile </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#add-contacts" id="add-contacts-click">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Contacts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#add-address" id="add-address-click">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Address</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#add-Reporter" id="add-Reporter-click">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Person Role</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <form [formGroup]="involvedPersonFormGroup">
+                        <div class="tab-content no-shadow">
+                            <div id="add-Profile-info" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-sm-4 ">
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="Lastname" placeholder="Last Name">
+                                        </mat-form-field>
+
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="Firstname" placeholder="First Name">
+                                        </mat-form-field>
+                                        <div class="no-pad clsIntake dpnew ">
+                                            <mat-form-field>
+                                                <input matInput formControlName="Dob" [matDatepicker]="picker" placeholder="DOB - MM/DD/YYYY">
+                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+
+                                                <!-- <i aria-hidden="True" class="fa fa-calendar"></i> -->
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-select placeholder="Select Gender" formControlName="Gender">
+                                                    <mat-option *ngFor="let item of genderDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="AliasLastName" placeholder="Alias">
+                                        </mat-form-field>
+
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="ssn" mask="000-00-0000" placeholder="SSN">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Race" formControlName="race">
+                                                <mat-option *ngFor="let item of racetypeDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Ethnicity" formControlName="Ethnicity">
+                                                <mat-option *ngFor="let item of ethinicityDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Occupation" formControlName="occupation">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Marital Status" formControlName="maritalstatus">
+                                                <mat-option *ngFor="let item of maritalDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Religion" formControlName="religiontype">
+                                                <mat-option *ngFor="let item of religionDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="stateid" placeholder=" State ID / Drivers License  ">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="tribalAssociation" placeholder="Tribal Association">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="physicalAtt" placeholder="Physical Attributes">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn-pri" (click)="navigateNext('contacts')">Next</a>
+                                </div>
+                            </div>
+                            <div id="add-contacts" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h4 class="inner-title">Contact Details</h4>
+                                    </div>
+                                    <div class="col-sm-6 added-adds">
+                                        <h4 class="inner-title">Contacts Added</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <form [formGroup]="contactPersonForm">
+                                        <div class="col-sm-6 border-right">
+                                            <h5>Phone</h5>
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <mat-form-field>
+                                                        <mat-select placeholder="Contact Type" formControlName="PhoneType">
+                                                            <mat-option *ngFor="let phone of phoneTypeDropdownItems$ | async" value="{{phone.text}}">{{phone.text}}</mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-9 pad-vspace">
+                                                    <label>Mobile </label>
+                                                    <mat-radio-group>
+                                                        <mat-radio-button value="1">Yes</mat-radio-button>
+                                                        <mat-radio-button value="2">No</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <mat-form-field>
+                                                        <input type="text" matInput formControlName="PhoneNumber" mask="(000) 000-0000" matInput placeholder="Phone No">
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <a class="btn-pri" (click)="addPhone()">ADD</a>
+                                                </div>
+                                            </div>
+                                            <h5>EMAIL</h5>
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <mat-form-field>
+                                                        <mat-select placeholder="Email Type" formControlName="EmailType">
+                                                            <mat-option *ngFor="let mail of emailTypeDropdownItems$ | async" value="{{mail.text}}">{{mail.text}}</mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <mat-form-field>
+                                                        <input type="text" matInput formControlName="EmailID" placeholder="Email ID">
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <a class="btn-pri" (click)="addEmail()">ADD</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <div class="col-sm-6 added-adds">
+                                        <div class="table-responsive t-height">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Phone Number
+                                                        </th>
+                                                        <th>
+
+                                                            Type
+                                                        </th>
+                                                        <th>
+                                                            DELETE
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngIf="(phoneNumber$ | async)?.length !== 0">
+                                                    <tr *ngFor="let phoneNumber of phoneNumber$ | async; let i = index">
+                                                        <td>
+                                                            {{phoneNumber.phone}}
+                                                        </td>
+                                                        <td>
+                                                            {{phoneNumber.type}}
+                                                        </td>
+                                                        <!-- <td>Primary </td> -->
+                                                        <td>
+                                                            <i class="fa fa-trash text-22" (click)="deletePhone(i)"></i>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+
+                                                <tbody *ngIf="(phoneNumber$ | async)?.length === 0">
+                                                    <tr>
+                                                        <td colspan="3"> No phone number added</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive t-height">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Email
+                                                        </th>
+                                                        <th>
+
+                                                            Type
+                                                        </th>
+                                                        <th>
+                                                            DELETE
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngIf="(emailID$ | async)?.length !== 0">
+                                                    <tr *ngFor="let emailID of emailID$ | async; let i = index">
+                                                        <td>
+                                                            {{emailID.email}}
+                                                        </td>
+                                                        <td>{{emailID.type}}</td>
+                                                        <td>
+                                                            <i class="fa fa-trash text-22" (click)="deleteEmail(i)"></i>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+
+                                                <tbody *ngIf="(emailID$ | async)?.length === 0">
+                                                    <tr>
+                                                        <td colspan="3"> No email id added</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn-pri" (click)="navigateNext('address')">Next</a>
+                                </div>
+                            </div>
+                            <div id="add-address" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-sm-6 ">
+                                        <h4 class="inner-title">Person Address</h4>
+                                    </div>
+                                    <div class="col-sm-6 added-adds">
+                                        <h4 class="inner-title">Address Added</h4>
+                                    </div>
+                                </div>
+                                <div class="row modal-height-body">
+                                    <div class="col-sm-5  border-right person-adds" [formGroup]="personAddressForm">
+
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-form-field>
+                                                    <mat-select placeholder="Address Type" formControlName="addressType">
+                                                        <mat-option *ngFor="let item of this.addresstypeDropdownItems$ | async" value="{{item.text}}">{{item.text}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-form-field>
+                                                    <input type="text" matInput placeholder="Phone No" mask="(000) 000-0000" formControlName="phoneNo">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+
+                                        <div class="cont-field">
+                                            <!-- <input type="text" class="form-control" (keyup)="callSuggestAddress()" formControlName="Address" placeholder="Address Line 1"> -->
+                                            <!-- <input type="text" class="form-control" formControlName="Address" placeholder="Address Line 1"> -->
+                                            <mat-form-field>
+                                                <input type="text" matInput placeholder="Address Line 1" formControlName="addressLine1">
+                                            </mat-form-field>
+
+                                            <div *ngIf="suggestedAddress">
+                                                <ul>
+                                                    <li *ngFor="let suggest of suggestedAddress" (click)="selectedAddress(suggest?suggest:'')">{{suggest?.text}}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Address Line 2" formControlName="addressLine2">
+                                        </mat-form-field>
+
+                                        <!--
+                                             <input type="text" class="form-control " formControlName="Address2" placeholder="Address Line 2">
+                                         <input type="text" class="form-control " formControlName="Zip" mask="00000-9999" placeholder="Zip Code">
+                                         -->
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput mask="00000-9999" placeholder="Zip Code" formControlName="zipCode">
+                                                </mat-form-field>
+
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <mat-select placeholder="Select State" formControlName="state">
+                                                        <mat-option *ngFor="let item of this.stateDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+
+                                                <!-- <div class="select-icon">
+                                                    <ng-select [searchable]="true" [clearable]="false" formControlName="State">
+                                                        <ng-option value=""> Select State </ng-option>
+                                                        <ng-option *ngFor="let item of this.stateDropdownItems$ | async" value="{{item.value}}">{{item.text}}</ng-option>
+                                                    </ng-select>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput formControlName="city" placeholder="City">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput formControlName="county" placeholder="County">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="no-pad clsIntake dpnew ">
+                                                    <mat-form-field>
+                                                        <input matInput formControlName="startDate" [matDatepicker]="picker2" placeholder="Start Date">
+                                                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                                        <mat-datepicker #picker2></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                                <!-- 
+                                                <div class="no-pad clsIntake dpnew ">
+                                                    <input a2e-datetimepicker="" class="form-control" formcontrolname="dob" placeholder="DOB - MM/DD/YYYY">
+                                                    <i aria-hidden="True" class="fa fa-calendar"></i>
+                                                </div> -->
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="no-pad clsIntake dpnew ">
+                                                    <mat-form-field>
+                                                        <input matInput formControlName="endDate" [matDatepicker]="picker1" placeholder="End Date">
+                                                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                        <mat-datepicker #picker1></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 text-right">
+                                                <!-- <button class="btn-pri" (click)="validationAddressCall()"> Validate Address</button> -->
+                                                <button class="btn-pri" (click)="addPersonAddress()"> Add Address</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-7 added-adds">
+                                        <!-- <h4 class="modal-title"> Validation </h4> -->
+                                        <div class="" *ngIf="personAddressInput.length !== 0">
+                                            <h2 *ngIf="errorValidateAddress">Unknown Address</h2>
+                                            <ul *ngFor="let analysis of addressAnalysis">
+                                                <span *ngIf="analysis?.text?.length > 4">
+                                                    <li class="{{analysis?.text.split('_')[1]}}">{{analysis?.text.split('_')[0]}}</li>
+                                                </span>
+                                            </ul>
+                                            <!-- <div class="scroll-tables"> -->
+                                            <div class="table-responsive t-height" *ngFor="let address of personAddressInput; let i=index">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                {{address.addressType}}
+                                                            </th>
+                                                            <th>
+                                                                LIVED IN
+                                                            </th>
+                                                            <th>
+                                                                DELETE
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let addressDetail of address.addressDetail; let j = index">
+                                                            <td>
+                                                                <p>{{addressDetail.addressLine1}} {{addressDetail.addressLine2}}
+                                                                    <br/>{{addressDetail.city}} {{addressDetail.state}} {{addressDetail.county}}</p>
+                                                            </td>
+                                                            <td>{{addressDetail.startDate ? addressDetail.startDate : 'N/A'}}
+                                                                - {{addressDetail.endDate ? addressDetail.endDate : 'N/A'}}
+                                                            </td>
+                                                            <td (click)="deleteAddressInput(i, j)">
+                                                                <i class="fa fa-trash text-22"></i>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- </div> -->
+                                        </div>
+
+                                        <div class="no-address" *ngIf="personAddressInput.length === 0">
+                                            <h4 class="text-center">No address added</h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <a class="btn-pri" (click)="navigateNext('role')">Next</a>
+
+                                </div>
+                            </div>
+                            <div id="add-Reporter" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h4 class="inner-title"></h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Role" formControlName="Role" (change)="involvedPersonFormGroup.patchValue({RelationshiptoRA: ''})">
+                                                <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field class="m-t-40" *ngIf="involvedPersonFormGroup.value.Role !== 'RA' && involvedPersonFormGroup.value.Role !== 'RC' && involvedPersonFormGroup.value.Role !== 'CLI'">
+                                            <mat-select placeholder="Relationship to Reported Person" formControlName="RelationshiptoRA">
+                                                <mat-option *ngFor="let item of relationShipToRADropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                        <label class="mt-lbl"> Danger to self?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="dangerToSelf">
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToSelfReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="dangerToSelfReason" placeholder="Reason">
+                                        </mat-form-field>
+
+
+                                        <label class="mt-lbl"> Danger to worker?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="dangerToWorker">
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToWorkerReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="dangerToWorkerReason" placeholder="Reason">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                        <label class="mt-lbl"> Appearance of mentally impaired?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="mentalImpaired">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalImpairedReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="mentalImpairedReason" placeholder="Reason">
+                                        </mat-form-field>
+
+                                        <label class="mt-lbl"> Signs of mental illness?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="mentalIllness">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalIllnessReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="mentalIllnessReason" placeholder="Reason">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn-pri" (click)="addPerson(involvedPersonFormGroup.value)">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-modal" id="delete-alias-popup" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"> Confirm Delete </h4>
+            </div>
+            <div class="modal-body">
+                <p> Are you sure you want to delete this alias? </p>
+                <div class="text-right big-bot-space right-mspace-15">
+                    <button type="button" value="No" class="btn-pri" name="" data-dismiss="modal"> No </button>
+                    <button type="button" value="Yes" class="btn-bg " name="" (click)="deleteAliasName()"> Yes </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

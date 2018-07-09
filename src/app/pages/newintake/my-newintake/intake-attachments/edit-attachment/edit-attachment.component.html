@@ -1,0 +1,72 @@
+<div class="modal fade in" id="edit-attachment" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog">
+  <div class="modal-dialog modal-lg custom-wid" role="document">
+    <div class="modal-content Persons-Involved" [formGroup]="fileUpdate">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+        <h4 class="modal-title">Edit Attachment</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <h4 class="file-name">File Name:
+              <span>{{attachmentDetail?.filename ? attachmentDetail?.filename.split('_')[1] : 'N/A'}}</span>
+            </h4>
+          </div>
+          <div class="col-md-12">
+            <div class="uploaded-files">
+              <div class="upload-wrap dd-overflow-inherit">
+                <div class="uploaded-form no-bg">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="row">
+                        <div class="col-sm-3 required">
+                          <input type="text" [class]="fileUpdate.value.title === '' ? 'form-control error-brd' : 'form-control'" formControlName="title"
+                            placeholder="Title">
+                        </div>
+                        <div class="col-sm-4 required">
+                          <div class="select-icon">
+                            <select name="" [class]="fileUpdate.value.attachmentTypeKey === '' ? 'form-control error-brd' : 'form-control'" formControlName="attachmentTypeKey">
+                              <option value="">Attachment Type</option>
+                              <option *ngFor="let attachment of attachmentTypeDropdown$ | async" [value]="attachment.value">{{attachment.text}}</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-4 required">
+                          <div class="select-icon">
+                            <select name="" [class]="fileUpdate.value.attachmentClassificationTypeKey === '' ? 'form-control error-brd' : 'form-control'"
+                              formControlName="attachmentClassificationTypeKey">
+                              <option value="">Category</option>
+                              <option *ngFor="let attachment of attachmentClassificationTypeDropDown$ | async" [value]="attachment.value">{{attachment.text}}</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-7">
+                          <textarea name="" class="form-control" rows="7" formControlName="description" spellcheck="True" placeholder="Description"></textarea>
+                          <small *ngIf="fileUpdate.value.description.length >= 150" class="text-danger">You have reached a maximum of 150 chraracters</small>
+                        </div>
+                        <div class="col-sm-5">
+                          <h6 class="upldr-name">Uploaded Date
+                            <!-- <span>{{currDate | date: 'MM/dd/yyyy H:mm:ss'}}</span> -->
+                            <span>{{attachmentDetail?.insertedon | date: 'MM/dd/yyyy H:mm:ss'}}</span>
+                          </h6>
+                          <h6 class="upldr-name">Uploaded By
+                            <span>{{attachmentDetail?.userprofile?.displayname}}</span>
+                          </h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer wizard-buttons">
+        <button class="btn-pri" [disabled]="fileUpdate.pristine || fileUpdate.invalid" (click)="saveAttachmentDetails()">UPDATE</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,305 @@
+<div class="cnt-min-height">
+  <div class="row">
+    <div class="col-sm-8">
+      <h4>External Entities</h4>
+      <p>Search database for external entities.</p>
+    </div>
+    <div class="col-sm-4 text-right btns-top">
+      <button class="btn-pri" type="submit">Add</button>
+      <button class="btn-pri" data-target="#entities-search" data-toggle="modal" type="submit">Search</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default entities-panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Derrek Smith
+            <span class="pull-right categori-name">REPORTER</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <dl>
+            <dt>DOB</dt>
+            <dd>25/05/2018</dd>
+          </dl>
+          <dl>
+            <dt>GENDER</dt>
+            <dd>Male</dd>
+          </dl>
+          <dl>
+            <dt>ADDRESS</dt>
+            <dd>1355 Market Street, Suite 900
+              <br> San Francisco, CA 94103</dd>
+          </dl>
+          <dl>
+            <dt>PHONE</dt>
+            <dd>333-333-3333</dd>
+          </dl>
+        </div>
+        <div class="panel-footer">
+          <ul class="list-inline">
+            <li>
+              <a data-target="#entitiesedit" data-toggle="modal" href="#">EDIT</a>
+            </li>
+            <li>
+              <a href="#">REMOVE</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 nextprev-btn">
+    <div class="pull-left">
+      <button class="btn btn-link" data-toggle="tab">Previous</button>
+      <button class="btn btn-link" data-toggle="tab">Next</button>
+    </div>
+    <div class="pull-right">
+      <button class="btn btn-link">Save</button>
+      <button class="btn-pri">Submit</button>
+    </div>
+  </div>
+</div>
+<div class="modal fade in" id="entities-search" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg custom-wid" role="document">
+    <div class="modal-content Persons-Involved">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+        <h4 class="modal-title">Search External Entities</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <p>Enter one of the following to apply search capabilities</p>
+          </div>
+        </div>
+        <form [formGroup]="involvedEntitiesForm" (submit)="searchInvolvedEntities(involvedEntitiesForm.value)">
+          <div class="row mrg-top25">
+            <div class="col-sm-4 ">
+              <input type="text" class="form-control " placeholder="External Entities Name">
+              <div class="select-icon">
+                <select class="form-control" placeholder="category">
+                  <option> Select Category </option>
+                </select>
+              </div>
+              <input type="text" class="form-control " placeholder="FACID">
+              <input type="text" class="form-control " placeholder="SSBG">
+              <input type="text" class="form-control " placeholder="Contact Number">
+            </div>
+
+            <div class="col-sm-4">
+              <input type="text" class="form-control " placeholder="Office Address Line 1">
+              <input type="text" class="form-control " placeholder="Address Line 2">
+              <div class="row">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control " placeholder="Zip Code">
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control " placeholder="City">
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="select-icon">
+                    <select class="form-control" placeholder="select">
+                      <option> Region </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="select-icon">
+                    <select class="form-control" placeholder="select">
+                      <option> State </option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="text" class="form-control " placeholder="County">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer wizard-buttons">
+            <button class="btn-bg">Search</button>
+          </div>
+        </form>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="arrow-left">
+              <a href="">
+                <i class="fa fa-angle-left searchresult"></i>
+              </a>
+              <span> Search Result</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 pull-right text-right">
+            <div class="tbl-pagination">
+              <div class="row-count">
+                <span class="mrg-rht10">Rows per page : </span>
+                <div class="select-icon disp-inblock">
+                  <select class="form-control disp-inline width-70 no-mar">
+                    <option> 10 </option>
+                    <option> 20 </option>
+                    <option> 30 </option>
+                    <option> 40 </option>
+                    <option> 50 </option>
+                  </select>
+                </div>
+              </div>
+              <div class="total-rows">
+                <span>1 - 10 </span> of
+                <span>100</span>
+              </div>
+              <div class="arrow-left">
+                <i class="fa fa-angle-left" style="font-size:29px"></i>
+              </div>
+              <div class="arrow-right">
+                <i class="fa fa-angle-right" style="font-size:29px"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row ">
+          <div class="col-sm-12">
+            <div class="table-responsive mrg-top25">
+              <table class="table table-striped  no-mar">
+                <thead>
+                  <tr>
+                    <th>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </th>
+                    <th>External Entity Name</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Zip</th>
+                    <th>Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="control control--checkbox disp-inline">
+                        <input type="checkbox">
+                        <div class="control__indicator"></div>
+                      </label>
+                    </td>
+                    <td>West Park Health Care Center</td>
+                    <td>ASPEN</td>
+                    <td>LAP-CLIA</td>
+                    <td>1225 depaul Dr, STE 503</td>
+                    <td>Valparisio</td>
+                    <td>63044</td>
+                    <td>7410911</td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer wizard-buttons">
+        <button class="btn-bg">Search</button>
+        <button class="btn-pri">Add</button>
+      </div>
+    </div>
+  </div>
+</div>

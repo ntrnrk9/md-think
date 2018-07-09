@@ -1,0 +1,53 @@
+<div class="box-grid">
+  <h4 class="mar-top0 text-16 textb"> My Intakes </h4>
+  <div class="table-responsive form-letter-tab no-mar">
+    <table class="table table-bordered icon-action no-mar">
+      <thead>
+        <tr>
+          <th>Contact Number</th>
+          <th>Date Received</th>
+          <th>Updated Date & Time</th>
+          <th>Narrative</th>
+          <th>Focus</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody *ngIf="intakes$ | async; let intakes">
+        <tr *ngFor="let item of intakes">
+          <td>
+            <a *ngIf="item?.intakenumber" [routerLink]="['/pages/newintake/my-newintake', item.id]">{{item?.intakenumber}}</a>
+          </td>
+          <td> {{item.datereceived | date:'MM/dd/yyyy'}} </td>
+          <td> {{item.timereceived | date:'medium' }} </td>
+          <td>
+            <div [safeHtml]="item.narrative"> </div>
+          </td>
+          <td> {{item.raname}} </td>
+          <td> Draft</td>
+        </tr>
+        <tr *ngIf="intakes?.length === 0">
+          <td colspan="5">No records found.</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <div class="text-center">
+      <pagination [totalItems]="totalRecords$ | async " [itemsPerPage]="paginationInfo.pageSize" (pageChanged)="pageChanged($event)"
+        class="pagination-sm" [boundaryLinks]="true" [maxSize]="10">
+      </pagination>
+        <div class="text-center">
+    <pagination [totalItems]="totalRecords$ | async" [(ngModel)]="paginationInfo.pageNumber" (pageChanged)="pageChanged($event.page)"
+      class="pagination-sm" [boundaryLinks]="true" [maxSize]="10">
+    </pagination>
+  </div>
+    </div> -->
+    <pagination [totalItems]="totalRecords$ | async" [(ngModel)]="paginationInfo.pageNumber" (pageChanged)="pageChanged($event)"
+      class="pagination-sm" [boundaryLinks]="true" [itemsPerPage]="paginationInfo.pageSize">
+    </pagination>
+    <!-- <div *ngIf="{ totalRecords: totalRecords$ | async } as pagination">
+      <pagination [totalItems]="pagination.totalRecords" (pageChanged)="pageChanged($event)" class="pagination-sm" [boundaryLinks]="true"
+        [maxSize]="10" [ngModel]="paginationInfo.pageNumber">
+      </pagination> -->
+    <!-- </div> -->
+  </div>
+</div>

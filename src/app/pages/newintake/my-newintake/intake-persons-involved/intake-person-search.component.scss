@@ -1,0 +1,155 @@
+#Search-res .table th {
+    font-size: 12px;
+}
+.basic-info li {
+    padding-bottom: 15px;
+    width: calc(50% - 10px);
+}
+.basic-info li label {
+    margin-bottom: 5px;
+}
+h4.modal-title {
+    font-weight: 600;
+    font-size: 19px;
+}
+.modal .Persons-Involved .nav-tabs {
+    padding: 10px 15px;
+}
+.tab-content {
+    padding: 0 20px;
+}
+.cus-tab-section li a {
+    font-size: 15px;
+    font-weight: 600;
+}
+.cus-tab-section li.active a {
+    font-weight: 700;
+}
+.circle {
+    border: 4px solid #a1a3a5;
+}
+.circle:after {
+    background: none;
+}
+.cus-tab-section li:after,
+.cus-tab-section li.active:after {
+    height: 2px;
+}
+.cus-tab-section li:last-child:after,
+.cus-tab-section li.active:last-child:after {
+    height: 0;
+}
+.form-control {
+    font-size: 14px;
+    color: #999999;
+}
+#Search-res tbody td,
+#Search-res tbody th {
+    text-transform: capitalize;
+}
+.tab-content.no-shadow {
+    box-shadow: none;
+    padding: 15px;
+}
+.tab-content .list-25 li {
+    width: calc(25% - 10px) !important;
+}
+.cus-tab-section .tab-txt {
+    padding: 0 5px;
+}
+.radio-inline input[type='radio'] {
+    position: relative;
+    margin-left: 0;
+}
+.fa-angle-down {
+    color: #039be6;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.accordion .panel-heading,
+#accordion .panel-heading {
+    background: none;
+    border: none;
+}
+.panel.panel-default {
+    border: none;
+    box-shadow: none;
+}
+.panel-title {
+    font-size: 14px;
+}
+#accordion .panel-heading h4 {
+    margin-bottom: 5px;
+    margin-top:0;
+}
+.panel-title > a {
+    display: block;
+    padding: 5px;
+    text-decoration: none;
+    color: #039be6;
+    line-height: 21px;
+    text-transform: uppercase;
+}
+
+.panel-body {
+    padding: 0;
+}
+.more-less {
+    float: left !important;
+    color: #039be6;
+    border: 2px solid #e4e4e4;
+    padding: 3px;
+    margin-right: 10px;
+    top: 0;
+    border-radius: 2px;
+    line-height: 4px;
+    background: #f3f3f3;
+    padding-bottom: 2px;
+}
+
+.panel-default > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #eeeeee;
+}
+
+.customTable {
+}
+.customTable th {
+    color: #626467 !important;
+}
+.table.customTable > tbody > tr > td {
+    border-top: 2px solid #ddd;
+}
+.customTable td {
+    color: #626467;
+    font-weight: 500;
+    font-size: 14px;
+}
+.p-b-0 {
+    padding-bottom: 0;
+}
+.p-tb-0 {
+    padding-bottom: 0;
+    padding-top: 0;
+}
+.innerTable > thead {
+    background: #edf0f3;
+}
+.innerTable > thead > tr > th {
+    padding: 5px 15px;
+}
+.td-pad {
+    padding: 10px 0 0;
+}
+.show {
+    display: table-row !important;
+}
+.notactive{
+    pointer-events: none;
+}
+.table-responsive {
+    overflow-x: visible;
+}
+.innerTable .panel-group {
+    margin-bottom: 10px;
+}

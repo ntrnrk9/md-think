@@ -1,0 +1,127 @@
+.attachment-tab .icon i.fa {
+    font-size: 22px;
+    padding-right: 10px;
+    vertical-align: sub;
+}
+.attachment-tab .icon button.btn-pri {
+    margin-left: 25px;
+}
+.attachment-panel {
+    border: 2px solid #e2e2e2;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.attachment-panel .panel-heading {
+    padding: 15px;
+    background: #fff;
+    border-bottom: 2px solid #e2e2e2;
+}
+.attachment-panel .panel-title {
+    color: #57595a;
+    font-weight: 600;
+    font-size: 16px;
+    min-height: 36px;
+}
+.attachment-panel .panel-title span i.fa-file-excel-o {
+    font-size: 22px;
+    padding-right: 10px;
+    vertical-align: middle;
+    color: #039be6;
+}
+.attachment-panel .panel-heading span.f-size {
+    padding-left: 30px;
+    font-size: 13px;
+}
+span.categori-name {
+    font-size: 12px;
+    margin-right: 15px;
+    border: 1px solid #0277bd;
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+.attachment-panel .panel-body dl dt,
+.entities-panel .panel-body dl dd {
+    font-weight: 600;
+    color: #676767;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.attachment-panel .panel-body dl {
+    margin-bottom: 5px;
+}
+.attachment-panel .panel-body dl dd {
+    font-size: 11px;
+}
+.attachment-panel .panel-footer {
+    background: #fff;
+    padding: 5px 15px;
+    border-top: 2px solid #e2e2e2;
+    color: #039be6;
+}
+.m-t-20 {
+    margin-top: 20px;
+}
+.m-t-15 {
+    margin-top: 15px;
+}
+.theme {
+    color: #039be6;
+}
+
+/*sathish*/
+.no-attach {
+    padding: 50px 0px;
+}
+.no-attach h6 {
+    font-weight: 600;
+    font-size: 18px;
+}
+.attachment-panel .panel-footer h5 {
+    display: inline-block;
+    width: 70%;
+}
+.attachment-panel .panel-footer div > a {
+    font-size: 20px;
+    margin-right: 5px;
+}
+.word-align {
+    margin-bottom: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.single-wrap {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.mh-82 {
+    min-height: 36px;
+}
+.attachment-panel .media .media-heading {
+    font-size: 15px;
+    margin-bottom: 5px;
+    text-transform: none;
+    margin-top: 3px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.attachment-panel .media .media-left {
+    font-size: 30px;
+    color: #039be6;
+}
+.attachment-panel .media p {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 0;
+}
+.att-wrap {
+    width: 100%;
+    float: left;
+    max-height: 420px;
+    overflow-y: auto;
+}

@@ -1,0 +1,220 @@
+<header id="header" class="main-header">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="col-md-6">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                            aria-expanded="false">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand logohome" [routerLink]="role === 'apcs' || role === 'provider' ? ['/pages/case-worker'] : ['/pages/home-dashboard']"></a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a [routerLink]="role === 'apcs' || role === 'provider' ? ['/pages/case-worker'] : ['/pages/home-dashboard']">Dashboard</a>
+                            </li>
+                            <li class="drop-link" *ngIf="hasAccess('new') | async">
+                                <a href="javascript:{}">NEW</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/new/intake']" perm-Key='intake'>Intake</a>
+                                    </li>
+
+                                    <li>
+                                        <a [routerLink]="['/pages/new/saved-intakes']" perm-Key='intake'>My Intakes</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="drop-link" *ngIf="hasAccess('new') | async">
+                                <a href="javascript:{}">New Design</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/newintake/my-newintake']">Intake</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/newintake/new-saveintake']">My Intakes</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="drop-link" *ngIf="hasAccess('find') | async">
+                                <a>FIND</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/find/provider']">Provider</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/documents']">Documents</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/dsds-actions']">Agency Actions</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/entities']">Entities</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/person']">Person</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/find-regulation-library']">Regulation Library</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/find/staff-n-team']">Staff &amp; Team</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="drop-link" *ngIf="hasAccess('manage') | async">
+                                <a>MANAGE</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/manage/team-manage']">Teams</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/manage/reference-links']">Reference Links</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/manage/regulation-library']">Regulation Library</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/manage/news']">News</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/manage/significant-events']">Significant Events</a>
+                                    </li>
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/manage/person-merge']">Person Merge</a>
+                                    </li> -->
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/manage/non-contracting-providers']">Non-Contracting Providers</a>
+                                    </li> -->
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/manage/manage-da-group']">Manage DA Group</a>
+                                    </li> -->
+                                </ul>
+                            </li>
+                            <li class="drop-link" *ngIf="hasAccess('admin') | async">
+                                <a>ADMIN</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/general']">General</a>
+                                    </li>
+                                    <li class="drop-menu-sub-link">
+                                        <a>Service Config</a>
+                                        <ul class="drop-menu-sub">
+                                            <li>
+                                                <a [routerLink]="['/pages/admin/da-config/da-type-config']">Service Type Config</a>
+                                            </li>
+                                            <li>
+                                                <a [routerLink]="['/pages/admin/da-config/actions-tasks-goals']">Actions-Tasks-Goals</a>
+                                            </li>
+                                            <li>
+                                                <a [routerLink]="['/pages/admin/da-config/allegations']">Allegations</a>
+                                            </li>
+                                            <li>
+                                                <a [routerLink]="['/pages/admin/da-config/review-da']">Review DA</a>
+                                            </li>
+                                            <li>
+                                                <a [routerLink]="['/pages/admin/da-config/provider-contracting']">Provider Contracting</a>
+                                            </li>
+                                            <!-- <li>
+                                                <a [routerLink]="['/pages/admin/da-config/custom-forms']">Custom Forms</a>
+                                            </li> -->
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/recording-type']">Contact Type</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/team-position']">Teams &amp; Positions</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/user-security-profile']">Users &amp; Security Profiles</a>
+                                    </li>
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/admin/form-letter-template']">Form &amp; Letter Templates</a>
+                                    </li> -->
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/assessment-builder']">Forms Builder</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/equipment-management']">Equipment Management</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/admin/non-contracting-type']">Non-Contracting Types</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/report']">Reports</a>
+                                    </li>
+                                    <li>
+                                        <a [routerLink]="['/pages/resource']">Resources</a>
+                                    </li>
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/admin/batch-annual-application']">Batch Annual Application</a>
+                                    </li> -->
+                                    <!-- <li>
+                                        <a [routerLink]="['/pages/admin/contracting']">Contracting</a>
+                                    </li> -->
+                                </ul>
+                            </li>
+                            <li class="drop-link">
+                                <a>HELP</a>
+                                <ul class="drop-menu">
+                                    <li>
+                                        <a [routerLink]="['/pages/help/api-refferance']">API REFERENCE</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="header-right">
+                            <div class="col-md-5 pull-right">
+                                <div class="user-login-info" data-toggle="dropdown">
+                                    <div class="usernametxt-info">
+                                        <h4>{{userInfo.user?.userprofile?.displayname}}</h4>
+                                        <p>{{today | date:'fullDate'}}</p>
+                                    </div>
+                                    <figure class="usericon">
+                                        <img *ngIf="userInfo.user?.userprofile?.userphoto" [src]="userInfo.user?.userprofile?.userphoto" alt="">
+                                        <img *ngIf="!userInfo.user?.userprofile?.userphoto" src="../../../../assets/images/user.png" alt="">
+                                    </figure>
+                                </div>
+                                <ul class="dropdown-menu user-dropdown-menu" aria-labelledby="dLabel">
+                                    <!-- <li>
+                                                <a href="javascript:{}">User Profile</a>
+                                            </li> -->
+                                    <li>
+                                        <a href="javascript:{}" (click)="onLoggedout()">Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="pull-right">
+                                <div class="notifybar">
+                                    <span [routerLink]="['/pages/calendar']" data-toggle="tooltip" data-placement="bottom" title="Calender">
+                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                    </span>
+                                    <a [routerLink]="['/pages/notification']" (click)="clearCount()">
+                                        <span data-toggle="tooltip" data-placement="bottom" title="Notification">
+                                            <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                            <sup *ngIf="showNotification">{{totalNotificationCount}}</sup>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+        </div>
+    </nav>
+</header>
+<!-- /header -->
+<!-- header end -->

@@ -1,0 +1,13 @@
+{
+    "id": "5",
+    "firstName": "hCue",
+    "lastName": "Admin",
+    "email": "hcueadmin@myhcue.com",
+    "userName": "hcueadmin",
+    "roles": [
+        "admin",
+        "intakeuser",
+        "caseworker",
+        "reviewer"
+    ]
+}

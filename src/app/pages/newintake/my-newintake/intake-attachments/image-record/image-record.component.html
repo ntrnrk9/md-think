@@ -1,0 +1,71 @@
+<div class="modal fade in" id="upload-attachment" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog"
+  style="display: block;">
+  <div class="modal-dialog modal-dialog-w1050" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button *ngIf="id" type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="stopStreamedVideo()" [routerLink]="['/pages/newintake/my-newintake/' + id]">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        <button *ngIf="!id" type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="stopStreamedVideo()" [routerLink]="['/pages/newintake/my-newintake/']">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Take Photo
+        </h4>
+      </div>
+      <div class="modal-body bg-grey-fill">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="wizard">
+              <div class="wizard-inner">
+                <div class="connecting-line"></div>
+                <ul class="nav nav-tabs" role="tablist">
+                  <li role="presentation" [ngClass]="!tabActive ? 'active' : 'disabled'">
+                    <a href="javasccript:{}" data-toggle="tab" aria-controls="step1" role="tab" title="Upload">
+                      <span class="round-tab">
+                        <i class="glyphicon glyphicon-folder-open"></i>
+                      </span>
+                    </a>
+                  </li>
+                  <li role="presentation" [ngClass]="tabActive ? 'active' : 'disabled'">
+                    <a href="javasccript:{}" data-toggle="tab" aria-controls="complete" role="tab" title="Complete">
+                      <span class="round-tab">
+                        <i class="glyphicon glyphicon-ok"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <form role="form">
+                <div class="tab-content">
+                  <div class="tab-pane active" role="tabpanel" id="step1">
+                    <div class="row">
+                      <div class="col-sm-5">
+                        <div class="camera">
+                          <video #video>Video stream not available.</video>
+                        </div>
+                      </div>
+                      <div class="col-sm-1 "></div>
+                      <div class="col-sm-5 ">
+                        <canvas class="no-photo" #canvas></canvas>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <button (click)="captureImage()" class=" btn btn-bg pull-left">Take photo</button>
+                        <button class=" btn btn-pri next-step pull-right" [disabled]="!enableSave" (click)="saveImage()">Save and continue</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" role="tabpanel" id="complete">
+                    <attachment-detail (modalDismiss)="modalDismiss()"></attachment-detail>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,231 @@
+<div class="container-fluid">
+  <form [formGroup]="departmentActionIntakeFormGroup">
+    <section class="intake-nstyle record-intake">
+      <div>
+        <h3 class="pad-top20">RECORD CONTACT</h3>
+        <div class="row form-wrapper pad-top20">
+          <div class="col-sm-12">
+            <input formcontrolname="IntakeNumber" type="hidden">
+            <ul class="list-unstyled list-inline">
+              <li>
+                <label>Contact Number</label>
+                <p>{{ departmentActionIntakeFormGroup.get('IntakeNumber').value }}</p>
+              </li>
+              <li>
+                <label>Created Date</label>
+                <p>{{ departmentActionIntakeFormGroup.get('CreatedDate').value | date:'MM/dd/yyyy - h:mm a'}}</p>
+              </li>
+              <li>
+                <label>Author</label>
+                <p>{{ departmentActionIntakeFormGroup.get('Author').value | uppercase }}</p>
+              </li>
+
+
+            </ul>
+            <ul class="list-unstyled list-inline">
+
+              <li style="display:none">
+                <div class="form-group">
+                  <label class="required">Source</label>
+                  <div class="select-icon cus-select-width">
+                    <ng-select [searchable]="true" [clearable]="false" formControlName="Source" class="select-source">
+                      <ng-option value=""> Select </ng-option>
+                      <ng-option *ngFor="let item of intakeSourceList$ | async" [value]="item.value">{{item.text}}</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label class="required">Communication</label>
+                  <div class="select-icon cus-select-width">
+                    <ng-select [searchable]="true" [clearable]="false" formControlName="InputSource" class="select-source">
+                      <ng-option value=""> Select </ng-option>
+                      <ng-option *ngFor="let item of intakeCommunication$ | async" [value]="item.value">{{item.text}}</ng-option>
+                    </ng-select>
+
+                  </div>
+                </div>
+              </li>
+              <li style="width:20%;">
+                <div class="form-group">
+                  <label class="control control--checkbox disp-inline">
+                    <input type="checkbox" formControlName="isOtherAgency" (change)="changeOtherAgency($event)">
+                    <div class="control__indicator"></div>
+                    Request From Other Agency
+                  </label>
+                  <div class="m-t-5">
+                    <input type="text" class="form-control" formControlName="otheragency" maxlength="50">
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label class="required">Agency</label>
+                  <div class="select-icon cus-select-width">
+                    <ng-select [searchable]="true" [clearable]="false" formControlName="Agency" (change)="listPurpose($event)" class="select-source">
+                      <ng-option value="all"> All of these </ng-option>
+                      <ng-option *ngFor="let item of intakeAgencies$ | async" [value]="item.value">{{item.text}}</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label class="required">Purpose</label>
+                  <div class="select-icon cus-select-width">
+                    <ng-select [searchable]="true" [clearable]="false" formControlName="Purpose" (change)="listService($event)" class="select-source">
+                      <ng-option value=""> Select </ng-option>
+                      <ng-option *ngFor="let item of intakePurpose$ | async" [value]="item.value">{{item.text}}</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label class="required">Received Date</label>
+                  <div class="no-pad clsIntake dpnew fm-box-form dd-overflow-inherit" style="width: 180px;">
+                    <input class="form-control" formControlName="RecivedDate" placeholder="MM/DD/YYYY" a2e-datetimepicker [options]="{ 'maxDate': null}"
+                    />
+                    <i class=" fa fa-calendar" aria-hidden="True"></i>
+                  </div>
+                  <small class="text-danger" *ngIf="departmentActionIntakeFormGroup.controls['RecivedDate'].errors?.maxDate">You cannot enter a date in the future!</small>
+                  <control-messages [control]="departmentActionIntakeFormGroup.controls['RecivedDate']"></control-messages>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="expand-sec list-wrap" *ngIf="itnakeServiceGrid">
+      <ul class="list-unstyled list-inline">
+        <li *ngFor="let item of intakeServices$ | async">
+          <label class="control control--checkbox">
+            {{item.description}}
+            <input type="checkbox" [checked]="isSelectedItems(item)" formControlName="IntakeService" (click)="selectService($event, item)">
+            <div class="control__indicator"></div>
+          </label>
+        </li>
+      </ul>
+    </section>
+    <div class="intake no-pad">
+      <div class="tab-horizontal">
+        <ul class="nav nav-pills click-triggers">
+          <li class="active">
+            <a data-toggle="tab" data-target="#narrative">NARRATIVE</a>
+          </li>
+          <li>
+            <a data-toggle="tab" data-target="#Persons-Involved">Persons Involved</a>
+          </li>
+          <li *ngIf='djsSelected'>
+            <a data-toggle="tab" data-target="#Evaluation-Fields">EVALUATION FIELDS</a>
+          </li>
+          <li>
+            <a data-toggle="tab">Entities</a>
+            </li>
+            <li *ngIf='!djsSelected'>
+              <a data-toggle="tab">Service/Sub-type</a>
+            </li>
+            <li *ngIf='djsSelected'>
+              <a data-toggle="tab" data-target="#complaints-type">Complaints-type</a>
+            </li>
+            <li>
+              <a data-toggle="tab" data-target="#intake-assessment">Assessments</a>
+            </li>
+            <li>
+              <a data-toggle="tab">Cross Reference</a>
+            </li>
+            <li>
+              <a data-toggle="tab">Communications</a>
+            </li>
+            <li>
+              <a data-toggle="tab" data-target="#attachments">Attachments</a>
+            </li>
+            <!-- <li>
+              <a data-toggle="tab" data-target="#intake-disposition">Disposition</a>
+            </li> -->
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="narrative">
+            <newintake-narrative [intakeNumberNarrative]="intakeNumberNarrative" [narrativeInputSubject$]="narrativeInputSubject$" [narrativeOutputSubject$]="narrativeOutputSubject$"
+              [draftId]="draftId" [finalNarrativeText$]="finalNarrativeText$"></newintake-narrative>
+            <div class="row">
+              <div class="col-sm-12 nextprev-btn">
+                <div class="pull-right">
+                  <button class="btn btn-link btnNext" data-toggle="tab" data-target="#Persons-Involved">Next</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="Persons-Involved">
+            <intake-persons-involved [intakeNumberNarrative]="intakeNumberNarrative" [addedPersons]="addedPersons"></intake-persons-involved>
+            <div class="row">
+              <div class="col-sm-12 nextprev-btn">
+                <div class="pull-right">
+                  <button class="btn btn-link btnPrevious" data-toggle="tab" data-target="#narrative">Previous</button>
+                  <!-- <button class="btn btn-link" data-toggle="tab" href="attachments">Next</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="Evaluation-Fields">
+            <intake-evaluation-fields [evalFieldsInputSubject$]="evalFieldsInputSubject$" [evalFieldsOutputSubject$]="evalFieldsOutputSubject$"></intake-evaluation-fields>
+            <div class="row">
+              <div class="col-sm-12 nextprev-btn">
+                <div class="pull-right">
+                  <button class="btn btn-link btnPrevious" data-toggle="tab" data-target="#Persons-Involved">Previous</button>
+                  <!-- <button class="btn btn-link" data-toggle="tab" href="attachments">Next</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="complaints-type">
+            <intake-complaint-type [purposeInputSubject$] = "purposeInputSubject$" [createdCaseInputSubject$]="createdCaseInputSubject$" [createdCaseOuptputSubject$]="createdCaseOuptputSubject$" ></intake-complaint-type>
+            <div class="row">
+              <div class="col-sm-12 nextprev-btn">
+                <div class="pull-right">
+                  <button class="btn btn-link btnPrevious" data-toggle="tab" data-target="#Persons-Involved">Previous</button>
+                  <!-- <button class="btn btn-link" data-toggle="tab" href="attachments">Next</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="Entities">
+            <intake-entities></intake-entities>
+          </div>
+          <div class="tab-pane" id="intake-assessment">
+            <!-- <intake-assessment [addedIntakeDATypeSubject$]="addedIntakeDATypeSubject$" [addedIntakeDATypeDetails]="addedIntakeDATypeDetails"
+              [intakeNumber]="intakeNumber"></intake-assessment> -->
+          </div>
+          <div class="tab-pane" id="attachments">
+            <intake-attachments [addAttachementSubject$]="addAttachementSubject$"></intake-attachments>
+            <div class="row ">
+              <div class="col-sm-12 nextprev-btn">
+                <div class="pull-right">
+                  <button class="btn btn-link btnPrevious" data-toggle="tab" href="#Persons-Involved">Previous</button>
+                  <!-- <button class="btn btn-link" data-toggle="tab" href="#narrative">Next</button> -->
+                  <!-- <button class="btn-pri">Submit</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="intake-disposition">
+            <intake-disposition></intake-disposition>
+          </div>
+          <div class="tab-pane" id="Service">
+            <div class="cnt-min-height">
+              <h3>We use css to change the background color of the content to be equal to the tab</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="save-drop-btn">
+        <button class="btn btn-pri" (click)="draftIntake(departmentActionIntakeFormGroup.value, 'DRAFT')">{{btnDraft === true ? 'Update Draft' : 'Save as Draft'}}</button>
+        <button class="btn btn-pri" (click)="submitIntake(departmentActionIntakeFormGroup.value, 'INTR')">{{saveIntakeBtn === true ? 'Save & Complete' : 'Submit for Review'}}</button>
+      </span>
+    </div>
+
+  </form>
+</div>

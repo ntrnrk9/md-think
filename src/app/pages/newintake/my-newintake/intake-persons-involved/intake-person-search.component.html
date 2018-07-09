@@ -1,0 +1,604 @@
+<div class="modal fade in" id="intake-findperson" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg custom-wid" role="document">
+        <div class="modal-content Persons-Involved">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearSearchDetails()">
+                    <span aria-hidden="true">X</span>
+                </button>
+                <h4 class="modal-title">Find Individual</h4>
+            </div>
+            <div class="modal-body">
+                <div class="">
+                    <ul class="nav nav-tabs mrg-btm10 cus-tab-section">
+                        <li class="active">
+                            <a data-toggle="tab" class="notactive" id="profileinfo" href="#Profile-info">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Profile Information </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" class="notactive" id="searchresult" href="#Search-res">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Search Result</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" class="notactive" id="reporterrole" href="#reporter-role">
+                                <span class="circle fa fa-pencil"></span>
+                                <span class="tab-txt">Person role</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" style="box-shadow:0 0 0 0;">
+                        <div id="Profile-info" class="tab-pane fade in active">
+                            <form [formGroup]="involvedPersonSearchForm" (submit)="searchInvolvedPersons(involvedPersonSearchForm.value)">
+
+                                <div class="row">
+                                    <div class="col-sm-4 ">
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="lastname" placeholder="Last Name">
+                                        </mat-form-field>
+
+                                        <mat-form-field>
+                                            <input type="text" matInput formControlName="firstname" placeholder="First Name">
+                                        </mat-form-field>
+                                        <div class="no-pad clsIntake dpnew ">
+
+                                            <mat-form-field>
+                                                <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="D.O.B">
+                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+
+                                                <!-- <i aria-hidden="True" class="fa fa-calendar"></i> -->
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput placeholder="Approx. Age" formControlName="age">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <mat-select placeholder="Select Gender" formControlName="gender">
+                                                        <mat-option *ngFor="let item of genderDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Email" formControlName="email">
+                                        </mat-form-field>
+                                        <control-messages class="alert-align" [control]="personSearchAddForm.controls['email']"></control-messages>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Phone" formControlName="phone">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Occupation" formControlName="occupation">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="SSN" formControlName="ssn">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="State ID / Drivers License" formControlName="dl">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="FEIN" formControlName="fein">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Compliant #" formControlName="complaintnumber">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="CJIS # / SID #" formControlName="cjisnumber">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Petition / Folder ID" formControlName="petitionid">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Old#'s" formControlName="oldId">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Maiden Name" formControlName="maidenname">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Alias Name" formControlName="alias">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Social Media Name" formControlName="mediasrc">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Address Line 1" formControlName="address1">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Address Line 2" formControlName="address2">
+                                        </mat-form-field>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput placeholder="Zip Code" formControlName="zip">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <mat-select placeholder="Select State" formControlName="stateid">
+                                                        <mat-option *ngFor="let item of stateDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput placeholder="City" formControlName="city">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <mat-form-field>
+                                                    <input type="text" matInput placeholder="Country" formControlName="county">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="wizard-buttons text-right">
+                                    <input class="btn-pri" type="button" (click)="clearPersonSearch()" value="Clear" />
+                                    <button class="btn-pri" type="submit" [disabled]="involvedPersonSearchForm.pristine || involvedPersonSearchForm.invalid">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="Search-res" class="tab-pane fade">
+                            <div class="row">
+                                <div class="text-right">
+                                    <div *ngIf="{ canDisplayPager: canDisplayPager$ | async, totalRecords: totalRecords$ | async } as pagination">
+                                        <pagination *ngIf="pagination.canDisplayPager" [totalItems]="pagination.totalRecords" [(ngModel)]="paginationInfo.pageNumber"
+                                            (pageChanged)="pageChanged($event)" class="pagination-sm" [boundaryLinks]="true"
+                                            [maxSize]="10" [itemsPerPage]="paginationInfo.pageSize"></pagination>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="outer">
+                                        <div class="table-responsive" *ngIf="involvedPersonSearchResponses$ | async; let involvedPersonSearchResponses">
+                                            <table class="table customTable" *ngIf="involvedPersonSearchResponses.length > 0">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>view</th>
+                                                        <th>last name</th>
+                                                        <th>first name</th>
+                                                        <th>dob</th>
+                                                        <th>gen</th>
+                                                        <th>ssn</th>
+                                                        <th>address 1</th>
+                                                        <th>state</th>
+                                                        <th>zip</th>
+                                                        <th>priors</th>
+                                                        <th>source</th>
+                                                        <th>relation</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngFor="let row of involvedPersonSearchResponses; let rowId=index;">
+                                                    <tr>
+                                                        <td>
+                                                            <input type="radio" name="selectedPerson" (click)="selectPerson(row)">
+                                                        </td>
+                                                        <td>
+                                                            <a (click)="searchPersonDetailsRow(rowId, row)">
+                                                                <i [class]="showPersonDetail === rowId ? 'fa fa-angle-up':'fa fa-angle-down'" aria-hidden="true"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td>{{row?.lastname}}</td>
+                                                        <td>{{row?.firstname}}</td>
+                                                        <td>{{row?.dob | date:'MM/dd/yyyy'}}</td>
+                                                        <td>{{row?.gendertypekey}}</td>
+                                                        <td>{{row?.ssn}}</td>
+                                                        <td>{{row?.primaryaddress?.split('~')[0]}}</td>
+                                                        <td>{{row?.primaryaddress?.split('~')[3]}}</td>
+                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
+                                                        <td *ngIf="row.priors >= 1">
+                                                            <a (click)="searchPersonDetailsRow(rowId, row)">Yes </a>
+                                                        </td>
+                                                        <td *ngIf="row.priors <= 0">No</td>
+                                                        <td>{{row?.source}}</td>
+                                                        <td>{{row?.relations}}</td>
+                                                    </tr>
+                                                    <tr [class]="showPersonDetail === rowId ? 'show':'hide'">
+                                                        <td colspan="14" class="td-pad">
+                                                            <table class="table customTable innerTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>CJAMS ID</th>
+                                                                        <th>ALIAS</th>
+                                                                        <th>SUFFIX</th>
+                                                                        <th>PREFIX</th>
+                                                                        <th>AWOL</th>
+                                                                        <th>D.O.B</th>
+                                                                        <th>ADDRESS 1</th>
+                                                                        <th>ADDRESS 2</th>
+                                                                        <th>CITY</th>
+                                                                        <th>STATE</th>
+                                                                        <th>ZIP</th>
+                                                                        <th>RELATIONS</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="theme-txt1">-</td>
+                                                                        <td>-</td>
+                                                                        <td>{{row?.suffix}}</td>
+                                                                        <td>{{row?.prefx}}</td>
+                                                                        <td>-</td>
+                                                                        <td>{{row?.dob | date:'MM/dd/yyyy'}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[0]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[1]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[2]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[3]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
+                                                                        <td>{{row?.relations}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="14" class="td-pad">
+                                                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                                                <div class="panel panel-default" *ngFor="let action of personDSDSActions$ | async; let i=index;">
+                                                                                    <div class="panel-heading">
+                                                                                        <h4 class="panel-title collapsed">
+                                                                                            <a href="#collapse-{{rowId}}-{{i}}" data-toggle="collapse" data-parent="#accordion" aria-expanded="false">{{action.daTypeName}}
+                                                                                                <span class="glyphicon pull-right glyphicon-plus more-less"></span>
+                                                                                            </a>
+                                                                                        </h4>
+                                                                                    </div>
+                                                                                    <div id="collapse-{{rowId}}-{{i}}" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+                                                                                        <div class="panel-body">
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-12">
+                                                                                                    <div class="table-responsive">
+                                                                                                        <table class="table table-bordered">
+                                                                                                            <thead>
+                                                                                                                <tr>
+                                                                                                                    <th>CASE
+                                                                                                                        NUMBER
+                                                                                                                        Number
+                                                                                                                    </th>
+                                                                                                                    <th>NAME</th>
+                                                                                                                    <th>ROLE</th>
+                                                                                                                    <th>DATE
+                                                                                                                        CREATED
+                                                                                                                    </th>
+                                                                                                                    <th>DATE
+                                                                                                                        RECEIVED
+                                                                                                                    </th>
+                                                                                                                    <th>DATE
+                                                                                                                        COMPLETED
+                                                                                                                    </th>
+                                                                                                                    <th>STATUS</th>
+                                                                                                                    <!-- <th>Actions</th> -->
+                                                                                                                </tr>
+                                                                                                            </thead>
+                                                                                                            <tbody>
+                                                                                                                <tr *ngFor="let item of action?.daDetails">
+                                                                                                                    <td>{{item.danumber}}</td>
+                                                                                                                    <td>{{item.firstname}}
+                                                                                                                        ,
+                                                                                                                        {{item.lastname}}
+                                                                                                                    </td>
+                                                                                                                    <td>{{item.role}}</td>
+                                                                                                                    <td>{{item.datecreated
+                                                                                                                        |
+                                                                                                                        date:'MM/dd/yyyy'
+                                                                                                                        }}
+                                                                                                                    </td>
+                                                                                                                    <td>{{item.datereceived
+                                                                                                                        |
+                                                                                                                        date:'MM/dd/yyyy'
+                                                                                                                        }}
+                                                                                                                    </td>
+                                                                                                                    <td>{{item.datecompleted}}</td>
+                                                                                                                    <td>{{item.status}}</td>
+                                                                                                                    <!-- <td>
+                                                                                                                                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="View">
+                                                                                                                                        <i class="fa fa-eye"> </i>
+                                                                                                                                    </span>
+                                                                                                                                </td> -->
+                                                                                                                </tr>
+                                                                                                                <tr *ngIf="action?.daDetails?.length === 0">
+                                                                                                                    <td colspan="8">No match
+                                                                                                                        were
+                                                                                                                        found.
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </tbody>
+                                                                                                        </table>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                            <div class="m-c-height" *ngIf="involvedPersonSearchResponses.length === 0">
+                                                <p>No Results match your criteria. Redo search or continue to add a new profile.</p>
+                                                <button type="button" class="btn-pri" (click)="addNewPerson()">Add New</button>
+                                            </div>
+                                            <div class="row">
+                                                <div class="pull-left m-t-10">
+                                                    <a class="btn-link" (click)="tabNavigation('profileinfo')">Previous</a>
+                                                </div>
+                                                <div class="text-right">
+                                                    <button *ngIf="involvedPersonSearchResponses.length > 0" type="button" class="btn-pri" (click)="addNewPerson()">Add New</button>
+                                                    <input class="btn-pri" type="button" (click)="addSearchPerson()" value="Select" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="reporter-role" class="tab-pane">
+                            <form [formGroup]="personSearchAddForm">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h4 class="inner-title">REPORTER DETAILS</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <input type="hidden" formControlName="Lastname">
+                                        <input type="hidden" formControlName="Firstname">
+                                        <input type="hidden" formControlName="Middlename">
+                                        <input type="hidden" formControlName="Gender">
+                                        <input type="hidden" formControlName="Dob">
+                                        <mat-form-field>
+                                            <mat-select placeholder="Select Role *" formControlName="Role" (change)="personSearchAddForm.patchValue({RelationshiptoRA: ''})">
+                                                <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field class="m-t-40" *ngIf="personSearchAddForm.value.Role !== 'RA' && personSearchAddForm.value.Role !== 'RC' && personSearchAddForm.value.Role !== 'CLI'">
+                                            <mat-select placeholder="Relationship to Reported Person" formControlName="RelationshiptoRA">
+                                                <mat-option *ngFor="let item of relationShipToRADropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                        <label class="mt-lbl"> Danger to self?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="dangerToSelf">
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToSelfReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="dangerToSelfReason" placeholder="Reason">
+                                        </mat-form-field>
+
+
+                                        <label class="mt-lbl"> Danger to worker?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="dangerToWorker">
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToWorkerReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="dangerToWorkerReason" placeholder="Reason">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                        <label class="mt-lbl"> Appearance of mentally impaired?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="mentalImpaired">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalImpairedReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="mentalImpairedReason" placeholder="Reason">
+                                        </mat-form-field>
+
+                                        <label class="mt-lbl"> Signs of mental illness?</label>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <mat-radio-group formControlName="mentalIllness">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalIllnessReason')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="3">Unknomn</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="m-t-10">
+                                            <input type="text" matInput formControlName="mentalIllnessReason" placeholder="Reason">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="pull-left m-t-10">
+                                        <a class="btn-link" (click)="tabNavigation('searchresult')">Previous</a>
+                                    </div>
+                                    <div class="text-right">
+                                        <input class="btn-pri" type="button" value="Done" (click)="addPerson(personSearchAddForm.value)" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="relations-summary" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"> Relations </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Person Relation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let relative of personRelations$ | async">
+                                        <td>{{relative.personrelative.firstname}}</td>
+                                        <td>{{relative.personrelative.lastname}}</td>
+                                        <td>{{relative.personrelationtype.description}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="address-summary" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"> Address </h4>
+            </div>
+            <div class="modal-body">
+                <div *ngFor="let address of personAddresses$ | async">
+                    <h4>{{address?.Personaddresstype?.typedescription}}</h4>
+                    <p>{{address?.address}}</p>
+                    <p>{{address?.city}}</p>
+                    <p>{{address?.state}}</p>
+                    <p>{{address?.county}}</p>
+                    <p>{{address?.zipcode}}</p>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 
+<div class="modal fade in" id="info-details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg custom-wid" role="document">
+        <div class="modal-content entities-edit">
+            <div class="modal-header">
+                <button type="button" class="close">
+                    <span aria-hidden="true" (click)="closeInformation()">X</span>
+                </button>
+                <h4 class="modal-title no-mar">Information Details </h4>
+            </div>
+            <div class="modal-body" style="padding: 15px 30px;">
+                <div class="row">
+                    <div class="tab-horizontal">
+                        <ul class="nav nav-pills">
+                            <li class="active">
+                                <a href="#basic" data-toggle="tab" aria-expanded="false">Basic</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix no-shadow" *ngIf="profileDetails; let item">
+                            <div class="tab-pane active" id="basic">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled basic-info list-inline list-25">
+                                        <li>
+                                            <label>First Name </label>
+                                            <p> {{item?.firstname ? item?.firstname: 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Last Name</label>
+                                            <p>{{item?.lastname ? item?.lastname: 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Alias </label>
+                                            <p> {{item?.firstname ? item?.firstname: 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Relation </label>
+                                            <p>{{item?.relations ? item?.relations : 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Date of Birth </label>
+                                            <p>{{item?.dob | date:'MM/dd/yyyy - h:mm a'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Gender </label>
+                                            <p>{{item?.gender ? item?.gender : 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Race </label>
+                                            <p>NA</p>
+                                        </li>
+                                        <li>
+                                            <label>Ethnicity </label>
+                                            <p>NA</p>
+                                        </li>
+                                        <li>
+                                            <label>Occupation </label>
+                                            <p>NA</p>
+                                        </li>
+                                        <li>
+                                            <label>Marital Status </label>
+                                            <p>NA</p>
+                                        </li>
+                                        <li>
+                                            <label>SSN </label>
+                                            <p>{{item?.ssn ? item?.ssn: 'NA'}}</p>
+                                        </li>
+                                    </ul>
+                                    <ul class="list-unstyled basic-info list-inline">
+                                        <li>
+                                            <label>Present Address </label>
+                                            <p> {{item.primaryaddress ? item.primaryaddress: 'NA'}}</p>
+                                        </li>
+                                        <li>
+                                            <label>Previous Address</label>
+                                            <p>NA</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div> -->
