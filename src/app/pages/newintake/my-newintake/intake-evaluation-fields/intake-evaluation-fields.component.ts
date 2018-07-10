@@ -16,7 +16,7 @@ import { EvaluationFields } from '../_entities/newintakeSaveModel';
 export class IntakeEvaluationFieldsComponent implements OnInit {
     @Input() evalFieldsInputSubject$ = new Subject<EvaluationFields>();
     @Input() evalFieldsOutputSubject$ = new Subject<EvaluationFields>();
-    intakeNarrativeForm: FormGroup;
+    intakeEvalForm: FormGroup;
     incidentDateOption: number;
     mdCountys$: Observable<DropdownModel[]>;
     offenceCategories$: Observable<DropdownModel[]>;
@@ -25,26 +25,26 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
         endDate: ''
     };
     maxDate = new Date();
-    constructor(private formBuilder: FormBuilder, private _commonHttpService: CommonHttpService) {}
+    constructor(private formBuilder: FormBuilder, private _commonHttpService: CommonHttpService) { }
 
     ngOnInit() {
         this.incidentDateOption = 0;
-        this.intakeNarrativeForm = this.formBuilder.group({
+        this.intakeEvalForm = this.formBuilder.group({
             requestdetention: false,
             petitionid: [''],
             adultpetitionid: [''],
-            sourceagency: ['', []],
-            complaintid: ['', []],
-            wvrnumber: ['', []],
-            offenselocation: ['', []],
-            complaintrcddate: ['', []],
-            arrestdate: ['', []],
-            zipcode: ['', []],
+            sourceagency: [''],
+            complaintid: [''],
+            wvrnumber: [''],
+            offenselocation: [''],
+            complaintrcddate: [''],
+            arrestdate: [''],
+            zipcode: [''],
             countyid: ['all'],
-            allegedoffense: ['all', []],
-            allegedoffenseknown: [0, []],
-            allegedoffensedate: ['', []],
-            allegedoffensetodate: ['', []],
+            allegedoffense: ['all'],
+            allegedoffenseknown: [0],
+            allegedoffensedate: [''],
+            allegedoffensetodate: [''],
             dateUnknown: false,
             dateRange: false
         });
@@ -53,12 +53,10 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
         });
 
         this.loadDroddowns();
-        this.intakeNarrativeForm.valueChanges.subscribe((val) => {
+        this.intakeEvalForm.valueChanges.subscribe((val) => {
             this.evalFieldsInputSubject$.next(val);
         });
     }
-
-    onChange(event) {}
 
     private loadDroddowns() {
         const source = forkJoin([
@@ -66,29 +64,22 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
             this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.OffenceCategoryListUrl + '?filter={"nolimit":true}')
             // this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.IntakeAgencies)
         ])
-            .map((result) => {
+            .map(([sourseListResult, offenceCategoryListResult]) => {
                 return {
-                    sourceList: result[0].map(
+                    sourceList: sourseListResult.map(
                         (res) =>
                             new DropdownModel({
                                 text: res.countyname,
                                 value: res.countyid
                             })
                     ),
-                    offenceCategoryList: result[1].map(
+                    offenceCategoryList: offenceCategoryListResult.map(
                         (res) =>
                             new DropdownModel({
                                 text: res.description,
                                 value: res.offensecategoryid
                             })
                     )
-                    // agenciesList: result[2].map(
-                    //     (res) =>
-                    //         new DropdownModel({
-                    //             text: res.description,
-                    //             value: res.agencyid
-                    //         })
-                    // )
                 };
             })
             .share();
@@ -99,30 +90,30 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
     onIncidentDateOptionChange(event: boolean, option: string) {
         if (option === 'range' && event) {
             this.incidentDateOption = 2;
-            this.intakeNarrativeForm.patchValue({
+            this.intakeEvalForm.patchValue({
                 dateUnknown: false,
                 allegedoffenseknown: 2,
                 allegedoffensedate: this.oldDate.beginDate,
                 allegedoffensetodate: this.oldDate.endDate
             });
         } else if (option === 'range' && !event) {
-            if (this.intakeNarrativeForm.value.dateUnknown) {
+            if (this.intakeEvalForm.value.dateUnknown) {
                 this.incidentDateOption = 1;
-                this.intakeNarrativeForm.patchValue({
+                this.intakeEvalForm.patchValue({
                     allegedoffenseknown: 1,
                     allegedoffensedate: '',
                     allegedoffensetodate: ''
                 });
             } else {
                 this.incidentDateOption = 0;
-                this.intakeNarrativeForm.patchValue({
+                this.intakeEvalForm.patchValue({
                     allegedoffenseknown: 0,
                     allegedoffensedate: this.oldDate.beginDate
                 });
             }
         } else if (option === 'unknown' && event) {
             this.incidentDateOption = 1;
-            this.intakeNarrativeForm.patchValue({
+            this.intakeEvalForm.patchValue({
                 dateRange: false,
                 allegedoffenseknown: 1,
                 allegedoffensedate: '',
@@ -130,7 +121,7 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
             });
         } else if (option === 'unknown' && !event) {
             this.incidentDateOption = 0;
-            this.intakeNarrativeForm.patchValue({
+            this.intakeEvalForm.patchValue({
                 allegedoffenseknown: 0,
                 allegedoffensedate: this.oldDate.beginDate
             });
@@ -139,8 +130,8 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
 
     patchForm(data: EvaluationFields) {
         if (data) {
-            this.intakeNarrativeForm.patchValue(data);
-            this.intakeNarrativeForm.patchValue({
+            this.intakeEvalForm.patchValue(data);
+            this.intakeEvalForm.patchValue({
                 complaintrcddate: data.complaintrcddate ? new Date(data.complaintrcddate) : '',
                 arrestdate: data.arrestdate ? new Date(data.arrestdate) : '',
                 allegedoffensedate: data.allegedoffensedate ? new Date(data.allegedoffensedate) : '',
@@ -150,17 +141,17 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
             this.oldDate.beginDate = data.allegedoffensedate;
             this.oldDate.endDate = data.allegedoffensetodate;
             if (data.allegedoffenseknown === 0) {
-                this.intakeNarrativeForm.patchValue({
+                this.intakeEvalForm.patchValue({
                     dateUnknown: false,
                     dateRange: false
                 });
             } else if (data.allegedoffenseknown === 1) {
-                this.intakeNarrativeForm.patchValue({
+                this.intakeEvalForm.patchValue({
                     dateRange: false,
                     dateUnknown: true
                 });
             } else if (data.allegedoffenseknown === 2) {
-                this.intakeNarrativeForm.patchValue({
+                this.intakeEvalForm.patchValue({
                     dateRange: true,
                     dateUnknown: false
                 });

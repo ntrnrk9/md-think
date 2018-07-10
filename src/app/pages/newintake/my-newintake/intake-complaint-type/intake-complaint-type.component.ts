@@ -4,13 +4,14 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { DropdownModel, PaginationRequest } from '../../../../@core/entities/common.entities';
 import { CommonHttpService } from '../../../../@core/services/common-http.service';
 import { NewUrlConfig } from '../../newintake-url.config';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Rx';
 import { ComplaintTypeCase } from '../_entities/newintakeSaveModel';
-import { IntakePurpose } from '../_entities/newintakeModel';
+import { IntakePurpose, SubType } from '../_entities/newintakeModel';
 import { AlertService } from '../../../../@core/services/alert.service';
 
 declare var $: any;
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'intake-complaint-type',
   templateUrl: './intake-complaint-type.component.html',
   styleUrls: ['./intake-complaint-type.component.scss']
@@ -24,167 +25,167 @@ export class IntakeComplaintTypeComponent implements OnInit {
   caseEditFormGroup: FormGroup;
   selectedPurpose: IntakePurpose;
   purposeList: IntakePurpose[];
-  subServiceTypes: any[];
+  subServiceTypes: SubType[];
   editCase: ComplaintTypeCase;
   deleteCaseID: string;
   @Input() purposeInputSubject$ = new Subject<IntakePurpose>();
   @Input() createdCaseInputSubject$ = new Subject<ComplaintTypeCase[]>();
   @Input() createdCaseOuptputSubject$ = new Subject<ComplaintTypeCase[]>();
-  constructor(private _commonHttpService: CommonHttpService, private formBuilder: FormBuilder, private _alertService: AlertService)
-        { }
+  constructor(private _commonHttpService: CommonHttpService, private formBuilder: FormBuilder, private _alertService: AlertService) { }
 
-ngOnInit() {
-  this.buildFormGroup();
-  this.purposeInputSubject$.subscribe((purpose) => {
-    console.log(purpose);
-    this.selectedPurpose = purpose;
-    if (purpose.teamtype) {
-      this.listServicetypes(purpose.teamtype.teamtypekey);
-    }
+  ngOnInit() {
+    this.buildFormGroup();
+    this.purposeInputSubject$.subscribe((purpose) => {
+      this.selectedPurpose = purpose;
+      if (purpose.teamtype) {
+        this.listServicetypes(purpose.teamtype.teamtypekey);
+      }
 
-    if (purpose.intakeservreqtypeid) {
-      this.listServiceSubtype(purpose.intakeservreqtypeid);
-    }
-    this.caseCreationFormGroup.patchValue({
-      serviceType: this.selectedPurpose.intakeservreqtypeid
+      if (purpose.intakeservreqtypeid) {
+        this.listServiceSubtype(purpose.intakeservreqtypeid);
+      }
+      this.caseCreationFormGroup.patchValue({
+        serviceType: this.selectedPurpose.intakeservreqtypeid
+      });
     });
-  });
-  this.createdCaseOuptputSubject$.subscribe((createdCases) => {
-    this.createdCases = createdCases;
-  });
-}
-
-buildFormGroup() {
-  this.caseCreationFormGroup = this.formBuilder.group({
-    serviceType: ['', Validators.required],
-    subServiceType: ['', Validators.required]
-  });
-  this.caseEditFormGroup = this.formBuilder.group({
-    serviceType: ['', Validators.required],
-    subServiceType: ['', Validators.required]
-  });
-}
-
-listServicetypes(teamtypekey) {
-  const checkInput = {
-    nolimit: true,
-    where: { teamtypekey: teamtypekey },
-    method: 'get'
-  };
-
-  this.serviceTypes$ = this._commonHttpService.getArrayList(new PaginationRequest(checkInput), NewUrlConfig.EndPoint.Intake.IntakePurposes + '/list?filter').map((result) => {
-    this.purposeList = result;
-    return result.map(
-      (res) =>
-        new DropdownModel({
-          text: res.description,
-          value: res.intakeservreqtypeid
-        })
-    );
-  });
-}
-
-getSelectedPurpose(purposeID): IntakePurpose {
-  return this.purposeList.find((puroposeItem) => puroposeItem.intakeservreqtypeid === purposeID);
-}
-
-getSelectedSubtype(subTypeID): any {
-  return this.subServiceTypes.find((subServiceType) => subServiceType.servicerequestsubtypeid === subTypeID);
-}
-
-listServiceSubtype(intakeservreqtypeid) {
-  const checkInput = {
-    include: 'servicerequestsubtype',
-    nolimit: true,
-    where: { intakeservreqtypeid: intakeservreqtypeid },
-    method: 'get'
-  };
-  this.subServiceTypes$ = this._commonHttpService.getArrayList(new PaginationRequest(checkInput), NewUrlConfig.EndPoint.Intake.DATypeUrl + '/?filter').map((result) => {
-    this.subServiceTypes = result[0].servicerequestsubtype;
-    return result[0].servicerequestsubtype.map(
-      (res) =>
-        new DropdownModel({
-          text: res.description,
-          value: res.servicerequestsubtypeid
-        })
-    );
-  });
-}
-
-loadSubServiceTypes(serviceType: DropdownModel) {
-  console.log(serviceType);
-  this.listServiceSubtype(serviceType.value);
-}
-isSubTypeExists(servicerequestsubtypeid: string) {
-  return this.createdCases.find((createdCase) => createdCase.subServiceTypeID == servicerequestsubtypeid);
-}
-
-addCase() {
-  console.log(this.caseCreationFormGroup.value);
-  if (this.caseCreationFormGroup.valid) {    
-    if (this.isSubTypeExists(this.caseCreationFormGroup.value.subServiceType)) {
-      this._alertService.error('Already Case created for this sub type ');
-      return false;
-    }
-    this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.GetNextNumberUrl).subscribe((result) => {
-      const complaintTypeCase: ComplaintTypeCase = new ComplaintTypeCase();
-      complaintTypeCase.caseID = result['nextNumber'];
-      const selectedPurpose = this.getSelectedPurpose(this.caseCreationFormGroup.value.serviceType);
-      const selectedSubtype = this.getSelectedSubtype(this.caseCreationFormGroup.value.subServiceType);
-      complaintTypeCase.serviceTypeID = this.caseCreationFormGroup.value.serviceType;
-      complaintTypeCase.serviceTypeValue = selectedPurpose.description;
-      complaintTypeCase.subServiceTypeID = selectedSubtype.servicerequestsubtypeid;
-      complaintTypeCase.subSeriviceTypeValue = selectedSubtype.description;
-      this.createdCases.push(complaintTypeCase);
-      this.updateCreatedCases();
+    this.createdCaseOuptputSubject$.subscribe((createdCases) => {
+      this.createdCases = createdCases;
     });
   }
-}
 
+  buildFormGroup() {
+    this.caseCreationFormGroup = this.formBuilder.group({
+      serviceType: ['', Validators.required],
+      subServiceType: ['', Validators.required]
+    });
+    this.caseEditFormGroup = this.formBuilder.group({
+      serviceType: ['', Validators.required],
+      subServiceType: ['', Validators.required]
+    });
+  }
 
+  listServicetypes(teamtypekey) {
+    const checkInput = {
+      nolimit: true,
+      where: { teamtypekey: teamtypekey },
+      method: 'get'
+    };
 
-deleteCase(intakeCase: ComplaintTypeCase) {
-  this.deleteCaseID = intakeCase.caseID;
-}
+    this.serviceTypes$ = this._commonHttpService.getArrayList(new PaginationRequest(checkInput), NewUrlConfig.EndPoint.Intake.IntakePurposes + '/list?filter').map((result) => {
+      this.purposeList = result;
+      return result.map(
+        (res) =>
+          new DropdownModel({
+            text: res.description,
+            value: res.intakeservreqtypeid
+          })
+      );
+    });
+  }
 
-editCase(intakeCase: ComplaintTypeCase) {
-  this.caseEditFormGroup.patchValue({
-    serviceType: intakeCase.serviceTypeID,
-    subServiceType: intakeCase.subServiceTypeID
-  });
-  this.editCase = intakeCase;
-}
+  getSelectedPurpose(purposeID): IntakePurpose {
+    return this.purposeList.find((puroposeItem) => puroposeItem.intakeservreqtypeid === purposeID);
+  }
 
-updateCreatedCases() {
-  this.createdCaseInputSubject$.next(this.createdCases);
-}
-isUpdateDisabled() {
-  return (this.caseEditFormGroup.value.subServiceType === this.editCase.subServiceTypeID);
-}
-updateSubTypes() {
-  if (this.caseEditFormGroup.valid) {
-    if (this.isSubTypeExists(this.caseEditFormGroup.value.subServiceType)) {
-      this._alertService.error('Already Case created for this sub type ');
-      return false;
-    }
-    this.createdCases.find((complaintTypeCase) => {
-      if (complaintTypeCase.caseID === this.editCase.caseID) {
-        const selectedPurpose = this.getSelectedPurpose(this.caseEditFormGroup.value.serviceType);
-        const selectedSubtype = this.getSelectedSubtype(this.caseEditFormGroup.value.subServiceType);
-        complaintTypeCase.serviceTypeID = this.caseEditFormGroup.value.serviceType;
+  getSelectedSubtype(subTypeID): SubType {
+    return this.subServiceTypes.find((subServiceType) => subServiceType.servicerequestsubtypeid === subTypeID);
+  }
+
+  listServiceSubtype(intakeservreqtypeid) {
+    const checkInput = {
+      include: 'servicerequestsubtype',
+      nolimit: true,
+      where: { intakeservreqtypeid: intakeservreqtypeid },
+      method: 'get'
+    };
+    this.subServiceTypes$ = this._commonHttpService.getArrayList(new PaginationRequest(checkInput), NewUrlConfig.EndPoint.Intake.DATypeUrl + '/?filter').map((result) => {
+      this.subServiceTypes = result[0].servicerequestsubtype;
+      return result[0].servicerequestsubtype.map(
+        (res) =>
+          new DropdownModel({
+            text: res.description,
+            value: res.servicerequestsubtypeid
+          })
+      );
+    });
+  }
+
+  loadSubServiceTypes(serviceType: DropdownModel) {
+    this.listServiceSubtype(serviceType.value);
+  }
+  isSubTypeExists(servicerequestsubtypeid: string) {
+    return this.createdCases.find((createdCase) => createdCase.subServiceTypeID === servicerequestsubtypeid);
+  }
+
+  addCase() {
+    if (this.caseCreationFormGroup.valid) {
+      if (this.isSubTypeExists(this.caseCreationFormGroup.value.subServiceType)) {
+        this._alertService.error('Already Case created for this sub type ');
+        return false;
+      }
+      this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.GetNextNumberUrl).subscribe((result) => {
+        const complaintTypeCase: ComplaintTypeCase = new ComplaintTypeCase();
+        complaintTypeCase.caseID = result['nextNumber'];
+        const selectedPurpose = this.getSelectedPurpose(this.caseCreationFormGroup.value.serviceType);
+        const selectedSubtype = this.getSelectedSubtype(this.caseCreationFormGroup.value.subServiceType);
+        complaintTypeCase.serviceTypeID = this.caseCreationFormGroup.value.serviceType;
         complaintTypeCase.serviceTypeValue = selectedPurpose.description;
         complaintTypeCase.subServiceTypeID = selectedSubtype.servicerequestsubtypeid;
         complaintTypeCase.subSeriviceTypeValue = selectedSubtype.description;
-        $('#editClose').click();
-        return true;
-      }
-    });
+        this.createdCases.push(complaintTypeCase);
+        this.updateCreatedCases();
+      });
+    }
   }
-}
 
-deleteCaseConfirm() {
-  this.createdCases = this.createdCases.filter((createdCase) => createdCase.caseID !== this.deleteCaseID);
-  this.updateCreatedCases();
-  (<any>$('#delete-case-popup')).modal('hide');
-}
+
+
+  deleteCase(intakeCase: ComplaintTypeCase) {
+    this.deleteCaseID = intakeCase.caseID;
+  }
+
+  onEditCase(intakeCase: ComplaintTypeCase) {
+    this.caseEditFormGroup.patchValue({
+      serviceType: intakeCase.serviceTypeID,
+      subServiceType: intakeCase.subServiceTypeID
+    });
+    this.editCase = intakeCase;
+  }
+
+  updateCreatedCases() {
+    this.createdCaseInputSubject$.next(this.createdCases);
+  }
+  isUpdateDisabled() {
+    if (this.editCase) {
+      return (this.caseEditFormGroup.value.subServiceType === this.editCase.subServiceTypeID);
+    }
+    return false;
+    
+  }
+  updateSubTypes() {
+    if (this.caseEditFormGroup.valid) {
+      if (this.isSubTypeExists(this.caseEditFormGroup.value.subServiceType)) {
+        this._alertService.error('Already Case created for this sub type ');
+        return false;
+      }
+      this.createdCases.find((complaintTypeCase) => {
+        if (complaintTypeCase.caseID === this.editCase.caseID) {
+          const selectedPurpose = this.getSelectedPurpose(this.caseEditFormGroup.value.serviceType);
+          const selectedSubtype = this.getSelectedSubtype(this.caseEditFormGroup.value.subServiceType);
+          complaintTypeCase.serviceTypeID = this.caseEditFormGroup.value.serviceType;
+          complaintTypeCase.serviceTypeValue = selectedPurpose.description;
+          complaintTypeCase.subServiceTypeID = selectedSubtype.servicerequestsubtypeid;
+          complaintTypeCase.subSeriviceTypeValue = selectedSubtype.description;
+          $('#editClose').click();
+          return true;
+        }
+      });
+    }
+  }
+
+  deleteCaseConfirm() {
+    this.createdCases = this.createdCases.filter((createdCase) => createdCase.caseID !== this.deleteCaseID);
+    this.updateCreatedCases();
+    (<any>$('#delete-case-popup')).modal('hide');
+  }
 }

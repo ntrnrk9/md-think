@@ -43,19 +43,19 @@
         <section class="created-cases mrg-top25" *ngFor="let case of createdCases">
           <div class="casestop-sec">
             <ul class="list-unstyled list-inline">
-              <li> AA Number
-                <br/> {{case.caseID}} </li>
-              <li> Complaint Type
+              <li> <b>CASE NUMBER
+                <br/> {{case.caseID}} </b></li>
+              <li> COMPLAINT TYPE
                 <br/>{{case.serviceTypeValue}} </li>
-              <li> Sub Type
+              <li> SUB TYPES
                 <br/>{{case.subSeriviceTypeValue}}</li>
-              <li> Status Disposition
+              <li> STATUS & DISPOSITION
                 <br/>
-                <a href=""> Add Status Disposition</a>
+                <a href > ADD STATUS & DISPOSITION</a>
               </li>
             </ul>
             <div class="actionicons">
-              <span (click)="editCase(case)"  data-target="#intake-edittypemodal" data-toggle="modal">
+              <span (click)="onEditCase(case)"  data-target="#intake-edittypemodal" data-toggle="modal">
                 <i class="fa fa-pencil text-22 "></i>
               </span>
               <span data-target="#delete-case-popup" (click)="deleteCase(case)" data-toggle="modal">
@@ -242,7 +242,7 @@
                 <p> Are you sure you want to delete this case? </p>
                 <div class="text-right big-bot-space right-mspace-15">
                     <button type="button" value="No" class="btn-pri" name="" data-dismiss="modal"> No </button>
-                    <button type="button" value="Yes" class="btn-bg " name=""  (click)="deleteCaseConfirm()"> Yes </button>
+                    <button type="button" value="Yes" class="btn-pri" name=""  (click)="deleteCaseConfirm()"> Yes </button>
                 </div>
             </div>
         </div>

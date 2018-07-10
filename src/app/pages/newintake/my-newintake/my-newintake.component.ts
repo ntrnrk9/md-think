@@ -82,7 +82,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     itnakeServiceGrid: boolean;
     intakeservice = [];
     otherAgencyControlName: AbstractControl;
-    djsSelected = true;
+    djsSelected = false;
     checkValidation: boolean;
     saveIntakeBtn: boolean;
     intakeType: string;
@@ -252,25 +252,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     }
     listPurpose(agency: DropdownModel) {
         this.selectedAgency = agency;
-        const teamtypekey = this.selectedAgency.value;
-        if (teamtypekey === 'all') {
-            this.djsSelected = false;
-        } else {
-            this.djsSelected = false;
-
-            this.intakeAgencies$.subscribe((list) => {
-                const si = list.filter((item) => {
-                    if (teamtypekey === item.value && item.text === 'DJS') {
-                        return item;
-                    }
-                });
-                if (si.length > 0) {
-                    this.djsSelected = true;
-                } else {
-                    this.djsSelected = false;
-                }
-            });
-        }
+        const teamtypekey = this.selectedAgency.value;       
         this.departmentActionIntakeFormGroup.patchValue({
             Purpose: ''
         });

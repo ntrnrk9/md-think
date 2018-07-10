@@ -800,3 +800,12 @@ export class IntakePurpose {
     intakeservreqtypeid: string;
     teamtype: { sequencenumber: number; teamtypekey: string };
 }
+export class SubType {
+    activeflag: number;
+    classkey: string;
+    description: string;
+    intakeservreqtypeid: string;
+    investigatable: boolean;
+    servicerequestsubtypeid: string;
+    workloadweight: number;
+}
