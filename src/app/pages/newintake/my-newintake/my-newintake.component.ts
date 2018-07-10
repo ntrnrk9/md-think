@@ -252,7 +252,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     }
     listPurpose(agency: DropdownModel) {
         this.selectedAgency = agency;
-        const teamtypekey = this.selectedAgency.value;       
+        const teamtypekey = this.selectedAgency.value;
         this.departmentActionIntakeFormGroup.patchValue({
             Purpose: ''
         });
@@ -273,6 +273,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             );
         });
     }
+
     listService(puropose: DropdownModel) {
         const serDescription = puropose.value;
         this.selectteamtypekey = serDescription;
@@ -344,7 +345,8 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             if (appevent !== 'DRAFT') {
                 this.checkValidation = this.conditionalValidation();
             } else {
-                this.checkValidation = this.conditionalValidation();
+                // this.checkValidation = this.conditionalValidation();
+                this.checkValidation = true;
             }
             if (this.checkValidation) {
                 this.general = Object.assign(new General(), modal);
@@ -437,6 +439,9 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
                             this.roleValue = true;
                         }
                     });
+                } else {
+                    this._alertService.error('Please add a person.');
+                    return false;
                 }
                 if (this.roleValue === false) {
                     this._alertService.error('Please add user of role RA/RC/CLI.');
@@ -582,25 +587,11 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         } else {
             this.djsSelected = false;
         }
-        /* this.intakePurpose$.subscribe((list) => {
-        const si = list.filter((item) => {
-            if (puropose.intakeservreqtypeid === item.value.intakeservreqtypeid && item.value.teamtype.teamtypekey === 'DJS') {
-                return item;
-            }
-        });
-        if (si.length > 0) {
-            this.djsSelected = true;
-        } else {
-            this.djsSelected = false;
-        }
-    }); */
     }
     private mapIntakeScreenInfo(model: General): IntakeScreen {
         model.Narrative = this.addNarrative.Narrative;
         model.IsAnonymousReporter = this.addNarrative.IsAnonymousReporter;
-        model.IsUnknownReporter = this.addNarrative.IsUnknownReporter;
-        // model.dispositioncode = this.disposition.dispositioncode ? this.disposition.dispositioncode : '';
-        // model.intakeserreqstatustypekey = this.disposition.intakeserreqstatustypekey ? this.disposition.intakeserreqstatustypekey : '';
+        model.IsUnknownReporter = this.addNarrative.IsUnknownReporter;     
         this.intakeScreen.Person = this.addedPersons.map((item) => {
             ObjectUtils.removeEmptyProperties(item);
             return new Person(item);

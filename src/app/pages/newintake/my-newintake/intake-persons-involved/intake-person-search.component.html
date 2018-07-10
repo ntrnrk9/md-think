@@ -258,7 +258,7 @@
                                                                         <th>STATE</th>
                                                                         <th>ZIP</th>
                                                                         <th>RELATIONS</th>
-                                                                        <th>JURISDICTION</th>
+                                                                        <!-- <th>JURISDICTION</th> -->
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -275,7 +275,7 @@
                                                                         <td>{{row?.primaryaddress?.split('~')[5]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[3]}}</td>
                                                                         <td>{{row?.relations}}</td>
-                                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
+                                                                        <!-- <td>{{row?.primaryaddress?.split('~')[4]}}</td> -->
                                                                     </tr>
                                                                     <tr>
                                                                         <td colspan="14" class="td-pad">
@@ -311,6 +311,7 @@
                                                                                                                         COMPLETED
                                                                                                                     </th>
                                                                                                                     <th>STATUS</th>
+                                                                                                                    <th>JURISDICTION</th>
                                                                                                                     <!-- <th>Actions</th> -->
                                                                                                                 </tr>
                                                                                                             </thead>
@@ -336,6 +337,7 @@
                                                                                                                     </td>
                                                                                                                     <td>{{item.datecompleted}}</td>
                                                                                                                     <td>{{item.status}}</td>
+                                                                                                                    <td>-</td>
                                                                                                                     <!-- <td>
                                                                                                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="View">
                                                                                                                                         <i class="fa fa-eye"> </i>

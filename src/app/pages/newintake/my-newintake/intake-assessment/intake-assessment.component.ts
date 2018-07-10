@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { REGEX } from '../../../../@core/entities/constants';
 import { CommonHttpService, AuthService, GenericService } from '../../../../@core/services';
-
+import { NewUrlConfig } from '../../newintake-url.config';
 import { Subject } from 'rxjs/Subject';
 import { AppUser } from '../../../../@core/entities/authDataModel';
 import { PaginationRequest, PaginationInfo, DropdownModel } from '../../../../@core/entities/common.entities';
@@ -10,7 +10,6 @@ import { Observable } from 'rxjs/Observable';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { IntakeDATypeDetail, IntakeAssessmentRequestIds, Assessments, Allegation, AllegationItem } from '../_entities/newintakeModel';
-import { NewUrlConfig } from '../../newintake-url.config';
 
 @Component({
     // tslint:disable-next-line:component-selector
