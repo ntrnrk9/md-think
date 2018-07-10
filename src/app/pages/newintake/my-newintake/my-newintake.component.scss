@@ -156,7 +156,7 @@ select.form-control {
 }
 .cus-tab-section .tab-txt {
     background: #fff;
-    padding: 0 15px;
+    padding: 0 5px;
     position: relative;
     z-index: 1;
     text-transform: uppercase;
@@ -470,7 +470,7 @@ h4.h-bg-blue {
 .table > tfoot > tr > th,
 .table > thead > tr > td,
 .table > thead > tr > th {
-    padding: 12px 8px;
+    padding: 8px 8px;
 }
 .arrow-left .searchresult {
     font-size: 29px;
@@ -546,4 +546,7 @@ h4.h-bg-blue {
 }
 .cus-select-width .ng-select-dropdown-outer .ng-select-dropdown {
     width: auto;
+}
+.modal-footer {
+    padding: 10px 0 0px !important;
 }

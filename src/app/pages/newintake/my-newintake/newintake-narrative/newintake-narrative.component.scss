@@ -167,7 +167,16 @@ select.form-control {
 .circle:after {
     width: 1px;
     height: 1px;
-    background: #039be6;
+    background: #fff;
+    content: '';
+    padding: 5px;
+    border-radius: 20px;
+    display: inline-block;
+}
+.circle.completed:after {
+    width: 1px;
+    height: 1px;
+    background: #039be6 !important;
     content: '';
     padding: 5px;
     border-radius: 20px;
@@ -449,7 +458,7 @@ h4.h-bg-blue {
 .table > tfoot > tr > th,
 .table > thead > tr > td,
 .table > thead > tr > th {
-    padding: 12px 8px;
+    padding: 8px 8px;
 }
 .arrow-left .searchresult {
     font-size: 29px;

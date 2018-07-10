@@ -21,7 +21,7 @@ const routes: Routes = [
         component: NewSaveintakeComponent,
         canActivate: [RoleGuard],
         data: {
-            title: ['DHS - Saved Intakes'],
+            title: ['MDTHINK - Saved Intakes'],
             desc: 'Maryland department of human services',
             screen: { current: 'new', modules: [], skip: false }
         }

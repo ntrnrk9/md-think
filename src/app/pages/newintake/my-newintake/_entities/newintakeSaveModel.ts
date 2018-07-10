@@ -51,6 +51,11 @@ export class General {
     intakeservice = [];
     otheragency: string;
     isOtherAgency: boolean;
+    dispositioncode: string;
+    intakeserreqstatustypekey: string;
+    Firstname: string;
+    Lastname: string;
+    AgencyCode: string;
 }
 
 export class DATypeDetail {
@@ -213,9 +218,9 @@ export class EvaluationFields {
 }
 
 export class ComplaintTypeCase {
-caseID:string;
-serviceTypeID:string;
-serviceTypeValue:string;
-subServiceTypeID:string;
-subSeriviceTypeValue:string;
+    caseID: string;
+    serviceTypeID: string;
+    serviceTypeValue: string;
+    subServiceTypeID: string;
+    subSeriviceTypeValue: string;
 }

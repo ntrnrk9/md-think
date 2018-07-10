@@ -13,19 +13,19 @@
                     <ul class="nav nav-tabs mrg-btm10 cus-tab-section">
                         <li class="active">
                             <a data-toggle="tab" class="notactive" id="profileinfo" href="#Profile-info">
-                                <span class="circle fa fa-pencil"></span>
+                                <span [class]="profileTabActive ? 'circle fa fa-pencil completed' : 'circle fa fa-pencil'"></span>
                                 <span class="tab-txt">Profile Information </span>
                             </a>
                         </li>
                         <li>
                             <a data-toggle="tab" class="notactive" id="searchresult" href="#Search-res">
-                                <span class="circle fa fa-pencil"></span>
+                                <span [class]="serachResultTabActive ? 'circle fa fa-pencil completed' : 'circle fa fa-pencil'"></span>
                                 <span class="tab-txt">Search Result</span>
                             </a>
                         </li>
                         <li>
                             <a data-toggle="tab" class="notactive" id="reporterrole" href="#reporter-role">
-                                <span class="circle fa fa-pencil"></span>
+                                <span  [class]="personRoleTabActive ? 'circle fa fa-pencil completed' : 'circle fa fa-pencil'"></span>
                                 <span class="tab-txt">Person role</span>
                             </a>
                         </li>
@@ -35,7 +35,7 @@
                         <div id="Profile-info" class="tab-pane fade in active">
                             <form [formGroup]="involvedPersonSearchForm" (submit)="searchInvolvedPersons(involvedPersonSearchForm.value)">
 
-                                <div class="row">
+                                <div class="row m-content-height">
                                     <div class="col-sm-4 ">
                                         <mat-form-field>
                                             <input type="text" matInput formControlName="lastname" placeholder="Last Name">
@@ -73,7 +73,7 @@
                                         </mat-form-field>
                                         <control-messages class="alert-align" [control]="personSearchAddForm.controls['email']"></control-messages>
                                         <mat-form-field>
-                                            <input type="text" matInput placeholder="Phone" formControlName="phone">
+                                            <input type="text" matInput placeholder="Phone" mask="(000) 000-0000" formControlName="phone">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <input type="text" matInput placeholder="Occupation" formControlName="occupation">
@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <mat-form-field>
-                                            <input type="text" matInput placeholder="SSN" formControlName="ssn">
+                                            <input type="text" matInput placeholder="SSN" mask="000-00-0000" formControlName="ssn">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <input type="text" matInput placeholder="State ID / Drivers License" formControlName="dl">
@@ -121,7 +121,7 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <mat-form-field>
-                                                    <input type="text" matInput placeholder="Zip Code" formControlName="zip">
+                                                    <input type="text" matInput placeholder="Zip Code" mask="00000-9999" formControlName="zip">
                                                 </mat-form-field>
                                             </div>
                                             <div class="col-sm-6">
@@ -140,7 +140,7 @@
                                             </div>
                                             <div class="col-sm-6">
                                                 <mat-form-field>
-                                                    <input type="text" matInput placeholder="Country" formControlName="county">
+                                                    <input type="text" matInput placeholder="County" formControlName="county">
                                                 </mat-form-field>
                                             </div>
                                         </div>
@@ -162,10 +162,39 @@
                                             [maxSize]="10" [itemsPerPage]="paginationInfo.pageSize"></pagination>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
+                                <!-- <div class="row">
+                                <div class="col-sm-8 pull-right text-right">
+                                    <div class="tbl-pagination">
+                                        <div class="row-count">
+                                            <span class="mrg-rht10">Rows per page : </span>
+                                            <div class="select-icon disp-inblock">
+                                                <select class="form-control disp-inline width-70 no-mar">
+                                                    <option> 10 </option>
+                                                    <option> 20 </option>
+                                                    <option> 30 </option>
+                                                    <option> 40 </option>
+                                                    <option> 50 </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="total-rows">
+                                            <span>1 - 10 </span> of
+                                            <span>100</span>
+                                        </div>
+                                        <div class="arrow-left">
+                                            <i class="fa fa-angle-left" style="font-size:29px"></i>
+                                        </div>
+                                        <div class="arrow-right">
+                                            <i class="fa fa-angle-right" style="font-size:29px"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                                <div class="col-sm-12" *ngIf="involvedPersonSearchResponses$ | async; let involvedPersonSearchResponses">
+
                                     <div class="outer">
-                                        <div class="table-responsive" *ngIf="involvedPersonSearchResponses$ | async; let involvedPersonSearchResponses">
-                                            <table class="table customTable" *ngIf="involvedPersonSearchResponses.length > 0">
+                                        <div class="table-responsive">
+                                            <table class="table customTable firsttable" *ngIf="involvedPersonSearchResponses.length > 0">
                                                 <thead>
                                                     <tr>
                                                         <th></th>
@@ -186,7 +215,11 @@
                                                 <tbody *ngFor="let row of involvedPersonSearchResponses; let rowId=index;">
                                                     <tr>
                                                         <td>
-                                                            <input type="radio" name="selectedPerson" (click)="selectPerson(row)">
+                                                            <!-- <input type="radio" name="selectedPerson" (click)="selectPerson(row)"> -->
+                                                            <label class="control control--radio">
+                                                                <input type="radio" name="selectedPerson" (click)="selectPerson(row)" class="ng-dirty ng-valid ng-touched">
+                                                                <div class="control__indicator"></div>
+                                                            </label>
                                                         </td>
                                                         <td>
                                                             <a (click)="searchPersonDetailsRow(rowId, row)">
@@ -199,8 +232,8 @@
                                                         <td>{{row?.gendertypekey}}</td>
                                                         <td>{{row?.ssn}}</td>
                                                         <td>{{row?.primaryaddress?.split('~')[0]}}</td>
+                                                        <td>{{row?.primaryaddress?.split('~')[5]}}</td>
                                                         <td>{{row?.primaryaddress?.split('~')[3]}}</td>
-                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
                                                         <td *ngIf="row.priors >= 1">
                                                             <a (click)="searchPersonDetailsRow(rowId, row)">Yes </a>
                                                         </td>
@@ -218,13 +251,14 @@
                                                                         <th>SUFFIX</th>
                                                                         <th>PREFIX</th>
                                                                         <th>AWOL</th>
-                                                                        <th>D.O.B</th>
+                                                                        <th>DOD</th>
                                                                         <th>ADDRESS 1</th>
                                                                         <th>ADDRESS 2</th>
                                                                         <th>CITY</th>
                                                                         <th>STATE</th>
                                                                         <th>ZIP</th>
                                                                         <th>RELATIONS</th>
+                                                                        <th>JURISDICTION</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -234,13 +268,14 @@
                                                                         <td>{{row?.suffix}}</td>
                                                                         <td>{{row?.prefx}}</td>
                                                                         <td>-</td>
-                                                                        <td>{{row?.dob | date:'MM/dd/yyyy'}}</td>
+                                                                        <td>{{row?.dod | date:'MM/dd/yyyy'}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[0]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[1]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[2]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[5]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[3]}}</td>
-                                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
                                                                         <td>{{row?.relations}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[4]}}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td colspan="14" class="td-pad">
@@ -256,14 +291,13 @@
                                                                                     <div id="collapse-{{rowId}}-{{i}}" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
                                                                                         <div class="panel-body">
                                                                                             <div class="row">
-                                                                                                <div class="col-sm-12">
+                                                                                                <div class="col-sm-12 col-pad">
                                                                                                     <div class="table-responsive">
-                                                                                                        <table class="table table-bordered">
+                                                                                                        <table class="table accordion-table">
                                                                                                             <thead>
                                                                                                                 <tr>
                                                                                                                     <th>CASE
                                                                                                                         NUMBER
-                                                                                                                        Number
                                                                                                                     </th>
                                                                                                                     <th>NAME</th>
                                                                                                                     <th>ROLE</th>
@@ -282,7 +316,7 @@
                                                                                                             </thead>
                                                                                                             <tbody>
                                                                                                                 <tr *ngFor="let item of action?.daDetails">
-                                                                                                                    <td>{{item.danumber}}</td>
+                                                                                                                    <td><a href="javascript:{}" (click)="priorAuditLog(item)">{{item.danumber}}</a></td>
                                                                                                                     <td>{{item.firstname}}
                                                                                                                         ,
                                                                                                                         {{item.lastname}}
@@ -290,12 +324,14 @@
                                                                                                                     <td>{{item.role}}</td>
                                                                                                                     <td>{{item.datecreated
                                                                                                                         |
-                                                                                                                        date:'MM/dd/yyyy'
+                                                                                                                        date:'MM/dd/yyyy
+                                                                                                                        H:mm:ss'
                                                                                                                         }}
                                                                                                                     </td>
                                                                                                                     <td>{{item.datereceived
                                                                                                                         |
-                                                                                                                        date:'MM/dd/yyyy'
+                                                                                                                        date:'MM/dd/yyyy
+                                                                                                                        H:mm:ss'
                                                                                                                         }}
                                                                                                                     </td>
                                                                                                                     <td>{{item.datecompleted}}</td>
@@ -331,21 +367,23 @@
 
                                                 </tbody>
                                             </table>
-                                            <div class="m-c-height" *ngIf="involvedPersonSearchResponses.length === 0">
-                                                <p>No Results match your criteria. Redo search or continue to add a new profile.</p>
+                                            <div class="m-content-height" *ngIf="involvedPersonSearchResponses.length === 0">
+                                                <p>No Results match your criteria. Redo search or continue to add a new profile.
+                                                </p>
                                                 <button type="button" class="btn-pri" (click)="addNewPerson()">Add New</button>
                                             </div>
-                                            <div class="row">
-                                                <div class="pull-left m-t-10">
-                                                    <a class="btn-link" (click)="tabNavigation('profileinfo')">Previous</a>
-                                                </div>
-                                                <div class="text-right">
-                                                    <button *ngIf="involvedPersonSearchResponses.length > 0" type="button" class="btn-pri" (click)="addNewPerson()">Add New</button>
-                                                    <input class="btn-pri" type="button" (click)="addSearchPerson()" value="Select" />
-                                                </div>
-                                            </div>
+
                                         </div>
 
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="pull-left m-t-10">
+                                            <a class="btn-link" (click)="tabNavigation('profileinfo')">Previous</a>
+                                        </div>
+                                        <div class="text-right">
+                                            <button *ngIf="involvedPersonSearchResponses.length > 0" type="button" class="btn-pri" (click)="addNewPerson()">Add New</button>
+                                            <input class="btn-pri" type="button" (click)="addSearchPerson()" value="Select" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -358,34 +396,35 @@
                                         <h4 class="inner-title">REPORTER DETAILS</h4>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row m-content-height-410">
                                     <div class="col-sm-4">
                                         <input type="hidden" formControlName="Lastname">
                                         <input type="hidden" formControlName="Firstname">
                                         <input type="hidden" formControlName="Middlename">
                                         <input type="hidden" formControlName="Gender">
                                         <input type="hidden" formControlName="Dob">
+                                        <input type="hidden" formControlName="ssn">
                                         <mat-form-field>
-                                            <mat-select placeholder="Select Role *" formControlName="Role" (change)="personSearchAddForm.patchValue({RelationshiptoRA: ''})">
+                                            <mat-select placeholder="Select Role *" formControlName="Role" (change)="relationShipToRO($event)">
                                                 <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
 
                                         <mat-form-field class="m-t-40" *ngIf="personSearchAddForm.value.Role !== 'RA' && personSearchAddForm.value.Role !== 'RC' && personSearchAddForm.value.Role !== 'CLI'">
-                                            <mat-select placeholder="Relationship to Reported Person" formControlName="RelationshiptoRA">
+                                            <mat-select placeholder="Relationship to Reported Person *" formControlName="RelationshiptoRA">
                                                 <mat-option *ngFor="let item of relationShipToRADropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
                                     <div class="col-sm-4">
 
-                                        <label class="mt-lbl"> Danger to self?</label>
+                                        <label class="mt-lbl"> *Danger to self?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <mat-radio-group formControlName="dangerToSelf">
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'dangerToSelfReason')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason')" value="3">Unknomn</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason', 'isManditory')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToSelfReason', 'notManditory')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason', 'notManditory')" value="3">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
@@ -394,13 +433,13 @@
                                         </mat-form-field>
 
 
-                                        <label class="mt-lbl"> Danger to worker?</label>
+                                        <label class="mt-lbl"> *Danger to worker?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <mat-radio-group formControlName="dangerToWorker">
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'dangerToWorkerReason')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason')" value="3">Unknomn</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason', 'isManditory')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'dangerToWorkerReason', 'notManditory')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason', 'notManditory')" value="3">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
@@ -410,13 +449,13 @@
                                     </div>
                                     <div class="col-sm-4">
 
-                                        <label class="mt-lbl"> Appearance of mentally impaired?</label>
+                                        <label class="mt-lbl"> *Appearance of mentally impaired?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <mat-radio-group formControlName="mentalImpaired">
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'mentalImpairedReason')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason')" value="3">Unknomn</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason', 'isManditory')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalImpairedReason', 'notManditory')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason', 'notManditory')" value="3">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
@@ -424,13 +463,13 @@
                                             <input type="text" matInput formControlName="mentalImpairedReason" placeholder="Reason">
                                         </mat-form-field>
 
-                                        <label class="mt-lbl"> Signs of mental illness?</label>
+                                        <label class="mt-lbl"> *Signs of mental illness?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <mat-radio-group formControlName="mentalIllness">
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'mentalIllnessReason')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason')" value="3">Unknomn</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason', 'isManditory')" value="1">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalIllnessReason', 'notManditory')" value="2">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason', 'notManditory')" value="3">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
@@ -512,93 +551,3 @@
         </div>
     </div>
 </div>
-
-
-<!-- 
-<div class="modal fade in" id="info-details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg custom-wid" role="document">
-        <div class="modal-content entities-edit">
-            <div class="modal-header">
-                <button type="button" class="close">
-                    <span aria-hidden="true" (click)="closeInformation()">X</span>
-                </button>
-                <h4 class="modal-title no-mar">Information Details </h4>
-            </div>
-            <div class="modal-body" style="padding: 15px 30px;">
-                <div class="row">
-                    <div class="tab-horizontal">
-                        <ul class="nav nav-pills">
-                            <li class="active">
-                                <a href="#basic" data-toggle="tab" aria-expanded="false">Basic</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content clearfix no-shadow" *ngIf="profileDetails; let item">
-                            <div class="tab-pane active" id="basic">
-                                <div class="col-sm-12">
-                                    <ul class="list-unstyled basic-info list-inline list-25">
-                                        <li>
-                                            <label>First Name </label>
-                                            <p> {{item?.firstname ? item?.firstname: 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Last Name</label>
-                                            <p>{{item?.lastname ? item?.lastname: 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Alias </label>
-                                            <p> {{item?.firstname ? item?.firstname: 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Relation </label>
-                                            <p>{{item?.relations ? item?.relations : 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Date of Birth </label>
-                                            <p>{{item?.dob | date:'MM/dd/yyyy - h:mm a'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Gender </label>
-                                            <p>{{item?.gender ? item?.gender : 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Race </label>
-                                            <p>NA</p>
-                                        </li>
-                                        <li>
-                                            <label>Ethnicity </label>
-                                            <p>NA</p>
-                                        </li>
-                                        <li>
-                                            <label>Occupation </label>
-                                            <p>NA</p>
-                                        </li>
-                                        <li>
-                                            <label>Marital Status </label>
-                                            <p>NA</p>
-                                        </li>
-                                        <li>
-                                            <label>SSN </label>
-                                            <p>{{item?.ssn ? item?.ssn: 'NA'}}</p>
-                                        </li>
-                                    </ul>
-                                    <ul class="list-unstyled basic-info list-inline">
-                                        <li>
-                                            <label>Present Address </label>
-                                            <p> {{item.primaryaddress ? item.primaryaddress: 'NA'}}</p>
-                                        </li>
-                                        <li>
-                                            <label>Previous Address</label>
-                                            <p>NA</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div> -->

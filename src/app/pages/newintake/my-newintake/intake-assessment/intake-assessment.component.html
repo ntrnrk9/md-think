@@ -1,39 +1,9 @@
 <div class="row">
   <div class="col-md-12">
     <div class="form-search-person cnt-min-height">
-      <form class="center-form search-person" [formGroup]="daTypeFormGroup" (submit)="addDAType(daTypeFormGroup.value)">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="required">Service Type</label>
-              <ng-select formControlName="DaTypeKey" [searchable]="true" [clearable]="false" (change)="onDATypeChange($event)" class="select-right">
-                <ng-option value=""> Select Service Type </ng-option>
-                <ng-option *ngFor="let item of daTypeDropDownItems$ | async" [value]="item.value" selectedText="item.text">{{item.text}}</ng-option>
-              </ng-select>
-
-            </div>
-          </div>
-          <div class="col-md-5">
-            <div class="form-group">
-              <label class="required">Service Sub Type</label>
-              <ng-select formControlName="DasubtypeKey" [searchable]="true" [clearable]="false" (change)="onDASubTypeChange($event)" class="select-right">
-                <ng-option value=""> Select Service Sub Type </ng-option>
-                <ng-option *ngFor="let item of daSubTypeDropDownItems$ | async" [value]="item.value">{{item.text}}</ng-option>
-              </ng-select>
-
-            </div>
-          </div>
-          <div class="col-md-3">
-            <button type="submit" id="daAddBtn" class="btn-bg m-t-30" [disabled]="daTypeFormGroup.pristine || daTypeFormGroup.invalid">Add</button>
-          </div>
-        </div>
-      </form>
       <div *ngIf="(startAssessment$ | async) as assessmentDetails">
         <div *ngIf="assessmentDetails.length!==0" class="box-grid-header">
           <h3>Intake Assessments
-            <!-- <span class="pull-right">
-              <i class="fa fa-plus"></i>
-            </span> -->
           </h3>
           <div class="col-md-12">
             <div class="form-search-person">
@@ -42,7 +12,6 @@
                   <table class="table table-bordered icon-action">
                     <thead>
                       <tr>
-
                         <th>Title</th>
                         <th>Last Modified Date</th>
                         <th>Target</th>
@@ -52,10 +21,10 @@
                     <tbody>
                       <tr *ngFor="let assessment of assessmentDetails">
                         <td>
-                          <span class="tr-brd-red" *ngIf="assessment?.assessment?.assessmentstatustypekey == 'Open' || assessment.assessment==null"></span>
-                          <span class="tr-brd-orange" *ngIf="assessment?.assessment?.assessmentstatustypekey == 'InProcess'"></span>
-                          <span class="tr-brd-green" *ngIf="assessment?.assessment?.assessmentstatustypekey == 'Submitted'"></span>
-                          {{assessment?.titleheadertext}}
+                          <span class="tr-brd-red" *ngIf="assessment.assessment?.assessmentstatustypekey == 'Open' || assessment.assessment==null"></span>
+                          <span class="tr-brd-orange" *ngIf="assessment.assessment?.assessmentstatustypekey == 'InProcess'"></span>
+                          <span class="tr-brd-green" *ngIf="assessment.assessment?.assessmentstatustypekey == 'Submitted'"></span>
+                          {{assessment.titleheadertext}}
                         </td>
                         <td>{{assessment.assessment?.updatedon | date: 'MM/dd/yyyy'}}</td>
                         <td>{{assessment.target}}</td>

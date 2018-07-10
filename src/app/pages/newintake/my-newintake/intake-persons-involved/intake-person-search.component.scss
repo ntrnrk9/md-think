@@ -13,7 +13,7 @@ h4.modal-title {
     font-size: 19px;
 }
 .modal .Persons-Involved .nav-tabs {
-    padding: 10px 15px;
+    padding: 0px 15px;
 }
 .tab-content {
     padding: 0 20px;
@@ -21,12 +21,13 @@ h4.modal-title {
 .cus-tab-section li a {
     font-size: 15px;
     font-weight: 600;
+    padding: 0;
 }
 .cus-tab-section li.active a {
     font-weight: 700;
 }
 .circle {
-    border: 4px solid #a1a3a5;
+    border: 3px solid #a1a3a5;
 }
 .circle:after {
     background: none;
@@ -61,7 +62,7 @@ h4.modal-title {
     position: relative;
     margin-left: 0;
 }
-.fa-angle-down {
+.fa-angle-down,.fa-angle-up {
     color: #039be6;
     font-size: 16px;
     font-weight: 600;
@@ -133,13 +134,13 @@ h4.modal-title {
     padding-top: 0;
 }
 .innerTable > thead {
-    background: #edf0f3;
+    background: #f4f4f4;
 }
 .innerTable > thead > tr > th {
-    padding: 5px 15px;
+    padding: 5px 8px;
 }
 .td-pad {
-    padding: 10px 0 0;
+    padding: 10px 5px;
 }
 .show {
     display: table-row !important;
@@ -152,4 +153,71 @@ h4.modal-title {
 }
 .innerTable .panel-group {
     margin-bottom: 10px;
+}
+table label.control {
+    padding-top: auto;
+    padding-left: auto;
+}
+.control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    left: 0;
+}
+.control--radio .control__indicator:after {
+    background: #039be6;
+}
+.control input:checked ~ .control__indicator {
+    background: transparent;
+}
+.accordion-table thead {
+    background: #f4f4f4;
+    color: #626467 !important;
+}
+.table .table {
+    box-shadow: 0 0 10px 1px #ded8d8;
+}
+.firsttable>thead {background: #f4f4f4;}
+.customTable.firsttable thead tr th:nth-child(1) {width:70px;}
+.customTable.firsttable thead tr th:nth-child(2) {width:40px;}
+.customTable.firsttable thead tr th:nth-child(3) {width:100px;}
+.customTable.firsttable thead tr th:nth-child(4) {width:100px;}
+.customTable.firsttable thead tr th:nth-child(5) {width:100px;}
+.customTable.firsttable thead tr th:nth-child(6) {width:50px;}
+.customTable.firsttable thead tr th:nth-child(7) {width:125px;}
+.customTable.firsttable thead tr th:nth-child(8) {width:150px;}
+.customTable.firsttable thead tr th:nth-child(9) {width:100px;}
+.customTable.firsttable thead tr th:nth-child(10) {width:100px;}
+.customTable.firsttable thead tr th:nth-child(11) {width:75px;}
+.customTable.firsttable thead tr th:nth-child(12) {width:75px;}
+.customTable.firsttable thead tr th:nth-child(13) {width:100px;}
+.customTable.firsttable > thead tr th, .customTable.firsttable > tbody tr td {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.customTable.innerTable > thead tr th, .customTable.innerTable > tbody tr td {
+    text-overflow: inherit;
+    white-space: normal;
+}
+.outer {
+    max-height:380px;
+    min-height:380px;
+    overflow: hidden;
+    overflow-y: auto;
+    margin:10px 0 30px;
+}
+.col-pad {
+    padding: 0 10px;
+}
+.modal-header {padding: 10px 15px;}
+.modal-content {
+    height:615px;
+}
+.modal-dialog {
+    margin:10px auto;
+}
+.modal-height-body {
+    height: 472px;
+    overflow: hidden;
+    overflow-y: auto;
 }

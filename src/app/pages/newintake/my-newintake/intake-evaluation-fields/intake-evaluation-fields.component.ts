@@ -21,14 +21,13 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
     mdCountys$: Observable<DropdownModel[]>;
     offenceCategories$: Observable<DropdownModel[]>;
     oldDate = {
-        beginDate: "",
-        endDate: ""
+        beginDate: '',
+        endDate: ''
     };
     maxDate = new Date();
-    constructor(private formBuilder: FormBuilder, private _commonHttpService: CommonHttpService) { }
+    constructor(private formBuilder: FormBuilder, private _commonHttpService: CommonHttpService) {}
 
     ngOnInit() {
-
         this.incidentDateOption = 0;
         this.intakeNarrativeForm = this.formBuilder.group({
             requestdetention: false,
@@ -55,17 +54,16 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
 
         this.loadDroddowns();
         this.intakeNarrativeForm.valueChanges.subscribe((val) => {
-            
             this.evalFieldsInputSubject$.next(val);
         });
     }
 
-    onChange(event) { }
+    onChange(event) {}
 
     private loadDroddowns() {
         const source = forkJoin([
             this._commonHttpService.getArrayList({ where: { state: 'MD' }, order: 'countyname', nolimit: true, method: 'get' }, NewUrlConfig.EndPoint.Intake.MDCountryListUrl + '?filter'),
-            this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.OffenceCategoryListUrl + '?filter')
+            this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.OffenceCategoryListUrl + '?filter={"nolimit":true}')
             // this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.IntakeAgencies)
         ])
             .map((result) => {
@@ -113,13 +111,13 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
                 this.intakeNarrativeForm.patchValue({
                     allegedoffenseknown: 1,
                     allegedoffensedate: '',
-                allegedoffensetodate: ''
+                    allegedoffensetodate: ''
                 });
             } else {
                 this.incidentDateOption = 0;
                 this.intakeNarrativeForm.patchValue({
                     allegedoffenseknown: 0,
-                    allegedoffensedate: this.oldDate.beginDate,
+                    allegedoffensedate: this.oldDate.beginDate
                 });
             }
         } else if (option === 'unknown' && event) {
@@ -134,7 +132,7 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
             this.incidentDateOption = 0;
             this.intakeNarrativeForm.patchValue({
                 allegedoffenseknown: 0,
-                allegedoffensedate: this.oldDate.beginDate,
+                allegedoffensedate: this.oldDate.beginDate
             });
         }
     }
@@ -142,16 +140,15 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
     patchForm(data: EvaluationFields) {
         if (data) {
             this.intakeNarrativeForm.patchValue(data);
-
             this.intakeNarrativeForm.patchValue({
-                complaintrcddate: (data.complaintrcddate)?new Date(data.complaintrcddate):"",
-                arrestdate: (data.arrestdate)?new Date(data.arrestdate):"",
-                allegedoffensedate: (data.allegedoffensedate)?new Date(data.allegedoffensedate):"",
-                allegedoffensetodate: (data.allegedoffensetodate)?new Date(data.allegedoffensetodate):""
+                complaintrcddate: data.complaintrcddate ? new Date(data.complaintrcddate) : '',
+                arrestdate: data.arrestdate ? new Date(data.arrestdate) : '',
+                allegedoffensedate: data.allegedoffensedate ? new Date(data.allegedoffensedate) : '',
+                allegedoffensetodate: data.allegedoffensetodate ? new Date(data.allegedoffensetodate) : ''
             });
             this.incidentDateOption = data.allegedoffenseknown;
-            this.oldDate.beginDate=data.allegedoffensedate;
-            this.oldDate.endDate=data.allegedoffensetodate;
+            this.oldDate.beginDate = data.allegedoffensedate;
+            this.oldDate.endDate = data.allegedoffensetodate;
             if (data.allegedoffenseknown === 0) {
                 this.intakeNarrativeForm.patchValue({
                     dateUnknown: false,

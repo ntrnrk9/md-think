@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { InvolvedPersonSearchResponse, InvolvedPersonSearch, PersonDsdsAction, PersonRelativeDetails, AddressDetails, InvolvedPerson } from '../_entities/newintakeModel';
+import { InvolvedPersonSearchResponse, InvolvedPersonSearch, PersonDsdsAction, PersonRelativeDetails, AddressDetails, InvolvedPerson, DaDetails, PriorAuditLog } from '../_entities/newintakeModel';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 
@@ -13,6 +13,8 @@ import { NewUrlConfig } from '../../newintake-url.config';
 import { AlertService } from '../../../../@core/services/alert.service';
 import { Subject } from 'rxjs/Subject';
 import { ValidationService } from '../../../../@core/services/validation.service';
+import { ControlUtils } from '../../../../@core/common/control-utils';
+import { Address } from '../../../case-worker/dsds-action/involved-person/_entities/involvedperson.data.model';
 declare var $: any;
 @Component({
     // tslint:disable-next-line:component-selector
@@ -31,6 +33,9 @@ export class IntakePersonSearchComponent implements OnInit {
     involvedPersonSearchForm: FormGroup;
     personSearchAddForm: FormGroup;
     involvedPersondata = false;
+    profileTabActive = false;
+    serachResultTabActive = false;
+    personRoleTabActive = false;
     showPersonDetail = -1;
     involvedPersonSearchResponses$: Observable<InvolvedPersonSearchResponse[]>;
     personDSDSActions$: Observable<PersonDsdsAction[]>;
@@ -41,8 +46,8 @@ export class IntakePersonSearchComponent implements OnInit {
     canDisplayPager$: Observable<boolean>;
     paginationInfo: PaginationInfo = new PaginationInfo();
     profileDetails: InvolvedPersonSearchResponse;
-    private pageStream$ = new Subject<number>();
     private involvedPersonSearch: InvolvedPersonSearch;
+    private priorAuditLogRequest = new PriorAuditLog();
     constructor(
         private _formBuilder: FormBuilder,
         private _alertService: AlertService,
@@ -53,28 +58,33 @@ export class IntakePersonSearchComponent implements OnInit {
     ngOnInit() {
         this.initiateFormGroup();
         this.loadDropDown();
-        this.pageStream$.subscribe((pageNumber) => {
-            this.paginationInfo.pageNumber = pageNumber;
-            this.getPage(this.paginationInfo.pageNumber);
-        });
+        // this.getPage(1);
     }
 
     initiateFormGroup() {
         this.personSearchAddForm = this._formBuilder.group({
+            Pid: [''],
             Lastname: [''],
             Firstname: [''],
             Middlename: [''],
             Gender: [''],
             Dob: [''],
-            Role: [''],
+            ssn: [''],
+            Role: ['', [Validators.required]],
+            address1: [''],
+            Address2: [''],
+            zipcode: [''],
+            state: [''],
+            city: [''],
+            county: [''],
             RelationshiptoRA: [''],
-            dangerToSelf: [''],
+            dangerToSelf: ['', [Validators.required]],
             dangerToSelfReason: [''],
-            dangerToWorker: [''],
+            dangerToWorker: ['', [Validators.required]],
             dangerToWorkerReason: [''],
-            mentalImpaired: [''],
+            mentalImpaired: ['', [Validators.required]],
             mentalImpairedReason: [''],
-            mentalIllness: [''],
+            mentalIllness: ['', [Validators.required]],
             mentalIllnessReason: ['']
         });
         this.involvedPersonSearchForm = this._formBuilder.group({
@@ -221,6 +231,8 @@ export class IntakePersonSearchComponent implements OnInit {
         this.involvedPersonSearch.stateid = this.involvedPersonSearchForm.value.dl;
         this.getPage(1);
         this.tabNavigation('searchresult');
+        this.profileTabActive = true;
+        this.personRoleTabActive = false;
     }
     private getPage(pageNumber: number) {
         ObjectUtils.removeEmptyProperties(this.involvedPersonSearch);
@@ -303,6 +315,7 @@ export class IntakePersonSearchComponent implements OnInit {
     }
     selectPerson(row) {
         this.selectedPerson = row;
+        this.serachResultTabActive = true;
     }
     addSearchPerson() {
         if (this.selectedPerson) {
@@ -311,8 +324,20 @@ export class IntakePersonSearchComponent implements OnInit {
                 Firstname: this.selectedPerson.firstname,
                 Middlename: this.selectedPerson.middlename,
                 Gender: this.selectedPerson.gendertypekey,
-                Dob: this.selectedPerson.dob
+                Dob: this.selectedPerson.dob,
+                ssn: this.selectedPerson.ssn,
+                Pid: this.selectedPerson.personid
             });
+            if (this.selectedPerson.primaryaddress) {
+                this.personSearchAddForm.patchValue({
+                    address1: this.selectedPerson.primaryaddress.split('~')[0] ? this.selectedPerson.primaryaddress.split('~')[0] : '',
+                    address2: this.selectedPerson.primaryaddress.split('~')[1] ? this.selectedPerson.primaryaddress.split('~')[1] : '',
+                    zipcode: this.selectedPerson.primaryaddress.split('~')[3] ? this.selectedPerson.primaryaddress.split('~')[3] : '',
+                    state: this.selectedPerson.primaryaddress.split('~')[5] ? this.selectedPerson.primaryaddress.split('~')[5] : '',
+                    city: this.selectedPerson.primaryaddress.split('~')[2] ? this.selectedPerson.primaryaddress.split('~')[2] : '',
+                    county: this.selectedPerson.primaryaddress.split('~')[4] ? this.selectedPerson.primaryaddress.split('~')[4] : ''
+                });
+            }
             // console.log(this.selectedPerson);
             this.tabNavigation('reporterrole');
         } else {
@@ -325,12 +350,13 @@ export class IntakePersonSearchComponent implements OnInit {
             this.intakePersonAdd.emit(involvedPerson);
             this.clearSearchDetails();
         } else {
+            ControlUtils.validateAllFormFields(this.personSearchAddForm);
+            ControlUtils.setFocusOnInvalidFields();
             this._alertService.warn('Please fill mandatory fields');
         }
     }
     addNewPerson() {
         this.newPersonAdd.emit();
-        this.tabNavigation('profileinfo');
         (<any>$('#intake-findperson')).modal('hide');
     }
     clearSearchDetails() {
@@ -338,6 +364,9 @@ export class IntakePersonSearchComponent implements OnInit {
         this.tabNavigation('profileinfo');
         (<any>$('#intake-findperson')).modal('hide');
         this.clearPersonSearch();
+        this.personRoleTabActive = false;
+        this.serachResultTabActive = false;
+        this.profileTabActive = false;
     }
 
     viewProfileDetails(vieeDetails: InvolvedPersonSearchResponse) {
@@ -350,16 +379,111 @@ export class IntakePersonSearchComponent implements OnInit {
     pageChanged(event: any) {
         this.paginationInfo.pageNumber = event.page;
         this.paginationInfo.pageSize = event.itemsPerPage;
-        this.pageStream$.next(this.paginationInfo.pageNumber);
+        this.getPage(this.paginationInfo.pageNumber);
     }
-    disabledInput(state, inputfield) {
+    disabledInput(state: boolean, inputfield: string, manditory: string) {
+        if (state === false && manditory === 'isManditory') {
+            this.personSearchAddForm.get(inputfield).enable();
+            if (inputfield === 'dangerToSelfReason') {
+                this.personSearchAddForm.get('dangerToSelf').valueChanges.subscribe((dangerToSelf: any) => {
+                    if (dangerToSelf === '1') {
+                        this.personSearchAddForm.get('dangerToSelfReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('dangerToSelfReason').updateValueAndValidity();
+                    } else {
+                        this.personSearchAddForm.get('dangerToSelfReason').clearValidators();
+                        this.personSearchAddForm.get('dangerToSelfReason').updateValueAndValidity();
+                    }
+                });
+            }
+
+            if (inputfield === 'dangerToWorkerReason') {
+                this.personSearchAddForm.get('dangerToWorker').valueChanges.subscribe((dangerToSelf: any) => {
+                    if (dangerToSelf === '1') {
+                        this.personSearchAddForm.get('dangerToWorkerReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                    } else {
+                        this.personSearchAddForm.get('dangerToWorkerReason').clearValidators();
+                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                    }
+                });
+            }
+
+            if (inputfield === 'dangerToWorkerReason') {
+                this.personSearchAddForm.get('dangerToWorker').valueChanges.subscribe((dangerToSelf: any) => {
+                    if (dangerToSelf === '1') {
+                        this.personSearchAddForm.get('dangerToWorkerReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                    } else {
+                        this.personSearchAddForm.get('dangerToWorkerReason').clearValidators();
+                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                    }
+                });
+            }
+            if (inputfield === 'mentalImpairedReason') {
+                this.personSearchAddForm.get('mentalImpaired').valueChanges.subscribe((dangerToSelf: any) => {
+                    if (dangerToSelf === '1') {
+                        this.personSearchAddForm.get('mentalImpairedReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('mentalImpairedReason').updateValueAndValidity();
+                    } else {
+                        this.personSearchAddForm.get('mentalImpairedReason').clearValidators();
+                        this.personSearchAddForm.get('mentalImpairedReason').updateValueAndValidity();
+                    }
+                });
+            }
+            if (inputfield === 'mentalIllnessReason') {
+                this.personSearchAddForm.get('mentalIllness').valueChanges.subscribe((dangerToSelf: any) => {
+                    if (dangerToSelf === '1') {
+                        this.personSearchAddForm.get('mentalIllnessReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('mentalIllnessReason').updateValueAndValidity();
+                    } else {
+                        this.personSearchAddForm.get('mentalIllnessReason').clearValidators();
+                        this.personSearchAddForm.get('mentalIllnessReason').updateValueAndValidity();
+                    }
+                });
+            }
+        }
         if (state) {
             this.personSearchAddForm.get(inputfield).disable();
-        } else {
+        } else if (!state && manditory === 'notManditory') {
             this.personSearchAddForm.get(inputfield).enable();
         }
     }
     tabNavigation(id) {
-        (<any>$('#' + id )).click();
+        (<any>$('#' + id)).click();
+        if (id === 'searchresult') {
+            this.personRoleTabActive = true;
+        }
+        if (id === 'profileinfo') {
+            this.paginationInfo.pageNumber = 1;
+        }
+    }
+
+    relationShipToRO(event: any) {
+        if (event.value !== 'RA' && event.value !== 'RC' && event.value !== 'CLI') {
+            this.personSearchAddForm.patchValue({ RelationshiptoRA: '' });
+            this.personSearchAddForm.get('RelationshiptoRA').setValidators([Validators.required]);
+            this.personSearchAddForm.get('RelationshiptoRA').updateValueAndValidity();
+        } else {
+            this.personSearchAddForm.patchValue({ RelationshiptoRA: '' });
+            this.personSearchAddForm.get('RelationshiptoRA').clearValidators();
+            this.personSearchAddForm.get('RelationshiptoRA').updateValueAndValidity();
+        }
+    }
+    priorAuditLog(item: PriorAuditLog) {
+        window.open('#/pages/case-worker/' + item.intakeserviceid + '/' + item.danumber + '/dsds-action/report-summary', '_blank');
+        const url = NewUrlConfig.EndPoint.Intake.PriorAuditLogUrl;
+        this.priorAuditLogRequest = Object.assign({}, item);
+        this.priorAuditLogRequest.priordanumber = item.danumber;
+        this.priorAuditLogRequest.danumber = this.intakeNumber;
+        const obj = this.priorAuditLogRequest;
+        this._commonHttpService
+            .getArrayList(
+                {
+                    method: 'post',
+                    obj
+                },
+                url
+            )
+            .subscribe();
     }
 }

@@ -124,7 +124,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-3 pull-right">
-                    <button class="btn-pri m-t-10 " (click)="updateSubTypes()" type="submit">Update</button>
+                    <button class="btn-pri m-t-10 " (click)="updateSubTypes()" [disabled]="isUpdateDisabled()" type="submit">Update</button>
                   </div>
             </div>
           </form>

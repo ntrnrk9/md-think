@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { debounceTime } from 'rxjs/operators';
@@ -17,6 +17,8 @@ import { NewUrlConfig } from '../../newintake-url.config';
 import * as moment from 'moment';
 import { map } from 'rxjs/operator/map';
 import { ValidationService } from '../../../../@core/services';
+import { MatRadioChange } from '@angular/material';
+import value from '*.json';
 
 declare var $: any;
 @Component({
@@ -25,9 +27,10 @@ declare var $: any;
     templateUrl: './intake-persons-involved.component.html',
     styleUrls: ['./intake-persons-involved.component.scss']
 })
-export class IntakePersonsInvolvedComponent implements OnInit {
+export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
     @Input() intakeNumberNarrative: string;
     @Input() addedPersons: InvolvedPerson[] = [];
+    @ViewChild('Dangerousself') Dangerousself: any;
     addEditLabel: string;
     errorValidateAddress = false;
     editAliasForm = false;
@@ -37,7 +40,8 @@ export class IntakePersonsInvolvedComponent implements OnInit {
     involvedPersonFormGroup: FormGroup;
     addAliasForm: FormGroup;
     personAddressForm: FormGroup;
-    contactPersonForm: FormGroup;
+    personPhoneForm: FormGroup;
+    personEmailForm: FormGroup;
     addedAliasPersons: InvolvedPersonAlias[] = [];
     totalRecords$: Observable<number>;
     genderDropdownItems$: Observable<DropdownModel[]>;
@@ -66,32 +70,64 @@ export class IntakePersonsInvolvedComponent implements OnInit {
     ngOnInit() {
         this.initiateFormGroup();
         this.loadDropDown();
+        this.involvedPersonFormGroup.controls['Firstname'].markAsTouched();
+        this.involvedPersonFormGroup.controls['Lastname'].markAsTouched();
+        this.involvedPersonFormGroup.controls['Gender'].markAsTouched();
+    }
+    ngAfterViewInit() {
+        this.personAddressForm.get('Address2').valueChanges.subscribe((result) => {
+            if (result) {
+                this.personAddressForm.get('address1').clearValidators();
+                this.personAddressForm.get('address1').updateValueAndValidity();
+            }
+        });
+        this.personAddressForm.get('knownDangerAddress').valueChanges.subscribe((result) => {
+            if (result === 'yes') {
+                this.personAddressForm.get('knownDangerAddressReason').setValidators([Validators.required]);
+                this.personAddressForm.get('knownDangerAddressReason').updateValueAndValidity();
+            } else {
+                this.personAddressForm.get('knownDangerAddressReason').clearValidators();
+                this.personAddressForm.get('knownDangerAddressReason').updateValueAndValidity();
+            }
+            if (result === 'no') {
+                this.personAddressForm.get('knownDangerAddressReason').disable();
+            } else {
+                this.personAddressForm.get('knownDangerAddressReason').enable();
+            }
+        });
     }
     addPersonAddress() {
-        if (this.personAddressForm.value.startDate) {
-            const startDate = this.personAddressForm.value.startDate + '';
-            const date1 = moment(new Date(startDate.substr(0, 16)));
-            this.personAddressForm.value.startDate = date1.format('MM/DD/YYYY');
-        }
-        if (this.personAddressForm.value.endDate) {
-            const endDate = this.personAddressForm.value.endDate + '';
-            const date2 = moment(new Date(endDate.substr(0, 16)));
-            this.personAddressForm.value.endDate = date2.format('MM/DD/YYYY');
-        }
-        if (this.personAddressInput.length !== 0) {
-            this.personAddressInput.map((item, index) => {
-                if (item.addressType !== this.personAddressForm.value.addressType) {
-                    this.personAddressInput.push({ addressType: this.personAddressForm.value.addressType, addressDetail: [] });
-                    this.personAddressInput[this.personAddressInput.length - 1].addressDetail.push(this.personAddressForm.value);
-                } else {
-                    this.personAddressInput[index].addressDetail.push(this.personAddressForm.value);
-                }
-            });
+        if (this.personAddressForm.dirty && this.personAddressForm.valid) {
+            if (this.personAddressForm.value.startDate) {
+                const startDate = this.personAddressForm.value.startDate + '';
+                const date1 = moment(new Date(startDate.substr(0, 16)));
+                this.personAddressForm.value.startDate = date1.format('MM/DD/YYYY');
+            }
+            if (this.personAddressForm.value.endDate) {
+                const endDate = this.personAddressForm.value.endDate + '';
+                const date2 = moment(new Date(endDate.substr(0, 16)));
+                this.personAddressForm.value.endDate = date2.format('MM/DD/YYYY');
+            }
+            // if (this.personAddressInput.length !== 0) {
+            //     this.personAddressInput.map((item, index) => {
+            //         if (item.addresstype !== this.personAddressForm.value.addresstype) {
+            //             this.personAddressInput.push({ addressid: '', addresstype: this.personAddressForm.value.addresstype, addressDetail: [] });
+            //             this.personAddressInput[this.personAddressInput.length - 1].addressDetail.push(this.personAddressForm.value);
+            //         } else {
+            //             this.personAddressInput[index].addressDetail.push(this.personAddressForm.value);
+            //         }
+            //     });
+            // } else {
+            this.personAddressInput.push(this.personAddressForm.value);
+            this.personAddressInput[this.personAddressInput.length - 1].addressid = '';
+            // }
+            this.personAddressForm.reset();
+            this.personAddressForm.get('address1').setValidators(Validators.required);
         } else {
-            this.personAddressInput.push({ addressType: this.personAddressForm.value.addressType, addressDetail: [] });
-            this.personAddressInput[0].addressDetail.push(this.personAddressForm.value);
+            ControlUtils.validateAllFormFields(this.personAddressForm);
+            ControlUtils.setFocusOnInvalidFields();
+            this._alertService.warn('Please fill mandatory fields!');
         }
-        this.personAddressForm.reset();
     }
     deleteAddressInput(i, j) {
         this.personAddressInput[i].addressDetail.splice(j, 1);
@@ -121,10 +157,13 @@ export class IntakePersonsInvolvedComponent implements OnInit {
             Dob: modal.Dob,
             Gender: modal.Gender,
             AliasLastName: modal.AliasLastName,
-            religiontype: modal.religiontype,
+            religionkey: modal.religionkey,
             stateid: modal.stateid,
-            tribalAssociation: modal.tribalAssociation,
-            physicalAtt: modal.physicalAtt,
+            tribalassociation: modal.tribalassociation,
+            height: modal.height ? modal.height : '',
+            weight: modal.weight ? modal.weight : '',
+            tattoo: modal.tattoo ? modal.tattoo : '',
+            physicalMark: modal.physicalMark ? modal.physicalMark : '',
             maritalstatus: modal.maritalstatus,
             Ethnicity: modal.Ethnicity,
             occupation: modal.occupation,
@@ -132,14 +171,14 @@ export class IntakePersonsInvolvedComponent implements OnInit {
             ssn: modal.ssn,
             race: modal.race,
             RelationshiptoRA: modal.RelationshiptoRA,
-            dangerToSelf: modal.dangerToSelf,
-            dangerToSelfReason: modal.dangerToSelfReason,
-            dangerToWorker: modal.dangerToWorker,
-            dangerToWorkerReason: modal.dangerToWorkerReason,
-            mentalImpaired: modal.mentalImpaired,
-            mentalImpairedReason: modal.mentalImpairedReason,
-            mentalIllness: modal.mentalIllness,
-            mentalIllnessReason: modal.mentalIllnessReason,
+            Dangerousself: modal.Dangerousself,
+            DangerousselfReason: modal.DangerousselfReason,
+            Dangerousworker: modal.Dangerousworker,
+            DangerousWorkerReason: modal.DangerousWorkerReason,
+            mentallyimpaired: modal.mentallyimpaired,
+            mentallyimpairedReason: modal.mentallyimpairedReason,
+            mentalillsign: modal.mentalillsign,
+            mentalillsignReason: modal.mentalillsignReason,
             Address: modal.Address,
             Address2: modal.Address2,
             Zip: modal.Zip,
@@ -177,10 +216,10 @@ export class IntakePersonsInvolvedComponent implements OnInit {
             Middlename: [''],
             Dob: [Validators.required],
             Gender: ['', Validators.required],
-            religiontype: [''],
+            religionkey: [''],
             maritalstatus: [''],
             Dangerous: [''],
-            Role: [''],
+            Role: ['', Validators.required],
             dangerAddress: [''],
             RelationshiptoRA: [''],
             race: [''],
@@ -203,38 +242,45 @@ export class IntakePersonsInvolvedComponent implements OnInit {
             County: [''],
             DangerousWorkerReason: [''],
             DangerousAddressReason: [''],
-            tribalAssociation: [''],
-            physicalAtt: [''],
-            dangerToSelf: [''],
-            dangerToSelfReason: [''],
-            dangerToWorker: [''],
-            dangerToWorkerReason: [''],
-            mentalImpaired: [''],
-            mentalImpairedReason: [''],
-            mentalIllness: [''],
-            mentalIllnessReason: ['']
+            tribalassociation: [''],
+            height: [''],
+            weight: [''],
+            tattoo: [''],
+            physicalMark: [''],
+            Dangerousself: ['', [Validators.required]],
+            DangerousselfReason: [''],
+            Dangerousworker: ['', [Validators.required]],
+            mentallyimpaired: ['', [Validators.required]],
+            mentallyimpairedReason: [''],
+            mentalillsign: ['', [Validators.required]],
+            mentalillsignReason: ['']
         });
         this.addAliasForm = this._formBuilder.group({
             AliasFirstName: [''],
             AliasLastName: ['']
         });
         this.personAddressForm = this._formBuilder.group({
-            addressType: [''],
+            knownDangerAddress: ['', [Validators.required]],
+            knownDangerAddressReason: ['', [Validators.required]],
+            addresstype: ['', Validators.required],
             phoneNo: [''],
-            addressLine1: [''],
-            addressLine2: [''],
-            zipCode: [''],
+            address1: ['', Validators.required],
+            Address2: [''],
+            zipcode: ['', Validators.required],
             state: [''],
             city: [''],
             county: [''],
             startDate: [''],
             endDate: ['']
         });
-        this.contactPersonForm = this._formBuilder.group({
-            PhoneNumber: [''],
-            PhoneType: [''],
-            EmailID: ['', [ValidationService.mailFormat]],
-            EmailType: ['']
+        this.personPhoneForm = this._formBuilder.group({
+            contactnumber: ['', Validators.required],
+            ismobile: ['', Validators.required],
+            contacttype: ['', Validators.required]
+        });
+        this.personEmailForm = this._formBuilder.group({
+            EmailID: ['', [ValidationService.mailFormat, Validators.required]],
+            EmailType: ['', Validators.required]
         });
     }
     validationAddressCall() {
@@ -243,8 +289,8 @@ export class IntakePersonsInvolvedComponent implements OnInit {
     }
     validateAddress() {
         const addressInput = {
-            street: this.personAddressForm.value.addressLine1 ? this.personAddressForm.value.addressLine1 : '',
-            street2: this.personAddressForm.value.addressLine2 ? this.personAddressForm.value.addressLine2 : '',
+            street: this.personAddressForm.value.address1 ? this.personAddressForm.value.address1 : '',
+            street2: this.personAddressForm.value.Address2 ? this.personAddressForm.value.Address2 : '',
             city: this.personAddressForm.value.city ? this.personAddressForm.value.city : '',
             state: this.personAddressForm.value.state ? this.personAddressForm.value.state : '',
             zipcode: this.personAddressForm.value.zipCode ? this.involvedPersonFormGroup.value.zipCode : '',
@@ -539,7 +585,7 @@ export class IntakePersonsInvolvedComponent implements OnInit {
                                 value: res.maritalstatustypekey
                             })
                     ),
-                    religiontype: result[9].map(
+                    religionkey: result[9].map(
                         (res) =>
                             new DropdownModel({
                                 text: res.typedescription,
@@ -585,7 +631,7 @@ export class IntakePersonsInvolvedComponent implements OnInit {
         this.roleDropdownItems$ = source.pluck('roles');
         this.stateDropdownItems$ = source.pluck('states');
         this.maritalDropdownItems$ = source.pluck('maritalstatus');
-        this.religionDropdownItems$ = source.pluck('religiontype');
+        this.religionDropdownItems$ = source.pluck('religionkey');
         this.racetypeDropdownItems$ = source.pluck('racetype');
         this.addresstypeDropdownItems$ = source.pluck('addresstype');
         this.phoneTypeDropdownItems$ = source.pluck('phonetype');
@@ -628,68 +674,132 @@ export class IntakePersonsInvolvedComponent implements OnInit {
         this.validateAddress();
     }
 
-    searchAddPerson(involvedPerson: InvolvedPerson) {
-        this.addedPersons.push(involvedPerson);
-        this.addedPersons.map((item) => {
-            if (item.Dob) {
-                const dob = item.Dob + '';
-                const date = moment(new Date(dob.substr(0, 16)));
-                item.DobFormatted = date.format('MM/DD/YYYY');
-            } else {
-                item.DobFormatted = 'N/A';
+    searchAddPerson(involvedPerson) {
+        const invDob = involvedPerson.Dob + '';
+        const invDate = moment(new Date(invDob.substr(0, 16)));
+        const invDobFormatted = invDate.format('MM/DD/YYYY');
+        const dDupPerson = this.addedPersons.filter(
+            (person) => person.Firstname === involvedPerson.Firstname && person.Lastname === involvedPerson.Lastname && person.DobFormatted === invDobFormatted
+        );
+        if (dDupPerson.length === 0) {
+            this.addedPersons.push(involvedPerson);
+            this.addedPersons.map((item) => {
+                if (item.Dob) {
+                    const dob = item.Dob + '';
+                    const date = moment(new Date(dob.substr(0, 16)));
+                    item.DobFormatted = date.format('MM/DD/YYYY');
+                } else {
+                    item.DobFormatted = 'N/A';
+                }
+            });
+            const addressDetail = [];
+            addressDetail.push({
+                addresstype: 'P',
+                address1: involvedPerson.address1,
+                zipcode: involvedPerson.zipCode,
+                state: involvedPerson.state,
+                city: involvedPerson.city,
+                county: involvedPerson.county,
+                addressid: ''
+            });
+            const personAddressInput = [];
+            personAddressInput.push({ addressDetail: addressDetail });
+            this.addedPersons[this.addedPersons.length - 1].phoneNumber = [];
+            this.addedPersons[this.addedPersons.length - 1].Gender = involvedPerson.Gender ? involvedPerson.Gender : '';
+            this.addedPersons[this.addedPersons.length - 1].emailID = [];
+            this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
+            this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(addressDetail);
+            this.addedPersons[this.addedPersons.length - 1].fullName = this.addedPersons[this.addedPersons.length - 1].Firstname + ' ' + this.addedPersons[this.addedPersons.length - 1].Lastname;
+            if (this.addedPersons[this.addedPersons.length - 1].personAddressInput) {
+                this.addedPersons[this.addedPersons.length - 1].fullAddress =
+                    this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].address1 +
+                    ' ' +
+                    this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].Address2 +
+                    ' ' +
+                    this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].city +
+                    ' ' +
+                    this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].state +
+                    ' ' +
+                    +this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].county +
+                    ' ' +
+                    this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].zipcode;
             }
-        });
-        this.addedPersons[this.addedPersons.length - 1].phoneNumber = [];
-        this.addedPersons[this.addedPersons.length - 1].emailID = [];
-        this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
+        } else {
+            this._alertService.error('Person already exists');
+        }
     }
     addPerson(involvedPerson: InvolvedPerson) {
         if (this.involvedPersonFormGroup.valid) {
             if (this.validatePerson(involvedPerson)) {
                 if (!this.involvedPerson.index && this.involvedPerson.index !== 0) {
-                    this._personManageService
-                        .create(
-                            {
-                                personid: involvedPerson.Pid,
-                                firstname: involvedPerson.Firstname,
-                                lastname: involvedPerson.Lastname,
-                                role: involvedPerson.Role,
-                                isnew: true,
-                                isedit: false,
-                                isdelete: false,
-                                obj: involvedPerson
-                            },
-                            NewUrlConfig.EndPoint.Intake.PersonInvolvedManageUrl
-                        )
-                        .subscribe((result) => {
-                            this.addedPersons.push(Object.assign(this.involvedPerson, involvedPerson));
-                            this.addedPersons[this.addedPersons.length - 1].phoneNumber = [];
-                            this.addedPersons[this.addedPersons.length - 1].phoneNumber = Object.assign(this.phoneNumber);
+                    // this._personManageService
+                    //     .create(
+                    //         {
+                    //             personid: involvedPerson.Pid,
+                    //             firstname: involvedPerson.Firstname,
+                    //             lastname: involvedPerson.Lastname,
+                    //             role: involvedPerson.Role,
+                    //             isnew: true,
+                    //             isedit: false,
+                    //             isdelete: false,
+                    //             obj: involvedPerson
+                    //         },
+                    //         NewUrlConfig.EndPoint.Intake.PersonInvolvedManageUrl
+                    //     )
+                    //     .subscribe((result) => {
+                    const invDob = involvedPerson.Dob + '';
+                    const invDate = moment(new Date(invDob.substr(0, 16)));
+                    const invDobFormatted = invDate.format('MM/DD/YYYY');
+                    const dDupPerson = this.addedPersons.filter(
+                        (person) => person.Firstname === involvedPerson.Firstname && person.Lastname === involvedPerson.Lastname && person.DobFormatted === invDobFormatted
+                    );
+                    if (dDupPerson.length === 0) {
+                        this.addedPersons.push(Object.assign(this.involvedPerson, involvedPerson));
+                        this.addedPersons[this.addedPersons.length - 1].phoneNumber = [];
+                        this.addedPersons[this.addedPersons.length - 1].phoneNumber = Object.assign(this.phoneNumber);
 
-                            this.addedPersons[this.addedPersons.length - 1].emailID = [];
-                            this.addedPersons[this.addedPersons.length - 1].emailID = Object.assign(this.emailID);
+                        this.addedPersons[this.addedPersons.length - 1].emailID = [];
+                        this.addedPersons[this.addedPersons.length - 1].emailID = Object.assign(this.emailID);
 
-                            this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
-                            this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(this.personAddressInput);
-                            this.addedPersons.map((item) => {
-                                if (item.Dob) {
-                                    const dob = item.Dob + '';
-                                    const date = moment(new Date(dob.substr(0, 16)));
-                                    item.DobFormatted = date.format('MM/DD/YYYY');
-                                } else {
-                                    item.DobFormatted = 'N/A';
-                                }
-                            });
-                            this.addedPersons.map((item, ix) => {
-                                item.index = ix;
-                                return item;
-                            });
-                            this.clearPerson();
-                            (<any>$('#intake-addperson')).modal('hide');
-                            this._alertService.success('Involved person added successfully!');
-                            // this.addedPersonsSubject$.next(this.addedPersons);
-                            this.involvedPerson.index = null;
+                        this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
+                        this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(this.personAddressInput);
+                        this.addedPersons.map((item) => {
+                            if (item.Dob) {
+                                const dob = item.Dob + '';
+                                const date = moment(new Date(dob.substr(0, 16)));
+                                item.DobFormatted = date.format('MM/DD/YYYY');
+                            } else {
+                                item.DobFormatted = 'N/A';
+                            }
+                            item.fullName = item.Firstname + ' ' + item.Lastname;
+                            if (item.personAddressInput && item.personAddressInput.length !== 0) {
+                                item.fullAddress =
+                                    item.personAddressInput[0].address1 +
+                                    ' ' +
+                                    item.personAddressInput[0].Address2 +
+                                    ' ' +
+                                    item.personAddressInput[0].city +
+                                    ' ' +
+                                    item.personAddressInput[0].state +
+                                    ' ' +
+                                    +item.personAddressInput[0].county +
+                                    ' ' +
+                                    item.personAddressInput[0].zipcode;
+                            }
                         });
+                        this.addedPersons.map((item, ix) => {
+                            item.index = ix;
+                            return item;
+                        });
+                        this.clearPerson();
+                        (<any>$('#intake-addperson')).modal('hide');
+                        this._alertService.success('Involved person added successfully!');
+                        // this.addedPersonsSubject$.next(this.addedPersons);
+                        this.involvedPerson.index = null;
+                    } else {
+                        this._alertService.error('Person already exists');
+                    }
+                    // });
                 } else {
                     this.addedPersons[this.involvedPerson.index] = involvedPerson;
                     const dob = this.addedPersons[this.involvedPerson.index].Dob + '';
@@ -704,6 +814,21 @@ export class IntakePersonsInvolvedComponent implements OnInit {
 
                     this.addedPersons[this.involvedPerson.index].personAddressInput = [];
                     this.addedPersons[this.involvedPerson.index].personAddressInput = Object.assign(this.personAddressInput);
+                    this.addedPersons[this.involvedPerson.index].fullName = this.addedPersons[this.involvedPerson.index].Firstname + ' ' + this.addedPersons[this.involvedPerson.index].Lastname;
+                    if (this.addedPersons[this.involvedPerson.index].personAddressInput && this.addedPersons[this.involvedPerson.index].personAddressInput.length !== 0) {
+                        this.addedPersons[this.involvedPerson.index].fullAddress =
+                            this.addedPersons[this.involvedPerson.index].personAddressInput[0].address1 +
+                            ' ' +
+                            this.addedPersons[this.involvedPerson.index].personAddressInput[0].Address2 +
+                            ' ' +
+                            this.addedPersons[this.involvedPerson.index].personAddressInput[0].city +
+                            ' ' +
+                            this.addedPersons[this.involvedPerson.index].personAddressInput[0].state +
+                            ' ' +
+                            +this.addedPersons[this.involvedPerson.index].personAddressInput[0].county +
+                            ' ' +
+                            this.addedPersons[this.involvedPerson.index].personAddressInput[0].zipcode;
+                    }
                     this.clearPerson();
                     (<any>$('#intake-addperson')).modal('hide');
                     this._alertService.success('Involved person updated successfully!');
@@ -880,25 +1005,33 @@ export class IntakePersonsInvolvedComponent implements OnInit {
         }
     }
     addPhone() {
-        const phoneNumber = this.contactPersonForm.get('PhoneNumber').value;
-        const phoneType = this.contactPersonForm.get('PhoneType').value;
+        const phoneNumber = this.personPhoneForm.get('contactnumber').value;
+        const phoneType = this.personPhoneForm.get('contacttype').value;
         if (phoneNumber && phoneType) {
-            this.phoneNumber.push({ phone: phoneNumber, type: phoneType });
+            this.phoneNumber.push({ contacttypeid: '', contactnumber: phoneNumber, contacttype: phoneType, isactive: 1 });
             this.phoneNumber$ = Observable.of(this.phoneNumber);
-            this.contactPersonForm.reset();
+            this.personPhoneForm.reset();
         } else {
             this._alertService.warn('Please fill mandatory fields for Phone');
+            ControlUtils.validateAllFormFields(this.personPhoneForm);
+            // ControlUtils.setFocusOnInvalidFields();
         }
     }
     addEmail() {
-        const emailID = this.contactPersonForm.get('EmailID').value;
-        const emailType = this.contactPersonForm.get('EmailType').value;
-        if (emailID && emailType && this.contactPersonForm.valid) {
-            this.emailID.push({ email: emailID, type: emailType });
+        const emailID = this.personEmailForm.get('EmailID').value;
+        const emailType = this.personEmailForm.get('EmailType').value;
+        if (emailID && this.personEmailForm.invalid) {
+            this._alertService.warn('Please enter a valid email id');
+            return;
+        }
+        if (emailID && emailType && this.personEmailForm.valid) {
+            this.emailID.push({ mailtypeid: '', mailid: emailID, mailtype: emailType, isactive: 1 });
             this.emailID$ = Observable.of(this.emailID);
-            this.contactPersonForm.reset();
+            this.personEmailForm.reset();
         } else {
             this._alertService.warn('Please fill mandatory fields for Email');
+            ControlUtils.validateAllFormFields(this.personEmailForm);
+            // ControlUtils.setFocusOnInvalidFields();
         }
     }
 
@@ -911,11 +1044,81 @@ export class IntakePersonsInvolvedComponent implements OnInit {
         this.emailID.splice(i, 1);
         this.emailID$ = Observable.of(this.emailID);
     }
-    disabledInput(state, inputfield) {
-        if (state) {
-            this.involvedPersonFormGroup.get(inputfield).disable();
-        } else {
+    disabledInput(state: boolean, inputfield: string, manditory: string) {
+        if (state === false && manditory === 'isManditory') {
             this.involvedPersonFormGroup.get(inputfield).enable();
+            if (inputfield === 'DangerousselfReason') {
+                this.involvedPersonFormGroup.get('Dangerousself').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.involvedPersonFormGroup.get('DangerousselfReason').setValidators([Validators.required]);
+                        this.involvedPersonFormGroup.get('DangerousselfReason').updateValueAndValidity();
+                    } else {
+                        this.involvedPersonFormGroup.get('DangerousselfReason').clearValidators();
+                        this.involvedPersonFormGroup.get('DangerousselfReason').updateValueAndValidity();
+                    }
+                });
+            }
+
+            if (inputfield === 'DangerousWorkerReason') {
+                this.involvedPersonFormGroup.get('Dangerousworker').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').setValidators([Validators.required]);
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').updateValueAndValidity();
+                    } else {
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').clearValidators();
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').updateValueAndValidity();
+                    }
+                });
+            }
+
+            if (inputfield === 'DangerousWorkerReason') {
+                this.involvedPersonFormGroup.get('Dangerousworker').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').setValidators([Validators.required]);
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').updateValueAndValidity();
+                    } else {
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').clearValidators();
+                        this.involvedPersonFormGroup.get('DangerousWorkerReason').updateValueAndValidity();
+                    }
+                });
+            }
+            if (inputfield === 'mentallyimpairedReason') {
+                this.involvedPersonFormGroup.get('mentallyimpaired').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.involvedPersonFormGroup.get('mentallyimpairedReason').setValidators([Validators.required]);
+                        this.involvedPersonFormGroup.get('mentallyimpairedReason').updateValueAndValidity();
+                    } else {
+                        this.involvedPersonFormGroup.get('mentallyimpairedReason').clearValidators();
+                        this.involvedPersonFormGroup.get('mentallyimpairedReason').updateValueAndValidity();
+                    }
+                });
+            }
+            if (inputfield === 'mentalillsignReason') {
+                this.involvedPersonFormGroup.get('mentalillsign').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.involvedPersonFormGroup.get('mentalillsignReason').setValidators([Validators.required]);
+                        this.involvedPersonFormGroup.get('mentalillsignReason').updateValueAndValidity();
+                    } else {
+                        this.involvedPersonFormGroup.get('mentalillsignReason').clearValidators();
+                        this.involvedPersonFormGroup.get('mentalillsignReason').updateValueAndValidity();
+                    }
+                });
+            }
+        } else if (state === true) {
+            this.involvedPersonFormGroup.get(inputfield).disable();
+        } else if (state === false && manditory === 'notManditory') {
+            this.involvedPersonFormGroup.get(inputfield).enable();
+        }
+    }
+    relationShipToRO(event: any) {
+        if (event.value !== 'RA' && event.value !== 'RC' && event.value !== 'CLI') {
+            this.involvedPersonFormGroup.patchValue({ RelationshiptoRA: '' });
+            this.involvedPersonFormGroup.get('RelationshiptoRA').setValidators([Validators.required]);
+            this.involvedPersonFormGroup.get('RelationshiptoRA').updateValueAndValidity();
+        } else {
+            this.involvedPersonFormGroup.patchValue({ RelationshiptoRA: '' });
+            this.involvedPersonFormGroup.get('RelationshiptoRA').clearValidators();
+            this.involvedPersonFormGroup.get('RelationshiptoRA').updateValueAndValidity();
         }
     }
 }

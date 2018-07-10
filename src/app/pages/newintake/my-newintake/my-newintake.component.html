@@ -124,28 +124,28 @@
           </li>
           <li>
             <a data-toggle="tab">Entities</a>
-            </li>
-            <li *ngIf='!djsSelected'>
-              <a data-toggle="tab">Service/Sub-type</a>
-            </li>
-            <li *ngIf='djsSelected'>
-              <a data-toggle="tab" data-target="#complaints-type">Complaints-type</a>
-            </li>
-            <li>
-              <a data-toggle="tab" data-target="#intake-assessment">Assessments</a>
-            </li>
-            <li>
-              <a data-toggle="tab">Cross Reference</a>
-            </li>
-            <li>
-              <a data-toggle="tab">Communications</a>
-            </li>
-            <li>
-              <a data-toggle="tab" data-target="#attachments">Attachments</a>
-            </li>
-            <!-- <li>
-              <a data-toggle="tab" data-target="#intake-disposition">Disposition</a>
-            </li> -->
+          </li>
+          <li *ngIf='!djsSelected'>
+            <a data-toggle="tab">Service/Sub-type</a>
+          </li>
+          <li *ngIf='djsSelected'>
+            <a data-toggle="tab" data-target="#complaints-type">Complaints-type</a>
+          </li>
+          <li>
+            <a data-toggle="tab" data-target="#intake-assessment">Assessments</a>
+          </li>
+          <li>
+            <a data-toggle="tab">Cross Reference</a>
+          </li>
+          <li>
+            <a data-toggle="tab">Communications</a>
+          </li>
+          <li>
+            <a data-toggle="tab" data-target="#attachments">Attachments</a>
+          </li>
+          <li>
+            <a data-toggle="tab" data-target="#intake-disposition">Disposition</a>
+          </li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="narrative">
@@ -182,7 +182,8 @@
             </div>
           </div>
           <div class="tab-pane" id="complaints-type">
-            <intake-complaint-type [purposeInputSubject$] = "purposeInputSubject$" [createdCaseInputSubject$]="createdCaseInputSubject$" [createdCaseOuptputSubject$]="createdCaseOuptputSubject$" ></intake-complaint-type>
+            <intake-complaint-type [purposeInputSubject$]="purposeInputSubject$" [createdCaseInputSubject$]="createdCaseInputSubject$"
+              [createdCaseOuptputSubject$]="createdCaseOuptputSubject$"></intake-complaint-type>
             <div class="row">
               <div class="col-sm-12 nextprev-btn">
                 <div class="pull-right">
@@ -196,8 +197,8 @@
             <intake-entities></intake-entities>
           </div>
           <div class="tab-pane" id="intake-assessment">
-            <!-- <intake-assessment [addedIntakeDATypeSubject$]="addedIntakeDATypeSubject$" [addedIntakeDATypeDetails]="addedIntakeDATypeDetails"
-              [intakeNumber]="intakeNumber"></intake-assessment> -->
+            <intake-assessment [addedIntakeDATypeSubject$]="addedIntakeDATypeSubject$" [addedIntakeDATypeDetails]="addedIntakeDATypeDetails"
+              [intakeNumber]="intakeNumber" [agencyCodeSubject$]="agencyCodeSubject$"></intake-assessment>
           </div>
           <div class="tab-pane" id="attachments">
             <intake-attachments [addAttachementSubject$]="addAttachementSubject$"></intake-attachments>
@@ -212,7 +213,7 @@
             </div>
           </div>
           <div class="tab-pane" id="intake-disposition">
-            <intake-disposition></intake-disposition>
+            <intake-disposition [timeReceived$]="timeReceived$" [dispositionInput$]="dispositionInput$" [dispositionOutPut$]="dispositionOutPut$" [dispositionRetrive$]="dispositionRetrive$"></intake-disposition>
           </div>
           <div class="tab-pane" id="Service">
             <div class="cnt-min-height">
@@ -222,7 +223,7 @@
         </div>
       </div>
       <span class="save-drop-btn">
-        <button class="btn btn-pri" (click)="draftIntake(departmentActionIntakeFormGroup.value, 'DRAFT')">{{btnDraft === true ? 'Update Draft' : 'Save as Draft'}}</button>
+        <button *ngIf="!saveIntakeBtn" class="btn btn-pri" (click)="draftIntake(departmentActionIntakeFormGroup.value, 'DRAFT')">{{btnDraft === true ? 'Update Draft' : 'Save as Draft'}}</button>
         <button class="btn btn-pri" (click)="submitIntake(departmentActionIntakeFormGroup.value, 'INTR')">{{saveIntakeBtn === true ? 'Save & Complete' : 'Submit for Review'}}</button>
       </span>
     </div>

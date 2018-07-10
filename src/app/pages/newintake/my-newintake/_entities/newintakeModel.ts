@@ -54,21 +54,27 @@ export class InvolvedPerson {
     personAddressInput: PersonAddress[];
     phoneNumber: any[];
     emailID: any[];
+    fullName: string;
+    fullAddress: string;
+    contactsmail?: any[];
+    contacts?: any[];
+    address?: PersonAddress[];
+    mentalillsign?: string;
+    mentalillsignReason: string;
+    AliasLastName: string;
 }
 export class PersonAddress {
     addressType: string;
-    addressDetail: AddressDetail[];
-}
-export class AddressDetail {
-    phoneNo: string;
-    addressLine1: string;
-    addressLine2: string;
-    zipCode: string;
+    phoneNo?: string;
+    address1: string;
+    Address2?: string;
+    zipcode: string;
     state: string;
     city: string;
     county: string;
-    startDate: Date;
-    endDate: Date;
+    startDate?: Date;
+    endDate?: Date;
+    addressid: string;
 }
 export class InvolvedPersonAlias {
     index: number;
@@ -335,6 +341,7 @@ export class IntakeDATypeDetail {
     Load: string;
     Team: string;
     Allegations: Allegation[] = [];
+    agencycode: string;
 }
 export class AllegationItem {
     allegationname: string;
@@ -520,8 +527,20 @@ export class DaDetails {
     datereceived: string;
     datecompleted: string;
     status: string;
+    intakeserviceid?: string;
 }
-
+export class PriorAuditLog {
+    danumber: string;
+    description: string;
+    firstname: string;
+    lastname: string;
+    role: string;
+    datereceived: string;
+    datecompleted: string;
+    status: string;
+    priordanumber: string;
+    intakeserviceid: string;
+}
 export class PersonDsdsAction {
     personid?: string;
     daDetails: DaDetails[];
@@ -559,6 +578,7 @@ export class RouteDA {
 export class IntakeAssessmentRequestIds {
     intakeservicerequesttypeid: string;
     intakeservicerequestsubtypeid: string;
+    agencycode: string;
 }
 
 export class IntakeTemporarySaveModel {
@@ -571,6 +591,8 @@ export class IntakeTemporarySaveModel {
     narrative: NarrativeIntake;
     attachement: AttachmentIntakes[];
     evaluationFields: EvaluationFields;
+    disposition?: DispostionOutput;
+    reviewstatus: ReviewStatus;
     createdCases: ComplaintTypeCase[];
     constructor(initializer?: IntakeTemporarySaveModel) {
         this.crossReference = initializer.crossReference;
@@ -582,6 +604,8 @@ export class IntakeTemporarySaveModel {
         this.narrative = initializer.narrative;
         this.attachement = initializer.attachement;
         this.evaluationFields = initializer.evaluationFields;
+        this.reviewstatus = initializer.reviewstatus;
+        this.disposition = initializer.disposition;
         this.createdCases = initializer.createdCases;
     }
 }
@@ -676,11 +700,11 @@ export class AttachmentUpload {
     numberofbytes: number;
     s3bucketpathname: string;
 }
-export interface ResourcePermission {
+export class ResourcePermission {
     id?: string;
     parentid?: string;
     name: string;
-    resourceid?: any;
+    resourceid?: string;
     resourcetype?: number;
     isSelected?: boolean;
     tooltip?: string;
@@ -740,8 +764,39 @@ export class Person {
     DangerousAddressReason?: string;
 }
 
+export class ReviewStatus {
+    appevent: string;
+    status: string;
+    commenttext: string;
+}
+
+export class DispositionCode {
+    description: string;
+    servicerequesttypeconfigid: string;
+    dispositioncode: string;
+    intakeserreqstatustypeid: string;
+    intakeserreqstatustypekey: string;
+    servicerequesttypeconfigdispositioncode: DispoistionList[];
+}
+
+export class DispoistionList {
+    description: string;
+    dispositioncode: string;
+    intakeserreqstatustypeid: string;
+    servicerequesttypeconfigid: string;
+}
+export class DispostionOutput {
+    dispositioncode: string;
+    intakeserreqstatustypekey: string;
+    comments: string;
+    reason: string;
+    DAStatus: string;
+    DADisposition: string;
+    Summary: string;
+    ReasonforDelay: string;
+}
 export class IntakePurpose {
-    description:string;
-    intakeservreqtypeid:string;
-    teamtype:{ sequencenumber:number,teamtypekey:string };
+    description: string;
+    intakeservreqtypeid: string;
+    teamtype: { sequencenumber: number; teamtypekey: string };
 }

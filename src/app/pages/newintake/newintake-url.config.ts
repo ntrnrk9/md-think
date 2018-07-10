@@ -56,8 +56,9 @@ export class NewUrlConfig {
             OffenceCategoryListUrl: 'offensecategories',
             PhoneTypeUrl: 'admin/personphonetype',
             EmailTypeUrl: 'admin/personemailtype',
-            saveIntakeUrl: 'Intakedastagings/listdadetails'
-            
+            saveIntakeUrl: 'Intakedastagings/listdadetails',
+            SupervisorApprovalUrl: 'Intakedastagings/approveIntake',
+            PriorAuditLogUrl: 'Intakeservicerequests/priors'
         },
         DSDSAction: {
             Attachment: {

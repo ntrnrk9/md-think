@@ -1,82 +1,79 @@
-<form id="Disposition" class="tab-pane" role="tabpanel" [formGroup]="dispositionFormGroup">
-  <div class="box-grid form-control-size" style="margin-bottom: 75px;">
-    <div class="row textLeft">
-      <div class="col-sm-3">
-        <label for="" class="bot-mspace"> Status Change Date </label>
-        <input type="text" formControlName="statusdate" disabled a2e-datetimepicker [options]="{format: 'MM/DD/YYYY'}">
-      </div>
-      <div class="col-sm-3">
-        <label for="" class="bot-mspace"> Due Date </label>
-        <input type="text" formControlName="duedate" disabled disabled a2e-datetimepicker [options]="{format: 'MM/DD/YYYY'}">
-      </div>
-      <div class="col-sm-3">
-        <label for="" class="bot-mspace"> Completion Date </label>
-        <input type="text" formControlName="completiondate" disabled disabled a2e-datetimepicker [options]="{format: 'MM/DD/YYYY'}">
-      </div>
-      <div class="col-sm-3">
-        <label for="" class="bot-mspace"> Seen WithIn </label>
-        <input type="text" formControlName="seenwithin" disabled a2e-datetimepicker [options]="{format: 'MM/DD/YYYY'}">
-      </div>
-    </div>
-    <div action="" class="big-top-space">
-      <div class="row textLeft dd-overflow-inherit">
-        <div class="col-md-6 col-lg-4 ">
-          <div class="row">
-            <div class="col-sm-4 bot-mspace-15">
-              <label for="" class=""> Initial Date Seen </label>
-            </div>
-            <div class="col-sm-8 bot-mspace-15">
-              <div class=" clsIntake fm-box-form dpnew">
-                <input type="text" class="form-control" a2e-datetimepicker [options]="{format: 'MM/DD/YYYY', minDate: null,useCurrent:false}"
-                  formControlName="dateseen">
-                <i class="fa fa-calendar" aria-hidden="true"></i>
-              </div>
-            </div>
+<div [formGroup]="dispositionFormGroup" class="box-grid form-control-size" style="margin-bottom: 75px;">
+  <div class="row textLeft">
+  </div>
+  <div action="" class="big-top-space">
+    <div class="row textLeft dd-overflow-inherit">
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="col-sm-4 bot-mspace-15">
+            <label for="" class="required"> Status </label>
           </div>
-          <div class="row">
-            <div class="col-sm-4 bot-mspace-15">
-              <label for="" class="required"> Status </label>
-            </div>
-            <div class="col-sm-8 bot-mspace-15">
-              <ng-select formControlName="statusid" [searchable]="true" [clearable]="false" (change)="onChangeTaskStatus($event.value,$event.label)">
-                <ng-option value="">- Select -</ng-option>
-                <ng-option *ngFor="let status of statusDropdownItems$ | async" [value]="status.value">{{status.text}}</ng-option>
-              </ng-select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4 bot-mspace-15">
-              <label for="" class="required"> Disposition </label>
-            </div>
-            <div class="col-sm-8 bot-mspace-15">
-              <ng-select formControlName="dispositionid" [searchable]="true" [clearable]="false">
-                <ng-option value="">- Select -</ng-option>
-                <ng-option *ngFor="let status of dispositionDropdownItems$ | async" [value]="status.value">{{status.text}}</ng-option>
-              </ng-select>
-            </div>
+          <div class="col-sm-7 bot-mspace-15">
+            <mat-form-field>
+              <mat-select placeholder="Select Status" formControlName="intakeserreqstatustypekey" (change)="onChangeTaskStatus($event.value); changeDisp()">
+                <mat-option>None</mat-option>
+                <mat-option *ngFor="let status of statusDropdownItems$ | async" value="{{status.value}}">{{status.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
-        <div class="col-md-6 col-lg-3 col-lg-offset-1" style="display:none">
-          <div class="invest-type">
-            <h4 class=""> Investigation Type </h4>
-            <label class="control control--checkbox">
-              Financial
-              <input type="checkbox" formControlName="financial" disabled>
-              <div class="control__indicator"></div>
-            </label>
-            <label class="control control--checkbox">
-              EDL
-              <input type="checkbox" formControlName="edl" disabled>
-              <div class="control__indicator"></div>
-            </label>
-            <label class="control control--checkbox">
-              Joint Investigation v
-              <input type="checkbox" formControlName="jointinvestigation" disabled>
-              <div class="control__indicator"></div>
-            </label>
+        <div class="row">
+          <div class="col-sm-4 bot-mspace-15">
+            <label for="" class="required"> Disposition/Recommendation </label>
+          </div>
+          <div class="col-sm-7 bot-mspace-15">
+            <mat-form-field>
+              <mat-select placeholder="Select Disposition" formControlName="dispositioncode" (change)="changeDisp()">
+                <mat-option>None</mat-option>
+                <mat-option *ngFor="let status of dispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
+        <div class="row">
+          <div class="col-sm-4 bot-mspace-15">
+            <label for="" class="required"> Comments </label>
+          </div>
+          <div class="col-sm-7 bot-mspace-15 no-placeholder">
+            <mat-form-field>
+              <textarea type="text" formControlName="comments" matInput placeholder="Leave a Comment" (change)="changeDisp()"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row" *ngIf="supervisorUser && showReason">
+          <div class="col-sm-4 bot-mspace-15">
+            <label for="" class="required"> Reason For Delay </label>
+          </div>
+          <div class="col-sm-7 bot-mspace-15 no-placeholder">
+            <mat-form-field>
+              <textarea type="text" formControlName="reason" matInput placeholder="Leave a Reason" (change)="changeDisp()"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4" *ngIf="supervisorUser">
+        <ul class="list-unstyled list-inline pull-right text-left">
+          <li>
+            <div class="hour">
+              <span class="digit">{{calculatedTime ? calculatedTime.split(':')[0] : 0}}</span>
+              <p>Hours</p>
+            </div>
+          </li>
+          <li>
+            <div class="hour">
+              <span class="digit">{{calculatedTime ? calculatedTime.split(':')[1] : 00}}</span>
+              <p>Minutes</p>
+            </div>
+          </li>
+          <li>
+            <div class="hour">
+              <span class="digit">{{calculatedTime ? calculatedTime.split(':')[2] : 00}}</span>
+              <p>Seconds</p>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
-</form>
+
+</div>
