@@ -13,29 +13,28 @@ export class CjamsPdfComponent implements OnInit {
   ngOnInit() {
   }
 
-  downloadPDF() {
+  async downloadPDF() {
     const pages = document.getElementsByClassName('pdf-page');
     for ( let i = 0; i < pages.length; i++) {
-      html2canvas(<HTMLElement>pages.item(i) ).then((canvas) => {
+      await html2canvas(<HTMLElement>pages.item(i) ).then((canvas) => {
         const img = canvas.toDataURL('image/png');
+          console.log( this.images);
         this.images.push(img);
-        console.log(pages.length, i);
-        if (pages.length === i + 1) {
-          this.convertImageToPdf(this.images);
-        }
       });
     }
+    this.convertImageToPdf();
   }
 
-  convertImageToPdf(images: string[]) {
+  convertImageToPdf() {
     const doc = new jsPDF();
-    images.forEach((image, index) => {
+    this.images.forEach((image, index) => {
         doc.addImage(image, 'JPEG', 0, 0);
-        if ( images.length > index + 1) {
+        if ( this.images.length > index + 1) {
          doc.addPage();
         }
     });
     doc.save('testCanvas.pdf');
+    this.images = [];
   }
 
 }
