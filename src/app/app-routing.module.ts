@@ -37,6 +37,7 @@ const routes: Routes = [
             desc: 'Maryland department of human services'
         }
     },
+    {path: 'pdf', loadChildren: './shared/pages/cjams-pdf/cjams-pdf.module#CjamsPdfModule'},
     { path: 'error', loadChildren: './shared/pages/server-error/server-error.module#ServerErrorModule' },
     { path: 'access-denied', loadChildren: './shared/pages/access-denied/access-denied.module#AccessDeniedModule' },
     { path: 'not-found', loadChildren: './shared/pages/not-found/not-found.module#NotFoundModule' },

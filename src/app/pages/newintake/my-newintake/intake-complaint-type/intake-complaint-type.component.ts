@@ -8,6 +8,8 @@ import { Subject } from 'rxjs/Rx';
 import { ComplaintTypeCase } from '../_entities/newintakeSaveModel';
 import { IntakePurpose, SubType } from '../_entities/newintakeModel';
 import { AlertService } from '../../../../@core/services/alert.service';
+import * as html2canvas from 'html2canvas';
+import * as jsPDF from 'jspdf';
 
 declare var $: any;
 @Component({
@@ -160,7 +162,6 @@ export class IntakeComplaintTypeComponent implements OnInit {
       return (this.caseEditFormGroup.value.subServiceType === this.editCase.subServiceTypeID);
     }
     return false;
-    
   }
   updateSubTypes() {
     if (this.caseEditFormGroup.valid) {
@@ -187,5 +188,14 @@ export class IntakeComplaintTypeComponent implements OnInit {
     this.createdCases = this.createdCases.filter((createdCase) => createdCase.caseID !== this.deleteCaseID);
     this.updateCreatedCases();
     (<any>$('#delete-case-popup')).modal('hide');
+  }
+
+  downloadCasePdf() {
+    html2canvas(document.getElementById('cjams-pdf')).then(function (canvas) {
+      const img = canvas.toDataURL('image/png');
+      const doc = new jsPDF();
+      doc.addImage(img, 'JPEG', 0, 0);
+      doc.save('case-template.pdf');
+    });
   }
 }
