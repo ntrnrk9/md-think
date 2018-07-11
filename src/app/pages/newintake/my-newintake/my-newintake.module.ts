@@ -39,7 +39,8 @@ import { EditAttachmentComponent } from './intake-attachments/edit-attachment/ed
 import { IntakeDispositionComponent } from './intake-disposition/intake-disposition.component';
 import { IntakeEvaluationFieldsComponent } from './intake-evaluation-fields/intake-evaluation-fields.component';
 import { IntakeComplaintTypeComponent } from './intake-complaint-type/intake-complaint-type.component';
-import { PdfHeaderComponent } from './intake-complaint-type/pdf-header/pdf-header.component';
+import { PdfPeaceOrderAppealLetterComponent } from './intake-complaint-type/pdf-peace-order-appeal-letter/pdf-peace-order-appeal-letter.component';
+
 
 @NgModule({
     imports: [
@@ -90,7 +91,7 @@ import { PdfHeaderComponent } from './intake-complaint-type/pdf-header/pdf-heade
         IntakeDispositionComponent,
         IntakeEvaluationFieldsComponent,
         IntakeComplaintTypeComponent,
-        PdfHeaderComponent
+        PdfPeaceOrderAppealLetterComponent
     ],
     exports: [MyNewintakeComponent],
     providers: [SpeechRecognitionService, SpeechRecognizerService, NgxfUploaderService]

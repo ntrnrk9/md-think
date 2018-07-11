@@ -13,6 +13,8 @@ import { AuthService } from '../../../@core/services/auth.service';
 import { CommonHttpService } from '../../../@core/services/common-http.service';
 import { SpeechRecognizerService } from '../../../shared/modules/web-speech/shared/services/speech-recognizer.service';
 import { NewUrlConfig } from '../newintake-url.config';
+import * as html2canvas from 'html2canvas';
+import * as jsPDF from 'jspdf';
 import {
     CrossReference,
     CrossReferenceSearchResponse,
@@ -95,6 +97,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     selectedPurpose: DropdownModel;
     selectedAgency: DropdownModel;
     roleValue = false;
+    pdfFiles: { 'fileName': string, 'images': string[] }[] = [];
     @ViewChild(IntakeAttachmentsComponent) intakeAttachment: IntakeAttachmentsComponent;
     @ViewChild(IntakeAssessmentComponent) daAllegaDispo: IntakeAssessmentComponent;
     constructor(
@@ -143,7 +146,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     ngAfterContentInit() {
-        $('.btnNext').click(function() {
+        $('.btnNext').click(function () {
             $('.click-triggers > .active')
                 .next('li')
                 .find('a')
@@ -151,7 +154,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             console.log('next');
         });
 
-        $('.btnPrevious').click(function() {
+        $('.btnPrevious').click(function () {
             $('.click-triggers > .active')
                 .prev('li')
                 .find('a')
@@ -530,7 +533,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         if (role.role.name === 'apcs') {
             this._alertService.success('Intake saved successfully!');
             Observable.timer(500).subscribe(() => {
-                this._router.routeReuseStrategy.shouldReuseRoute = function() {
+                this._router.routeReuseStrategy.shouldReuseRoute = function () {
                     return false;
                 };
                 this._router.navigate(['/pages/cjams-dashboard']);
@@ -538,7 +541,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         } else {
             this._alertService.success('Intake saved successfully!');
             Observable.timer(500).subscribe(() => {
-                this._router.routeReuseStrategy.shouldReuseRoute = function() {
+                this._router.routeReuseStrategy.shouldReuseRoute = function () {
                     return false;
                 };
                 this._router.navigate(['/pages/newintake/new-saveintake']);
@@ -591,7 +594,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     private mapIntakeScreenInfo(model: General): IntakeScreen {
         model.Narrative = this.addNarrative.Narrative;
         model.IsAnonymousReporter = this.addNarrative.IsAnonymousReporter;
-        model.IsUnknownReporter = this.addNarrative.IsUnknownReporter;     
+        model.IsUnknownReporter = this.addNarrative.IsUnknownReporter;
         this.intakeScreen.Person = this.addedPersons.map((item) => {
             ObjectUtils.removeEmptyProperties(item);
             return new Person(item);
@@ -701,5 +704,39 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         if (this.departmentActionIntakeFormGroup.value.isOtherAgency) {
             this.otherAgencyControlName.enable();
         }
+    }
+
+    async downloadCasePdf() {
+        const pages = document.getElementsByClassName('pdf-page');
+        let pageImages = [];
+        for (let i = 0; i < pages.length; i++) {
+            console.log(pages.item(i).getAttribute('data-page-name'));
+            const pageName = pages.item(i).getAttribute('data-page-name');
+            const isPageEnd = pages.item(i).getAttribute('data-page-end');
+            await html2canvas(<HTMLElement>pages.item(i)).then((canvas) => {
+                const img = canvas.toDataURL('image/png');
+                pageImages.push(img);
+                if (isPageEnd === 'true') {
+                    this.pdfFiles.push({ 'fileName': pageName, 'images': pageImages });
+                    pageImages = [];
+                }
+            });
+        }
+        this.convertImageToPdf();
+    }
+
+    convertImageToPdf() {
+        this.pdfFiles.forEach((pdfFile) => {
+            const doc = new jsPDF();
+            pdfFile.images.forEach((image, index) => {
+                doc.addImage(image, 'JPEG', 0, 0);
+                if (pdfFile.images.length > index + 1) {
+                    doc.addPage();
+                }
+            });
+            doc.save(pdfFile.fileName);
+        });
+        (<any>$('#intake-complaint-pdf1')).modal('hide');
+        this.pdfFiles = [];
     }
 }

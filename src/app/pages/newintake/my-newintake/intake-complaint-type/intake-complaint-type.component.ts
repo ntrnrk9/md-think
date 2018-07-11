@@ -30,6 +30,8 @@ export class IntakeComplaintTypeComponent implements OnInit {
   subServiceTypes: SubType[];
   editCase: ComplaintTypeCase;
   deleteCaseID: string;
+  pdfFiles:{"fileName": string,"images": string[]}[] = [];
+  images: string[] = [];
   @Input() purposeInputSubject$ = new Subject<IntakePurpose>();
   @Input() createdCaseInputSubject$ = new Subject<ComplaintTypeCase[]>();
   @Input() createdCaseOuptputSubject$ = new Subject<ComplaintTypeCase[]>();
@@ -51,7 +53,12 @@ export class IntakeComplaintTypeComponent implements OnInit {
       });
     });
     this.createdCaseOuptputSubject$.subscribe((createdCases) => {
+      if (createdCases) {
       this.createdCases = createdCases;
+      }
+      else {
+        this.createdCases = [];
+      }
     });
   }
 
@@ -116,7 +123,10 @@ export class IntakeComplaintTypeComponent implements OnInit {
     this.listServiceSubtype(serviceType.value);
   }
   isSubTypeExists(servicerequestsubtypeid: string) {
-    return this.createdCases.find((createdCase) => createdCase.subServiceTypeID === servicerequestsubtypeid);
+    if ( this.createdCases ) {
+      return this.createdCases.find((createdCase) => createdCase.subServiceTypeID === servicerequestsubtypeid);
+    }
+    return false;
   }
 
   addCase() {
@@ -190,12 +200,8 @@ export class IntakeComplaintTypeComponent implements OnInit {
     (<any>$('#delete-case-popup')).modal('hide');
   }
 
-  downloadCasePdf() {
-    html2canvas(document.getElementById('cjams-pdf')).then(function (canvas) {
-      const img = canvas.toDataURL('image/png');
-      const doc = new jsPDF();
-      doc.addImage(img, 'JPEG', 0, 0);
-      doc.save('case-template.pdf');
-    });
+   
+  isPeaceOrder(complaintCase: ComplaintTypeCase): boolean {
+    return complaintCase.subSeriviceTypeValue === 'Peace Order';    
   }
 }
