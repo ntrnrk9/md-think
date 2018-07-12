@@ -727,8 +727,8 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             console.log(pages.item(i).getAttribute('data-page-name'));
             const pageName = pages.item(i).getAttribute('data-page-name');
             const isPageEnd = pages.item(i).getAttribute('data-page-end');
-            await html2canvas(<HTMLElement>pages.item(i)).then((canvas) => {
-                const img = canvas.toDataURL('image/png');
+            await html2canvas(<HTMLElement>pages.item(i),{letterRendering: true}).then((canvas) => {
+                const img = canvas.toDataURL('image/jpeg');
                 pageImages.push(img);
                 if (isPageEnd === 'true') {
                     this.pdfFiles.push({ 'fileName': pageName, 'images': pageImages });

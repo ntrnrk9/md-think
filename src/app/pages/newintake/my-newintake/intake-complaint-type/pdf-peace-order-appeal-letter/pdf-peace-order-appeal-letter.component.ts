@@ -50,7 +50,7 @@ export class PdfPeaceOrderAppealLetterComponent implements OnInit {
     }
 
     getMaltreatorAddress () {
-      const person = this.getPerson('Alleged Victim');
+      const person = this.getPerson('Alleged Maltreator');
         if (person) {
             return person.fullAddress;
         }
