@@ -709,8 +709,17 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         }
     }
 
-    async downloadCasePdf() {
-        const pages = document.getElementsByClassName('pdf-page');
+
+    collectivePdfCreator() {
+        const pdfList = ["Appeal-Letter", "Formal-Action-Letter", "Formal-Action-Letter-Complaint", "Process-Letter"];
+        pdfList.forEach(element => {
+            this.downloadCasePdf(element);
+        });
+    }
+
+    async downloadCasePdf(element: string) {
+        const source = document.getElementById(element);
+        const pages = source.getElementsByClassName('pdf-page');
         let pageImages = [];
         for (let i = 0; i < pages.length; i++) {
             console.log(pages.item(i).getAttribute('data-page-name'));

@@ -66,9 +66,14 @@ export class PdfPeaceOrderAppealLetterComponent implements OnInit {
     getPersonID(role) {
       const person = this.getPerson(role);
       if (person) {
-          return person.Pid;
+          return person.Pid.substr(person.Pid.length - 8).toUpperCase();
       }
     return '';
+    }
+
+    appointmentDate() {
+      const RecivedDate =  new Date(this.general.RecivedDate);
+      return RecivedDate.setDate(RecivedDate.getDate() + 7);
     }
 
 
