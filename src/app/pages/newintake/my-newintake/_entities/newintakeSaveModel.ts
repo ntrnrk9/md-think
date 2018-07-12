@@ -205,6 +205,7 @@ export class EvaluationFields {
     petitionid: string;
     adultpetitionid: string;
     sourceagency: string;
+    source: string;
     complaintid: string;
     wvrnumber: number;
     offenselocation: string;

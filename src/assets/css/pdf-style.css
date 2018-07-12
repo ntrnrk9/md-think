@@ -76,3 +76,11 @@
          font-size: 35px;
          font-weight: bold;
      }
+
+     .footer-border {
+         border-top: 2px solid red;
+     }
+
+     .padding-top-20 {
+        padding-top: 20px;
+     }

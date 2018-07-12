@@ -20,7 +20,7 @@
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput formControlName="adultpetitionid" placeholder="Adult Petition ID" >
+              <input type="text" matInput formControlName="adultpetitionid" placeholder="Adult Petition ID">
             </mat-form-field>
           </div>
         </div>
@@ -40,12 +40,16 @@
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput formControlName="sourceagency" placeholder="Source Agency" >
+              <mat-select placeholder="Source Agency" formControlName="sourceagency">
+                <mat-option value="Baltimore Police Department">Baltimore Police Department</mat-option>
+                <mat-option value="PG Police Department">PG Police Department</mat-option>
+              </mat-select>
             </mat-form-field>
+
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput formControlName="complaintid" placeholder="Complaint ID" >
+              <input type="text" matInput formControlName="complaintid" placeholder="Complaint ID">
             </mat-form-field>
 
           </div>
@@ -57,12 +61,12 @@
         <div class="row">
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" formControlName="wvrnumber" matInput placeholder="WVR-sequence number" >
+              <input type="text" formControlName="wvrnumber" matInput placeholder="WVR-sequence number">
             </mat-form-field>
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput formControlName="offenselocation" placeholder="Location of Offense(s)" >
+              <input type="text" matInput formControlName="offenselocation" placeholder="Location of Offense(s)">
             </mat-form-field>
 
           </div>
@@ -93,14 +97,16 @@
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput formControlName="zipcode" placeholder="Zip Code" >
+              <input type="text" matInput formControlName="zipcode" placeholder="Zip Code">
             </mat-form-field>
           </div>
           <div class="col-sm-4">
             <mat-form-field>
-              <input type="text" matInput placeholder="Source" >
+              <mat-select placeholder="Source" formControlName="source">
+                <mat-option value="Police officer 1"> Police officer 1</mat-option>
+                <mat-option value="Police officer 2"> Police officer 2</mat-option>
+              </mat-select>
             </mat-form-field>
-
           </div>
         </div>
       </div>

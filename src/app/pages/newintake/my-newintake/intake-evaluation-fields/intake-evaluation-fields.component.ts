@@ -34,6 +34,7 @@ export class IntakeEvaluationFieldsComponent implements OnInit {
             petitionid: [''],
             adultpetitionid: [''],
             sourceagency: [''],
+            source: [''],
             complaintid: [''],
             wvrnumber: [''],
             offenselocation: [''],

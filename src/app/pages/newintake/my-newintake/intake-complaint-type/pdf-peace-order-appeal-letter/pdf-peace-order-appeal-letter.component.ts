@@ -63,5 +63,13 @@ export class PdfPeaceOrderAppealLetterComponent implements OnInit {
       }
     }
 
+    getPersonID(role) {
+      const person = this.getPerson(role);
+      if (person) {
+          return person.Pid;
+      }
+    return '';
+    }
+
 
 }

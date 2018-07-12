@@ -1,132 +1,127 @@
 <div class="pdf-page sizeA4" data-page-name="Appeal Letter" data-page-end="false" data-page-number="1">
-    <header class="header">
-        <div class="pull-left">
-            <img src="assets/images/pdf/header.png" class="header-img">
-        </div>
-        <div class="pull-right">
-            <div class="header-address">
-                Headquarters
-                <br> 120 West Fayetee Street
-                <br> Baltimore, Maryland 21201
-            </div>
-        </div>
-        <div class="hr-border"></div>
-        <div class="row signature">
-            <div class="col-sm-4 align-center">
-                Boyd K. Rutherford
-                <br> Lt. Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Larry Hogan
-                <br> Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Sam Abed
-                <br> Secretary
-
-            </div>
-        </div>
-
-    </header>
-    <div class="margin-wrapper">
-        <div class="row title">
-            <div class="align-center">
-                PEACE ORDER DECISION/APPEAL LETTER
-            </div>
-        </div>
-        <div class="header-info">
-            <div class="row ">
-                <div class="col-sm-4 col-sm-offset-8">
-                    Date: {{general?.RecivedDate | date:'MM/dd/yyyy'}}
-                    <span class="date-value"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    Victim Name: {{getVictimName()}}
-                    <span class="Victim-name"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    Victim Address:
-                    <span class="victime-address"> {{getVictimAddress()}}</span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Re:
-                    <span class="re-value"></span>
-                </div>
-
-            </div>
-        </div>
-        <div class="body-content">
-            <div class="row salutation col-sm-12">
-                <p>Dear </p>
-            </div>
-            <div class="row content col-sm-12">
-                <p>
-                    I have reviewed the facts concerning the Peace Order Complaint filed with the Department of
-                    Juvenile Services.
-                </p>
-
-                <p>
-                    __I have decided not to authorize the filing of the Complaint with the Juvenile Court and will
-                    be closing the complaint at
-                    intake.
-                </p>
-
-                <p>
-                    __ I have decided to forward the Complaint to the Juvenile Court for petitioning
-                </p>
-                <br>
-
-                <p>
-                    If you disagree with this decision and wish to appeal, you must complete the form provided below
-                    and send it to the Regional
-                    Director so that it is received by - - .
-                </p>
-                <br>
-
-                <p>
-                    If you have any questions or want to discuss this case with me before making a decision on
-                    whether to appeal, please call
-                    me at ( ) - . If you do this, however, it will not extend the period within which you are
-                    allowed to ask for
-                    a review of the decision.
-                </p>
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Sincerely,
-                </div>
-            </div>
-            <br>
-            <br>
-
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Worker Name : {{general?.Author}} 
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Intake Officer
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sm-4">
-                    Enclosure
-                </div>
-            </div>
-
-
-        </div>
+  <header class="header">
+    <div class="pull-left">
+      <img src="assets/images/pdf/header.png" class="header-img">
     </div>
+    <div class="pull-right">
+      <div class="header-address">
+        Headquarters
+        <br> 120 West Fayetee Street
+        <br> Baltimore, Maryland 21201
+      </div>
+    </div>
+    <div class="hr-border"></div>
+    <div class="row signature">
+      <div class="col-sm-4 align-center">
+        Boyd K. Rutherford
+        <br> Lt. Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Larry Hogan
+        <br> Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Sam Abed
+        <br> Secretary
+
+      </div>
+    </div>
+
+  </header>
+  <div class="margin-wrapper">
+    <div class="row title">
+      <div class="align-center">
+        PEACE ORDER DECISION/APPEAL LETTER
+      </div>
+    </div>
+    <div class="header-info">
+      <div class="row ">
+        <div class="col-sm-4 col-sm-offset-8">
+          Date: {{general?.RecivedDate | date:'MM/dd/yyyy - h:mm a'}}
+          <span class="date-value"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          Victim Name: {{getVictimName()}}
+          <span class="Victim-name"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          Victim Address:
+          <span class="victime-address"> {{getVictimAddress()}}</span>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+          Re:
+          <span class="re-value"></span>
+        </div>
+
+      </div>
+    </div>
+    <div class="body-content">
+      <div class="row salutation col-sm-12">
+        <p>Dear </p>
+      </div>
+      <div class="row content col-sm-12">
+        <p>
+          I have reviewed the facts concerning the Peace Order Complaint filed with the Department of Juvenile Services.
+        </p>
+
+        <p>
+          __I have decided not to authorize the filing of the Complaint with the Juvenile Court and will be closing the complaint at
+          intake.
+        </p>
+
+        <p>
+          __ I have decided to forward the Complaint to the Juvenile Court for petitioning
+        </p>
+        <br>
+
+        <p>
+          If you disagree with this decision and wish to appeal, you must complete the form provided below and send it to the Regional
+          Director so that it is received by - - .
+        </p>
+        <br>
+
+        <p>
+          If you have any questions or want to discuss this case with me before making a decision on whether to appeal, please call
+          me at ( ) - . If you do this, however, it will not extend the period within which you are allowed to ask for a
+          review of the decision.
+        </p>
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Sincerely,
+        </div>
+      </div>
+      <br>
+      <br>
+
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Worker Name : {{general?.Author}}
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Intake Officer
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-sm-4">
+          Enclosure
+        </div>
+      </div>
+
+
+    </div>
+
     <br>
     <br>
     <br>
@@ -143,234 +138,266 @@
     <br>
     <br>
     <footer>
-        <div class="row footer ">
-            <div class="col-sm-12">
-                <div class="col-sm-2 " style="text-align: right">
-                    <p><b><i class="fa fa-wheelchair footer-icon"></i></b></p>
-                </div>
-                <div class="col-sm-10 align-center">
-                    <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+      <div class="row footer footer-border">
+        <div class="col-sm-12 padding-top-20">
+          <div class="col-sm-2 " style="text-align: right">
+            <p>
+              <b>
+                <i class="fa fa-wheelchair footer-icon"></i>
+              </b>
+            </p>
+          </div>
+          <div class="col-sm-10 align-center">
+            <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
 
-                    <p> Treating Children &nbsp;<span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
-                        <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
-                </div>
-            </div>
+            <p> Treating Children &nbsp;
+              <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+              <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+          </div>
         </div>
+      </div>
 
     </footer>
+  </div>
 
 </div>
 <div class="pdf-page sizeA4" data-page-name="Appeal Letter" data-page-end="true" data-page-number="2">
-    <div class="margin-wrapper">
-        <div class="row title ">
-            <div class="col-sm-12">
-                <br> <br><br>
-
-                IF YOU DISAGREE WITH THE DECISION OF THE INTAKE OFFICER, COMPLETE THE FORM BELOW AND SEND IT SO THAT
-                IT IS RECEIVED BY (DATE):
-                <br> <br><br>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                Regional Director Name
-            </div>
-            <br>
-
-            <div class="col-sm-12">
-                Regional Address
-            </div>
-            <br><br><br>
-
-            <div class="col-sm-12">
-                Re: Youth Name: {{getMaltreatorName()}}
-                <br>
-                &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Youth ID#:
-                <br>
-                &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Request for Peace Order Complaint Appeal
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <br>
-                <br>
-
-                <p>
-                    I have been informed of the Intake Officer’s decision not to forward the Peace Order Complaint
-                    to the juvenile court for further proceedings.
-                </p>
-
-                <p>
-                    I disagree with this decision, request that the Department of Juvenile Services’ Regional
-                    Director review the decision, and authorize the filing of the Peace Order Complaint with the
-                    Juvenile Court.
-
-
-                </p>
-                <br><br>
-
-            </div>
-        </div>
-
-        <br><br><br>
-
-        <div class="row">
-            <div class="col-sm-4">
-                Signature:
-            </div>
-            <div class="col-sm-6 signature-border">
-                
-            </div>
-        </div>
-        <div class="row">
-            <br>
-
-            <div class="col-sm-4">
-                Printed Name:
-            </div>
-
-            <div class="col-sm-6 signature-border">
-               
-            </div>
-
-        </div>
-        <br><br><br><br><br><br>
-        <br><br><br><br><br><br>
-        <br><br><br><br><br><br>
-        <br><br><br><br>
-        <footer>
-            <div class="row footer ">
-                <div class="col-sm-12">
-                    <div class="col-sm-2 " style="text-align: right">
-                        <p><b><i class="fa fa-wheelchair footer-icon"></i></b></p>
-                    </div>
-                    <div class="col-sm-10 align-center">
-                        <p>410-230-3333 &nbsp;/ &nbsp; Toll Free: 1-888-639-7499 &nbsp; / &nbsp; TDD:
-                            1-800-735-2258</p>
-
-                        <p> Treating Children &nbsp;<span class="red-bullet"></span> &nbsp; Supporting Families
-                            &nbsp; <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
-                    </div>
-                </div>
-            </div>
-
-        </footer>
+  <div class="margin-wrapper">
+    <div class="row title ">
+      <div class="col-sm-12">
+        <br>
+        <br>
+        <br> IF YOU DISAGREE WITH THE DECISION OF THE INTAKE OFFICER, COMPLETE THE FORM BELOW AND SEND IT SO THAT IT IS RECEIVED
+        BY (DATE):
+        <br>
+        <br>
+        <br>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-sm-12">
+        Regional Director Name
+      </div>
+      <br>
+
+      <div class="col-sm-12">
+        Regional Address
+      </div>
+      <br>
+      <br>
+      <br>
+
+      <div class="col-sm-12">
+        Re: Youth Name: {{getMaltreatorName()}}
+        <br> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Youth ID#:
+        <br> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Request for Peace Order Complaint Appeal
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <br>
+        <br>
+
+        <p>
+          I have been informed of the Intake Officer’s decision not to forward the Peace Order Complaint to the juvenile court for
+          further proceedings.
+        </p>
+
+        <p>
+          I disagree with this decision, request that the Department of Juvenile Services’ Regional Director review the decision, and
+          authorize the filing of the Peace Order Complaint with the Juvenile Court.
+
+
+        </p>
+        <br>
+        <br>
+
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <div class="row">
+      <div class="col-sm-4">
+        Signature:
+      </div>
+      <div class="col-sm-6 signature-border">
+
+      </div>
+    </div>
+    <div class="row">
+      <br>
+
+      <div class="col-sm-4">
+        Printed Name:
+      </div>
+
+      <div class="col-sm-6 signature-border">
+
+      </div>
+
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <footer>
+      <div class="row footer ">
+        <div class="col-sm-12 padding-top-20 footer-border">
+          <div class="col-sm-2 " style="text-align: right">
+            <p>
+              <b>
+                <i class="fa fa-wheelchair footer-icon"></i>
+              </b>
+            </p>
+          </div>
+          <div class="col-sm-10 align-center">
+            <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+
+            <p> Treating Children &nbsp;
+              <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+              <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+          </div>
+        </div>
+      </div>
+
+    </footer>
+  </div>
 </div>
 <div class="pdf-page sizeA4" data-page-name="Formal Action Letter" data-page-end="true" data-page-number="1">
-    <header class="header">
-        <div class="pull-left">
-            <img src="assets/images/pdf/header.png" class="header-img">
-        </div>
-        <div class="pull-right">
-            <div class="header-address">
-                Headquarters
-                <br> 120 West Fayetee Street
-                <br> Baltimore, Maryland 21201
-            </div>
-        </div>
-        <div class="hr-border"></div>
-        <div class="row signature">
-            <div class="col-sm-4 align-center">
-                Boyd K. Rutherford
-                <br> Lt. Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Larry Hogan
-                <br> Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Sam Abed
-                <br> Secretary
-
-            </div>
-        </div>
-
-    </header>
-    <div class="margin-wrapper">
-        <div class="row title">
-            <div class="align-center">
-                PEACE ORDER FORMAL ACTION NOTIFICATION LETTER (RESPONDENT)
-            </div>
-        </div>
-        <div class="header-info">
-            <div class="row ">
-                <div class="col-sm-4 col-sm-offset-8">
-                    Date: {{general?.RecivedDate | date:'MM/dd/yyyy'}}
-                    <span class="date-value"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-
-                    Youth’s Parent: 
-                    <span class="Victim-name"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    Youth’s Parent Address: {{getMaltreatorAddress()}}
-                    <span class="victime-address"></span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Youth: {{getMaltreatorName()}}
-                    <span class="re-value"></span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Youth ID:
-                    <span class="re-value"></span>
-                </div>
-
-            </div>
-        </div>
-        <div class="body-content">
-            <div class="row salutation col-sm-12">
-                <p>Dear </p>
-            </div>
-            <div class="row content col-sm-12">
-                <p>
-                    A Peace Order Complaint has been filed with the Department of Juvenile Services regarding the above-named youth
-                </p>
-
-                <p>
-                    The Peace Order Complaint is being forwarded for possible court action.
-                </p>
-
-
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Sincerely,
-                </div>
-            </div>
-            <br>
-            <br>
-
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Worker Name : {{general?.Author}}
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Intake Officer
-                </div>
-            </div>
-
-
-
-        </div>
+  <header class="header">
+    <div class="pull-left">
+      <img src="assets/images/pdf/header.png" class="header-img">
     </div>
-    <br>
+    <div class="pull-right">
+      <div class="header-address">
+        Headquarters
+        <br> 120 West Fayetee Street
+        <br> Baltimore, Maryland 21201
+      </div>
+    </div>
+    <div class="hr-border"></div>
+    <div class="row signature">
+      <div class="col-sm-4 align-center">
+        Boyd K. Rutherford
+        <br> Lt. Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Larry Hogan
+        <br> Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Sam Abed
+        <br> Secretary
+
+      </div>
+    </div>
+
+  </header>
+  <div class="margin-wrapper">
+    <div class="row title">
+      <div class="align-center">
+        PEACE ORDER FORMAL ACTION NOTIFICATION LETTER (RESPONDENT)
+      </div>
+    </div>
+    <div class="header-info">
+      <div class="row ">
+        <div class="col-sm-4 col-sm-offset-8">
+          Date: {{general?.RecivedDate | date:'MM/dd/yyyy - h:mm a'}}
+          <span class="date-value"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+
+          Youth’s Parent:  {{getMaltreatorName()}}
+          <span class="Victim-name"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          Youth’s Parent Address: {{getMaltreatorAddress()}}
+          <span class="victime-address"></span>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+          Youth: {{getMaltreatorName()}}
+          <span class="re-value"></span>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+          Youth ID: {{getPersonID('Alleged Maltreator')}}
+          <span class="re-value"></span>
+        </div>
+
+      </div>
+    </div>
+    <div class="body-content">
+      <div class="row salutation col-sm-12">
+        <p>Dear </p>
+      </div>
+      <div class="row content col-sm-12">
+        <p>
+          A Peace Order Complaint has been filed with the Department of Juvenile Services regarding the above-named youth
+        </p>
+
+        <p>
+          The Peace Order Complaint is being forwarded for possible court action.
+        </p>
+
+
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Sincerely,
+        </div>
+      </div>
+      <br>
+      <br>
+
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Worker Name : {{general?.Author}}
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Intake Officer
+        </div>
+      </div>
+
+
+
+    </div>
+
+
     <br>
     <br>
     <br>
@@ -394,157 +421,312 @@
     <br>
     <br>
     <footer>
-        <div class="row footer ">
-            <div class="col-sm-12">
-                <div class="col-sm-2 " style="text-align: right">
-                    <p><b><i class="fa fa-wheelchair footer-icon"></i></b></p>
-                </div>
-                <div class="col-sm-10 align-center">
-                    <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+      <div class="row footer footer-border">
+        <div class="col-sm-12 padding-top-20">
+          <div class="col-sm-2 " style="text-align: right">
+            <p>
+              <b>
+                <i class="fa fa-wheelchair footer-icon"></i>
+              </b>
+            </p>
+          </div>
+          <div class="col-sm-10 align-center">
+            <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
 
-                    <p> Treating Children &nbsp;<span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
-                        <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
-                </div>
-            </div>
+            <p> Treating Children &nbsp;
+              <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+              <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+          </div>
         </div>
+      </div>
 
     </footer>
+  </div>
 
 </div>
-
-<div class="pdf-page sizeA4" data-page-name="Process Letter" data-page-end="false" data-page-number="1">
+<div class="pdf-page sizeA4" data-page-name="Formal Action Letter Complaint" data-page-end="true" data-page-number="1">
     <header class="header">
-        <div class="pull-left">
-            <img src="assets/images/pdf/header.png" class="header-img">
+      <div class="pull-left">
+        <img src="assets/images/pdf/header.png" class="header-img">
+      </div>
+      <div class="pull-right">
+        <div class="header-address">
+          Headquarters
+          <br> 120 West Fayetee Street
+          <br> Baltimore, Maryland 21201
         </div>
-        <div class="pull-right">
-            <div class="header-address">
-                Headquarters
-                <br> 120 West Fayetee Street
-                <br> Baltimore, Maryland 21201
-            </div>
+      </div>
+      <div class="hr-border"></div>
+      <div class="row signature">
+        <div class="col-sm-4 align-center">
+          Boyd K. Rutherford
+          <br> Lt. Governor
+
         </div>
-        <div class="hr-border"></div>
-        <div class="row signature">
-            <div class="col-sm-4 align-center">
-                Boyd K. Rutherford
-                <br> Lt. Governor
+        <div class="col-sm-4 align-center">
+          Larry Hogan
+          <br> Governor
 
-            </div>
-            <div class="col-sm-4 align-center">
-                Larry Hogan
-                <br> Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Sam Abed
-                <br> Secretary
-
-            </div>
         </div>
+        <div class="col-sm-4 align-center">
+          Sam Abed
+          <br> Secretary
+
+        </div>
+      </div>
 
     </header>
     <div class="margin-wrapper">
-        <div class="row title">
-            <div class="align-center">
-                PEACE ORDER APPOINTMENT WITH PEACE ORDER PROCESS
-            </div>
+      <div class="row title">
+        <div class="align-center">
+            PEACE ORDER FORMAL ACTION NOTIFICATION LETTER (COMPLAINANT)
         </div>
-        <div class="header-info">
-            <div class="row ">
-                <div class="col-sm-4 col-sm-offset-8">
-                    Date: {{general?.RecivedDate | date:'MM/dd/yyyy'}}
-                    <span class="date-value"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    Client Parent:
-                    <span class="Victim-name"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    Client Parent Address: {{getMaltreatorAddress()}}
-                    <span class="victime-address"></span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Youth Name: {{getMaltreatorName()}}
-                    <span class="re-value"></span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Youth ID:
-                    <span class="re-value"></span>
-                </div>
-
-            </div>
+      </div>
+      <div class="header-info">
+        <div class="row ">
+          <div class="col-sm-4 col-sm-offset-8">
+            Date: {{general?.RecivedDate | date:'MM/dd/yyyy - h:mm a'}}
+            <span class="date-value"></span>
+          </div>
         </div>
-        <div class="body-content">
-            <div class="row salutation col-sm-12">
-                <p>Dear </p>
-            </div>
-            <div class="row content col-sm-12">
-                <p>
-                    A Peace Order Complaint has been filed against the above named youth regarding an incident that
-                    occurred on or about (DATE)
-                    ____{{ getAllegedOffenceDate() | date:'MM/dd/yyyy'}}________. An Intake Officer is required by law to review this matter to
-                    determine if court
-                    action is necessary.
-                </p>
+        <div class="row">
+          <div class="col-sm-8">
 
-                <p>
-                    An appointment has been scheduled for you and the above named youth to meet with an Intake
-                    Officer on (DATE AND TIME) at
-                    the Department of Juvenile Services, located at (OFFICE ADDRESS). If the youth fails to keep
-                    this appointment
-                    and does not contact the Intake Officer, the complaint may be authorized by the Intake Officer
-                    for formal Court
-                    action. The attached Peace Order Complaint Process document further explains the purpose of the
-                    intake function
-                    and the youth’s legal rights.
-                </p>
+              Complainant’s Name  :
+            <span class="Victim-name"> {{getVictimName()}}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8">
+              Complainant’s Parent Address : {{getVictimAddress()}}
+            <span class="victime-address"></span>
+          </div>
 
-                <p>
-                    Additional Comments:
-                </p>
-                <br>
-                <br>
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Sincerely,
-                </div>
-            </div>
-            <br>
-            <br>
+        </div>
+        <div class="row">
+          <div class="col-sm-offset-8 col-sm-4">
+            Youth: {{getMaltreatorName()}}
+            <span class="re-value"></span>
+          </div>
 
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Worker Name : {{general?.Author}}
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sm-offset-8 col-sm-4">
-                    Intake
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sm-4">
-                    Attachment: Peace Order Complaint Process document
-                </div>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-offset-8 col-sm-4">
+            Youth ID: {{getPersonID('Alleged Maltreator')}}
+            <span class="re-value"></span>
+          </div>
+
+        </div>
+      </div>
+      <div class="body-content">
+        <div class="row salutation col-sm-12">
+          <p>Dear </p>
+        </div>
+        <div class="row content col-sm-12">
+          <p>
+            A Peace Order Complaint has been filed with the Department of Juvenile Services regarding the above-named youth
+          </p>
+
+          <p>
+            The Peace Order Complaint is being forwarded for possible court action.
+          </p>
 
 
         </div>
+        <div class="row ">
+          <div class="col-sm-offset-8 col-sm-4">
+            Sincerely,
+          </div>
+        </div>
+        <br>
+        <br>
+
+        <div class="row ">
+          <div class="col-sm-offset-8 col-sm-4">
+            Worker Name : {{general?.Author}}
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-sm-offset-8 col-sm-4">
+            Intake Officer
+          </div>
+        </div>
+
+      </div>
+
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+        <br>
+        <br>
+      <footer>
+        <div class="row footer footer-border">
+          <div class="col-sm-12 padding-top-20">
+            <div class="col-sm-2 " style="text-align: right">
+              <p>
+                <b>
+                  <i class="fa fa-wheelchair footer-icon"></i>
+                </b>
+              </p>
+            </div>
+            <div class="col-sm-10 align-center">
+              <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+
+              <p> Treating Children &nbsp;
+                <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+                <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+            </div>
+          </div>
+        </div>
+
+      </footer>
     </div>
-    <br>
-    <br>
+
+  </div>
+
+<div class="pdf-page sizeA4" data-page-name="Process Letter" data-page-end="false" data-page-number="1">
+  <header class="header">
+    <div class="pull-left">
+      <img src="assets/images/pdf/header.png" class="header-img">
+    </div>
+    <div class="pull-right">
+      <div class="header-address">
+        Headquarters
+        <br> 120 West Fayetee Street
+        <br> Baltimore, Maryland 21201
+      </div>
+    </div>
+    <div class="hr-border"></div>
+    <div class="row signature">
+      <div class="col-sm-4 align-center">
+        Boyd K. Rutherford
+        <br> Lt. Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Larry Hogan
+        <br> Governor
+
+      </div>
+      <div class="col-sm-4 align-center">
+        Sam Abed
+        <br> Secretary
+
+      </div>
+    </div>
+
+  </header>
+  <div class="margin-wrapper">
+    <div class="row title">
+      <div class="align-center">
+        PEACE ORDER APPOINTMENT WITH PEACE ORDER PROCESS
+      </div>
+    </div>
+    <div class="header-info">
+      <div class="row ">
+        <div class="col-sm-4 col-sm-offset-8">
+          Date: {{general?.RecivedDate | date:'MM/dd/yyyy - h:mm a'}}
+          <span class="date-value"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          Client Parent: {{getMaltreatorName()}}
+          <span class="Victim-name"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          Client Parent Address: {{getMaltreatorAddress()}}
+          <span class="victime-address"></span>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+          Youth Name: {{getMaltreatorName()}}
+          <span class="re-value"></span>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+          Youth ID: {{getPersonID('Alleged Maltreator')}}
+          <span class="re-value"></span>
+        </div>
+
+      </div>
+    </div>
+    <div class="body-content">
+      <div class="row salutation col-sm-12">
+        <p>Dear </p>
+      </div>
+      <div class="row content col-sm-12">
+        <p>
+          A Peace Order Complaint has been filed against the above named youth regarding an incident that occurred on or about (DATE)
+          ____{{ getAllegedOffenceDate() | date:'MM/dd/yyyy - h:mm a'}}________. An Intake Officer is required by law to review this
+          matter to determine if court action is necessary.
+        </p>
+
+        <p>
+          An appointment has been scheduled for you and the above named youth to meet with an Intake Officer on (DATE AND TIME) at
+          the Department of Juvenile Services, located at (OFFICE ADDRESS). If the youth fails to keep this appointment and
+          does not contact the Intake Officer, the complaint may be authorized by the Intake Officer for formal Court action.
+          The attached Peace Order Complaint Process document further explains the purpose of the intake function and the
+          youth’s legal rights.
+        </p>
+
+        <p>
+          Additional Comments:
+        </p>
+        <br>
+        <br>
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Sincerely,
+        </div>
+      </div>
+      <br>
+      <br>
+
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Worker Name : {{general?.Author}}
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-sm-offset-8 col-sm-4">
+          Intake
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-sm-4">
+          Attachment: Peace Order Complaint Process document
+        </div>
+      </div>
+
+
+    </div>
+
+
     <br>
     <br>
     <br>
@@ -559,104 +741,121 @@
     <br>
     <br>
     <footer>
-        <div class="row footer ">
-            <div class="col-sm-12 align-center">
-                <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+      <div class="row footer footer-border">
+        <div class="col-sm-12 padding-top-20">
+          <div class="col-sm-2 " style="text-align: right">
+            <p>
+              <b>
+                <i class="fa fa-wheelchair footer-icon"></i>
+              </b>
+            </p>
+          </div>
+          <div class="col-sm-10 align-center">
+            <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
 
-                <p> Treating Children &nbsp;
-                    <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
-                    <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
-            </div>
+            <p> Treating Children &nbsp;
+              <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+              <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+          </div>
         </div>
+      </div>
 
     </footer>
+  </div>
 
 </div>
 <div class="pdf-page sizeA4" data-page-name="Process Letter" data-page-end="true" data-page-number="2">
-    <header class="header">
-        <div class="pull-left">
-            <img src="assets/images/pdf/header.png" class="header-img">
-        </div>
-        <div class="pull-right">
-            <div class="header-address">
-                Headquarters
-                <br> 120 West Fayetee Street
-                <br> Baltimore, Maryland 21201
-            </div>
-        </div>
-        <div class="hr-border"></div>
-        <div class="row signature">
-            <div class="col-sm-4 align-center">
-                Boyd K. Rutherford
-                <br> Lt. Governor
 
-            </div>
-            <div class="col-sm-4 align-center">
-                Larry Hogan
-                <br> Governor
-
-            </div>
-            <div class="col-sm-4 align-center">
-                Sam Abed
-                <br> Secretary
-
-            </div>
-        </div>
-
-    </header>
-    <div class="margin-wrapper">
-        <div class="row" class="align-center">
-            <b>Intake Process for Peace Order Complaints</b>
-        </div>
-        <br>
-
-        <div class="row content col-sm-12">
-            <p>The purpose of the Intake Interview is to determine whether the Juvenile Court has jurisdiction over
-                the complaint
-                and, if so, whether judicial action is in the best interest of the public, the youth or both.</p>
-
-            <p>After determining that the court has jurisdiction, the Intake Officer must make one of the following
-                decisions within
-                25 days of the date that the complaint is received by the Department of Juvenile Services.</p>
-            <ol>
-                <li>Close the complaint at intake with a warning;</li>
-                <li>With the consent of the victim, the youth and the youth’s parent(s)/guardian(s)/custodian(s),
-                    place the youth on
-                    Informal Supervision for up to 90 days, unless otherwise extended by the Court; or
-                </li>
-                <li>Authorize the filing of the Peace Order application with a referral to the Juvenile Court Clerk
-                    for scheduling
-                    of a Court Hearing.
-                </li>
-            </ol>
-            <p>At the Intake Interview, the juvenile who is the subject of the complaint may have an attorney
-                present. If the juvenile
-                wishes to have an attorney present, one must be retained by the juvenile. At any point in the Intake
-                Interview,
-                the juvenile has the right to remain silent.</p>
-
-            <p>If the Intake Officer authorizes the filing of the Peace Order Complaint, any information received by
-                the Intake
-                Officer during the intake process cannot be used against the youth at the hearing to determine
-                whether the youth
-                committed the alleged delinquent act.</p>
-
-            <p>The complainant may appeal the Denial of authorization to file a Peace Order Complaint, to the
-                Department of Juvenile
-                Services’ Regional Director within 15 days of issuance of the denial.</p>
-
-            <p>If an application for a Peace Order is filed and the Court makes a finding that the act did, in fact
-                occur the Court
-                may place the youth under supervision and impose conditions that the Court, or any agency designated
-                by the Court,
-                deems appropriate.</p>
-
-            <p>If you do not understand any part of the information contained in this form, the Intake Officer will
-                explain it to
-                you at the time of the Intake Interview.</p>
-
-        </div>
+  <div class="margin-wrapper">
+    <div class="row">
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="col-sm-12 align-center">
+        <b>Intake Process for Peace Order Complaints</b>
+      </div>
     </div>
+    <br>
+
+    <div class="row content ">
+      <div class="col-sm-12">
+        <p>The purpose of the Intake Interview is to determine whether the Juvenile Court has jurisdiction over the complaint
+          and, if so, whether judicial action is in the best interest of the public, the youth or both.</p>
+
+        <p>After determining that the court has jurisdiction, the Intake Officer must make one of the following decisions within
+          25 days of the date that the complaint is received by the Department of Juvenile Services.</p>
+        <ol>
+          <li>Close the complaint at intake with a warning;</li>
+          <li>With the consent of the victim, the youth and the youth’s parent(s)/guardian(s)/custodian(s), place the youth on
+            Informal Supervision for up to 90 days, unless otherwise extended by the Court; or
+          </li>
+          <li>Authorize the filing of the Peace Order application with a referral to the Juvenile Court Clerk for scheduling
+            of a Court Hearing.
+          </li>
+        </ol>
+        <p>At the Intake Interview, the juvenile who is the subject of the complaint may have an attorney present. If the juvenile
+          wishes to have an attorney present, one must be retained by the juvenile. At any point in the Intake Interview,
+          the juvenile has the right to remain silent.</p>
+
+        <p>If the Intake Officer authorizes the filing of the Peace Order Complaint, any information received by the Intake
+          Officer during the intake process cannot be used against the youth at the hearing to determine whether the youth
+          committed the alleged delinquent act.</p>
+
+        <p>The complainant may appeal the Denial of authorization to file a Peace Order Complaint, to the Department of Juvenile
+          Services’ Regional Director within 15 days of issuance of the denial.</p>
+
+        <p>If an application for a Peace Order is filed and the Court makes a finding that the act did, in fact occur the Court
+          may place the youth under supervision and impose conditions that the Court, or any agency designated by the Court,
+          deems appropriate.</p>
+
+        <p>If you do not understand any part of the information contained in this form, the Intake Officer will explain it to
+          you at the time of the Intake Interview.</p>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      </div>
+    </div>
+
+
+
+    <footer>
+      <div class="row footer footer-border">
+        <div class="col-sm-12 padding-top-20">
+          <div class="col-sm-2 " style="text-align: right">
+            <p>
+              <b>
+                <i class="fa fa-wheelchair footer-icon"></i>
+              </b>
+            </p>
+          </div>
+          <div class="col-sm-10 align-center">
+            <p>410-230-3333 / Toll Free: 1-888-639-7499 / TDD: 1-800-735-2258</p>
+
+            <p> Treating Children &nbsp;
+              <span class="red-bullet"></span> &nbsp; Supporting Families &nbsp;
+              <span class="red-bullet"></span> &nbsp; Protecting Communities</p>
+          </div>
+        </div>
+      </div>
+
+    </footer>
+  </div>
+
 </div>
-
-

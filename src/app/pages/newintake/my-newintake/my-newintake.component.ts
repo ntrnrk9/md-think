@@ -89,7 +89,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     saveIntakeBtn: boolean;
     intakeType: string;
     disposition: DispostionOutput;
-    purposeList: IntakePurpose[];
+    purposeList: IntakePurpose[] = [];
     createdCases: ComplaintTypeCase[];
     createdCaseInputSubject$ = new Subject<ComplaintTypeCase[]>();
     purposeInputSubject$ = new Subject<IntakePurpose>();
@@ -577,11 +577,14 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     getSelectedPurpose(purposeID) {
-        return this.purposeList.find((puroposeItem) => puroposeItem.intakeservreqtypeid === purposeID);
+
+        if (this.purposeList) {
+            return this.purposeList.find((puroposeItem) => puroposeItem.intakeservreqtypeid === purposeID);
+        }
+        return null;
     }
     checkForDJSSelected(puropose) {
         this.djsSelected = false;
-        console.log(this.purposeList);
         const selectedPurpose = this.getSelectedPurpose(puropose);
 
         if (selectedPurpose && selectedPurpose.teamtype.teamtypekey === 'DJS') {
