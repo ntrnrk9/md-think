@@ -86,7 +86,7 @@
 
           <p>
             If you disagree with this decision and wish to appeal, you must complete the form provided below and send it to the Regional
-            Director so that it is received by - - .
+            Director so that it is received by {{appointmentDate() | date:'MM/dd/yyyy'}} .
           </p>
           <br>
 
@@ -337,7 +337,7 @@
         <div class="row">
           <div class="col-sm-8">
 
-            Youth’s Parent: {{getMaltreatorName()}}
+            Youth’s Parent: Adam Smith
             <span class="Victim-name"></span>
           </div>
         </div>
@@ -657,7 +657,7 @@
         </div>
         <div class="row">
           <div class="col-sm-8">
-            Client Parent: {{getMaltreatorName()}}
+            Client Parent: Adam Smith
             <span class="Victim-name"></span>
           </div>
         </div>
@@ -690,7 +690,7 @@
         <div class="row content col-sm-12">
           <p>
             A Peace Order Complaint has been filed against the above named youth regarding an incident that occurred on or about (DATE)
-            ____{{ getAllegedOffenceDate() | date:'MM/dd/yyyy - h:mm a'}}________. An Intake Officer is required by law to
+            ____{{ getAllegedOffenceDate() | date:'MM/dd/yyyy'}}________. An Intake Officer is required by law to
             review this matter to determine if court action is necessary.
           </p>
 

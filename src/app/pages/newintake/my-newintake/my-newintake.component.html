@@ -240,13 +240,14 @@
           <h4 class="modal-title">PDF preview</h4>
         </div>
         <div class="modal-body">
+            <div class="text-right big-bot-space right-mspace-15">
+                <button type="button" class="btn-pri" (click)="collectivePdfCreator()" [disabled]="downloadInProgress"> Download </button>
+
+            </div>
           <pdf-peace-order-appeal-letter [persons]="addedPersons" [general]="general" [evalFields]="evalFields" ></pdf-peace-order-appeal-letter>
-         
 
-          <div class="text-right big-bot-space right-mspace-15">
-            <button type="button" class="btn-pri" (click)="collectivePdfCreator()"> Download </button>
 
-          </div>
+
         </div>
       </div>
     </div>

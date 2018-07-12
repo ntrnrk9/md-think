@@ -135,7 +135,7 @@ export class IntakeComplaintTypeComponent implements OnInit {
         this._alertService.error('Already Case created for this sub type ');
         return false;
       }
-      this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.GetNextNumberUrl).subscribe((result) => {
+      this._commonHttpService.getArrayList({}, NewUrlConfig.EndPoint.Intake.NextnumbersUrl).subscribe((result) => {
         const complaintTypeCase: ComplaintTypeCase = new ComplaintTypeCase();
         complaintTypeCase.caseID = result['nextNumber'];
         const selectedPurpose = this.getSelectedPurpose(this.caseCreationFormGroup.value.serviceType);
@@ -200,8 +200,8 @@ export class IntakeComplaintTypeComponent implements OnInit {
     (<any>$('#delete-case-popup')).modal('hide');
   }
 
-   
+
   isPeaceOrder(complaintCase: ComplaintTypeCase): boolean {
-    return complaintCase.subSeriviceTypeValue === 'Peace Order';    
+    return complaintCase.subSeriviceTypeValue === 'Peace Order';
   }
 }

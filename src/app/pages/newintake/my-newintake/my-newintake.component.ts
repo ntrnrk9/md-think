@@ -98,6 +98,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     selectedAgency: DropdownModel;
     roleValue = false;
     pdfFiles: { 'fileName': string, 'images': string[] }[] = [];
+    downloadInProgress = false;
     @ViewChild(IntakeAttachmentsComponent) intakeAttachment: IntakeAttachmentsComponent;
     @ViewChild(IntakeAssessmentComponent) daAllegaDispo: IntakeAssessmentComponent;
     constructor(
@@ -711,6 +712,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
 
 
     collectivePdfCreator() {
+        this.downloadInProgress = true;
         const pdfList = ["Appeal-Letter", "Formal-Action-Letter", "Formal-Action-Letter-Complaint", "Process-Letter"];
         pdfList.forEach(element => {
             this.downloadCasePdf(element);
@@ -750,5 +752,6 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         });
         (<any>$('#intake-complaint-pdf1')).modal('hide');
         this.pdfFiles = [];
+        this.downloadInProgress = false;
     }
 }
