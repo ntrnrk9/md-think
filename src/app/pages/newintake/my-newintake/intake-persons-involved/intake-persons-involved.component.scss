@@ -220,13 +220,10 @@ span.categori-name {
     margin-bottom: 15px;
     min-height: 280px;
 }
-.upload-img {
-    background: #e5e5e5;
-    width: 150px;
-    height: 150px;
+.upload-img image-cropper img.source-image{
+    width: 160px;
     border-radius: 50%;
-    margin: 0 auto;
-    margin-bottom: 20px;
+    height: 160px;
 }
 .upload-img i.fa-cloud-upload {
     font-size: 22px;
@@ -261,3 +258,21 @@ span.categori-name {
 .upload-edit-icon li a i {
     font-size: 18px;
 }
+.danger-reason {
+    font-size: 13px;
+    color:red;
+}
+.danger-reason span {color:#000;}
+.danger-header thead tr {
+    background: #ff8f8f;
+    color: #fff;
+}
+.after-upload .media-right, .before-upload .media-right {
+    margin: 0 auto;
+    width: 128px;
+    height: 128px;
+    display: inherit;
+    padding-left: 0;
+}
+.after-upload .media-right img, .before-upload .media-right img{border-radius: 50%;  width: 128px;
+    height: 128px;}

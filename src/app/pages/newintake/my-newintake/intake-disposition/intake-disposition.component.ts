@@ -1,15 +1,13 @@
-import { Component, OnInit, Input, EventEmitter, AfterViewInit } from '@angular/core';
-import { CommonHttpService } from '../../../../@core/services';
-import { DropdownModel, PaginationRequest } from '../../../../@core/entities/common.entities';
-import { Observable } from 'rxjs/Observable';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { NewUrlConfig } from '../../newintake-url.config';
-import { Subject } from 'rxjs/Rx';
-import { ActivatedRoute } from '@angular/router';
-import { DispositionCode, DispoistionList, DispostionOutput } from '../_entities/newintakeModel';
 import value from '*.json';
-import * as moment from 'moment';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Rx';
+
+import { DropdownModel, PaginationRequest } from '../../../../@core/entities/common.entities';
+import { CommonHttpService } from '../../../../@core/services';
 import { AuthService } from '../../../../@core/services/auth.service';
+import { DispositionCode, DispostionOutput } from '../_entities/newintakeModel';
 
 @Component({
     // tslint:disable-next-line:component-selector
@@ -17,7 +15,7 @@ import { AuthService } from '../../../../@core/services/auth.service';
     templateUrl: './intake-disposition.component.html',
     styleUrls: ['./intake-disposition.component.scss']
 })
-export class IntakeDispositionComponent implements OnInit, AfterViewInit {
+export class IntakeDispositionComponent implements OnInit, AfterViewInit, AfterViewChecked {
     @Input() dispositionInput$ = new Subject<string>();
     @Input() dispositionOutPut$ = new Subject<DispostionOutput>();
     @Input() dispositionRetrive$ = new Subject<DispostionOutput>();
@@ -25,6 +23,7 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
     statusDropdownItems$: Observable<DropdownModel[]>;
     dispositionList: DispositionCode[];
     dispositionDropDown: DropdownModel[];
+    supDispositionDropDown: DropdownModel[];
     disposition: string;
     dispositionDropdownItems$: Observable<DropdownModel[]>;
     dispositionFormGroup: FormGroup;
@@ -34,9 +33,9 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
     showReason = false;
     supervisorUser: boolean;
     timeReceived: string;
+    showStatus = true;
 
-    constructor(private _commonHttpService: CommonHttpService, private formBuilder: FormBuilder,
-        private _authService: AuthService) { }
+    constructor(private _commonHttpService: CommonHttpService, private formBuilder: FormBuilder, private _authService: AuthService, private _changeDetect: ChangeDetectorRef) {}
 
     ngOnInit() {
         this.dispositionForm();
@@ -47,34 +46,51 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
         const role = this._authService.getCurrentUser();
         if (role.role.name === 'apcs') {
             this.supervisorUser = true;
+            this.dispositionFormGroup.get('intake');
         } else {
             this.supervisorUser = false;
         }
-        this.dispositionRetrive$.subscribe((data) => {
-            this.dispositionFormGroup.patchValue({
-                intakeserreqstatustypekey: data.intakeserreqstatustypekey,
-                dispositioncode: data.dispositioncode,
-                comments: data.comments ? data.comments : '',
-                reason: data.reason ? data.reason : '',
-            });
-        });
         this.dispositionOutPut$.subscribe((data) => {
             const roleId = this._authService.getCurrentUser();
             if (roleId.role.name === 'apcs') {
                 this.supervisorUser = true;
+                this.showStatus = false;
             } else {
                 this.supervisorUser = false;
             }
-            this.loadDropdown();
-            if (data) {
-                this.onChangeTaskStatus(data.intakeserreqstatustypekey);
+            this._commonHttpService
+                .getArrayList(
+                    new PaginationRequest({
+                        nolimit: true,
+                        where: { intakeservreqtypeid: '247a8b26-cdee-4ce8-b36e-b37e49fd0103', servicerequestsubtypeid: 'ca495817-fdf6-41d9-9b37-43a933f2d2fe' },
+                        method: 'get'
+                    }),
+                    'Intakeservicerequestdispositioncodes/getdispositionstatus?filter'
+                )
+                .subscribe((result) => {
+                    this.dispositionList = result;
+                    if (data) {
+                        if (data.intakeserreqstatustypekey) {
+                            this.onChangeTaskStatus(data.intakeserreqstatustypekey);
 
-                this.dispositionFormGroup.patchValue({
-                    intakeserreqstatustypekey: data.intakeserreqstatustypekey,
-                    dispositioncode: data.dispositioncode,
-                    comments: data.comments
+                            this.dispositionFormGroup.patchValue({
+                                intakeserreqstatustypekey: data.intakeserreqstatustypekey,
+                                dispositioncode: data.dispositioncode,
+                                comments: data.comments
+                            });
+                        }
+                        if (data.supStatus) {
+                            this.supOnChangeTaskStatus(data.supStatus);
+
+                            this.dispositionFormGroup.patchValue({
+                                reason: data.reason,
+                                supStatus: data.supStatus,
+                                supDisposition: data.supDisposition,
+                                supComments: data.supComments
+                            });
+                        }
+                    }
                 });
-            }
         });
         this.timeReceived$.subscribe((time) => {
             this.timeReceived = time;
@@ -82,7 +98,9 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit() {}
+    ngAfterViewChecked() {
+        this._changeDetect.detectChanges();
     }
     dispositionForm() {
         this.dispositionFormGroup = this.formBuilder.group({
@@ -98,9 +116,12 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
             jointinvestigation: [''],
             investigationsummary: [''],
             visitinfo: [''],
-            reviewcomments: [''],
+            supStatus: [''],
+            supDisposition: [''],
+            supComments: [''],
             comments: [''],
-            reason: ['']
+            reason: [''],
+            isDelayed: [false]
         });
     }
 
@@ -127,6 +148,7 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
     }
 
     onChangeTaskStatus(id: any) {
+        this.dispositionDropDown = [];
         this.dispositionList.map((data) => {
             if (data.intakeserreqstatustypekey === id) {
                 this.dispositionDropDown = data.servicerequesttypeconfigdispositioncode.map(
@@ -139,31 +161,41 @@ export class IntakeDispositionComponent implements OnInit, AfterViewInit {
             }
         });
     }
+    supOnChangeTaskStatus(id: any) {
+        this.supDispositionDropDown = [];
+        this.dispositionList.map((data) => {
+            if (data.intakeserreqstatustypekey === id) {
+                this.supDispositionDropDown = data.servicerequesttypeconfigdispositioncode.map(
+                    (res) =>
+                        new DropdownModel({
+                            text: res.description,
+                            value: res.dispositioncode
+                        })
+                );
+            }
+        });
+    }
 
     changeDisp() {
-        this.dispositionOutPut$.next(this.dispositionFormGroup.value);
+        this.dispositionRetrive$.next(this.dispositionFormGroup.value);
     }
     enableReasonfordelay() {
-        // this.timeReceived$.subscribe((data) => {
-        //     this.timeReceived = data;
-        // });
-        console.log(this.timeReceived);
-        // this.timeReceived = '2018-07-08T09:30:51.01';
-        const time = this.timeReceived.split('.')[0].replace('T', ' ');
-        const date = new Date(time);
-        // this.currentTime = time.split('T')[1].split('.')[0];
-        // this.receivedTime = this.currentTime.replace(':', '.');
-        // const calculateValue = (date.getHours() - this.currentTime);
-        const currentTime = new Date();
-        const calculatedTime = moment(currentTime, 'DD/MM/YYYY HH:mm:ss').diff(moment(date, 'DD/MM/YYYY HH:mm:ss'));
-        // .format('HH:mm:ss');
-        const durationValue = moment.duration(calculatedTime);
-        this.calculatedTime = Math.floor(durationValue.asHours()) + moment.utc(durationValue.asMilliseconds()).format(':mm:ss');
-        if (+this.calculatedTime.split(':')[0] > 2) {
+        // const time = this.timeReceived.split('.')[0].replace('T', ' ');
+        // const date = new Date(time);
+        // const currentTime = new Date();
+        // const calculatedTime = moment(currentTime, 'DD/MM/YYYY HH:mm:ss').diff(moment(date, 'DD/MM/YYYY HH:mm:ss'));
+        // const durationValue = moment.duration(calculatedTime);
+        // this.calculatedTime = Math.floor(durationValue.asHours()) + moment.utc(durationValue.asMilliseconds()).format(':mm:ss');
+        // if (+this.calculatedTime.split(':')[0] > 2) {
+        if (this.timeReceived === 'Overdue') {
+            this.dispositionFormGroup.patchValue({ isDelayed: true });
             this.showReason = true;
             this.dispositionFormGroup.get('reason').setValidators([Validators.required]);
             this.dispositionFormGroup.get('reason').updateValueAndValidity();
+        } else {
+            this.dispositionFormGroup.get('reason').clearValidators();
+            this.dispositionFormGroup.get('reason').updateValueAndValidity();
+            this.dispositionFormGroup.patchValue({ isDelayed: false });
         }
-        console.log(this.calculatedTime);
     }
 }

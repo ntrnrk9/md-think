@@ -14,7 +14,8 @@ import { AlertService } from '../../../../@core/services/alert.service';
 import { Subject } from 'rxjs/Subject';
 import { ValidationService } from '../../../../@core/services/validation.service';
 import { ControlUtils } from '../../../../@core/common/control-utils';
-//import { Address } from '../../../case-worker/dsds-action/involved-person/_entities/involvedperson.data.model';
+// import { Address } from '../../../case-worker/dsds-action/involved-person/_entities/involvedperson.data.model';
+import { map } from 'rxjs/operator/map';
 declare var $: any;
 @Component({
     // tslint:disable-next-line:component-selector
@@ -23,7 +24,7 @@ declare var $: any;
     styleUrls: ['./intake-person-search.component.scss']
 })
 export class IntakePersonSearchComponent implements OnInit {
-    selectedPerson: any;
+    selectedPerson: InvolvedPersonSearchResponse;
     @Input() intakeNumber: string;
     @Output() intakePersonAdd = new EventEmitter();
     @Output() newPersonAdd = new EventEmitter();
@@ -53,7 +54,7 @@ export class IntakePersonSearchComponent implements OnInit {
         private _alertService: AlertService,
         private _commonHttpService: CommonHttpService,
         private _involvedPersonSeachService: GenericService<InvolvedPersonSearchResponse>
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.initiateFormGroup();
@@ -78,14 +79,14 @@ export class IntakePersonSearchComponent implements OnInit {
             city: [''],
             county: [''],
             RelationshiptoRA: [''],
-            dangerToSelf: ['', [Validators.required]],
-            dangerToSelfReason: [''],
-            dangerToWorker: ['', [Validators.required]],
-            dangerToWorkerReason: [''],
-            mentalImpaired: ['', [Validators.required]],
-            mentalImpairedReason: [''],
-            mentalIllness: ['', [Validators.required]],
-            mentalIllnessReason: ['']
+            Dangerousself: ['', [Validators.required]],
+            DangerousselfReason: [''],
+            Dangerousworker: ['', [Validators.required]],
+            DangerousWorkerReason: [''],
+            mentallyimpaired: ['', [Validators.required]],
+            mentallyimpairedReason: [''],
+            mentalillsign: ['', [Validators.required]],
+            mentalillsignReason: ['']
         });
         this.involvedPersonSearchForm = this._formBuilder.group({
             lastname: [''],
@@ -217,7 +218,7 @@ export class IntakePersonSearchComponent implements OnInit {
     }
     searchInvolvedPersons(model: InvolvedPersonSearch) {
         this.showPersonDetail = -1;
-        this.selectedPerson = '';
+        this.selectedPerson = Object.assign({}, new InvolvedPersonSearchResponse());
         if (model.dob) {
             const event = new Date(model.dob);
             model.dob = event.getMonth() + 1 + '/' + event.getDate() + '/' + event.getFullYear();
@@ -290,6 +291,17 @@ export class IntakePersonSearchComponent implements OnInit {
             )
             .share();
         this.personDSDSActions$ = source.pluck('data');
+        this.personDSDSActions$.map((data) => {
+            data.map((address) => {
+                address.daDetails.map((addressdata) => {
+                    if (addressdata.dasubtype === 'Peace Order') {
+                        address.highLight = true;
+                        return address;
+                    }
+                });
+            });
+            return data;
+        }).subscribe(finalValue => console.log(finalValue));
     }
 
     getPersonRelations(personid) {
@@ -302,17 +314,17 @@ export class IntakePersonSearchComponent implements OnInit {
             url
         );
     }
-    getPersonAddress(personid) {
-        const url = NewUrlConfig.EndPoint.Intake.PersonAddressesUrl + '?filter';
-        this.personAddresses$ = this._commonHttpService.getArrayList(
-            new PaginationRequest({
-                method: 'get',
-                where: { personid: personid },
-                include: { relation: 'Personaddresstype', scope: { fields: ['typedescription'] } }
-            }),
-            url
-        );
-    }
+    // getPersonAddress() {
+    //     const url = NewUrlConfig.EndPoint.Intake.PersonAddressesUrl + '?filter';
+    //     this.personAddresses$ = this._commonHttpService.getArrayList(
+    //         new PaginationRequest({
+    //             method: 'get',
+    //             where: { personid: this.selectedPerson.personid },
+    //             include: { relation: 'Personaddresstype', scope: { fields: ['typedescription'] } }
+    //         }),
+    //         url
+    //     );
+    // }
     selectPerson(row) {
         this.selectedPerson = row;
         this.serachResultTabActive = true;
@@ -346,9 +358,37 @@ export class IntakePersonSearchComponent implements OnInit {
     }
     addPerson(involvedPerson: InvolvedPerson) {
         if (this.personSearchAddForm.valid && this.personSearchAddForm.dirty) {
-            // console.log(involvedPerson);
-            this.intakePersonAdd.emit(involvedPerson);
-            this.clearSearchDetails();
+            const url = NewUrlConfig.EndPoint.Intake.PersonAddressesUrl + '?filter';
+            this._commonHttpService
+                .getArrayList(
+                    new PaginationRequest({
+                        method: 'get',
+                        where: { personid: this.selectedPerson.personid },
+                        include: { relation: 'Personaddresstype', scope: { fields: ['typedescription'] } }
+                    }),
+                    url
+                )
+                .subscribe((result) => {
+                    if (result && result.length !== 0) {
+                        result.map((item) => {
+                            item.addresstype = item.personaddresstypekey;
+                            item.addresstypeLabel = item.Personaddresstype ? item.Personaddresstype.typedescription : '';
+                            item.address1 = item.address ? item.address : '';
+                            item.Address2 = item.address2 ? item.address2 : '';
+                            item.zipcode = item.zipcode ? item.zipcode : '';
+                            item.state = item.state ? item.state : '';
+                            item.city = item.city ? item.city : '';
+                            item.county = item.country ? item.country : '';
+                            item.addressid = item.personaddressid;
+                        });
+                        involvedPerson.personAddressInput = result;
+                    } else {
+                        involvedPerson.personAddressInput = [];
+                    }
+                    involvedPerson.Pid = this.selectedPerson.personid;
+                    this.intakePersonAdd.emit(involvedPerson);
+                    this.clearSearchDetails();
+                });
         } else {
             ControlUtils.validateAllFormFields(this.personSearchAddForm);
             ControlUtils.setFocusOnInvalidFields();
@@ -384,60 +424,47 @@ export class IntakePersonSearchComponent implements OnInit {
     disabledInput(state: boolean, inputfield: string, manditory: string) {
         if (state === false && manditory === 'isManditory') {
             this.personSearchAddForm.get(inputfield).enable();
-            if (inputfield === 'dangerToSelfReason') {
-                this.personSearchAddForm.get('dangerToSelf').valueChanges.subscribe((dangerToSelf: any) => {
-                    if (dangerToSelf === '1') {
-                        this.personSearchAddForm.get('dangerToSelfReason').setValidators([Validators.required]);
-                        this.personSearchAddForm.get('dangerToSelfReason').updateValueAndValidity();
+            if (inputfield === 'DangerousselfReason') {
+                this.personSearchAddForm.get('Dangerousself').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.personSearchAddForm.get('DangerousselfReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('DangerousselfReason').updateValueAndValidity();
                     } else {
-                        this.personSearchAddForm.get('dangerToSelfReason').clearValidators();
-                        this.personSearchAddForm.get('dangerToSelfReason').updateValueAndValidity();
+                        this.personSearchAddForm.get('DangerousselfReason').clearValidators();
+                        this.personSearchAddForm.get('DangerousselfReason').updateValueAndValidity();
                     }
                 });
             }
-
-            if (inputfield === 'dangerToWorkerReason') {
-                this.personSearchAddForm.get('dangerToWorker').valueChanges.subscribe((dangerToSelf: any) => {
-                    if (dangerToSelf === '1') {
-                        this.personSearchAddForm.get('dangerToWorkerReason').setValidators([Validators.required]);
-                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+            if (inputfield === 'DangerousWorkerReason') {
+                this.personSearchAddForm.get('Dangerousworker').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.personSearchAddForm.get('DangerousWorkerReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('DangerousWorkerReason').updateValueAndValidity();
                     } else {
-                        this.personSearchAddForm.get('dangerToWorkerReason').clearValidators();
-                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                        this.personSearchAddForm.get('DangerousWorkerReason').clearValidators();
+                        this.personSearchAddForm.get('DangerousWorkerReason').updateValueAndValidity();
                     }
                 });
             }
-
-            if (inputfield === 'dangerToWorkerReason') {
-                this.personSearchAddForm.get('dangerToWorker').valueChanges.subscribe((dangerToSelf: any) => {
-                    if (dangerToSelf === '1') {
-                        this.personSearchAddForm.get('dangerToWorkerReason').setValidators([Validators.required]);
-                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+            if (inputfield === 'mentallyimpairedReason') {
+                this.personSearchAddForm.get('mentallyimpaired').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.personSearchAddForm.get('mentallyimpairedReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('mentallyimpairedReason').updateValueAndValidity();
                     } else {
-                        this.personSearchAddForm.get('dangerToWorkerReason').clearValidators();
-                        this.personSearchAddForm.get('dangerToWorkerReason').updateValueAndValidity();
+                        this.personSearchAddForm.get('mentallyimpairedReason').clearValidators();
+                        this.personSearchAddForm.get('mentallyimpairedReason').updateValueAndValidity();
                     }
                 });
             }
-            if (inputfield === 'mentalImpairedReason') {
-                this.personSearchAddForm.get('mentalImpaired').valueChanges.subscribe((dangerToSelf: any) => {
-                    if (dangerToSelf === '1') {
-                        this.personSearchAddForm.get('mentalImpairedReason').setValidators([Validators.required]);
-                        this.personSearchAddForm.get('mentalImpairedReason').updateValueAndValidity();
+            if (inputfield === 'mentalillsignReason') {
+                this.personSearchAddForm.get('mentalillsign').valueChanges.subscribe((Dangerousself: any) => {
+                    if (Dangerousself === 'yes') {
+                        this.personSearchAddForm.get('mentalillsignReason').setValidators([Validators.required]);
+                        this.personSearchAddForm.get('mentalillsignReason').updateValueAndValidity();
                     } else {
-                        this.personSearchAddForm.get('mentalImpairedReason').clearValidators();
-                        this.personSearchAddForm.get('mentalImpairedReason').updateValueAndValidity();
-                    }
-                });
-            }
-            if (inputfield === 'mentalIllnessReason') {
-                this.personSearchAddForm.get('mentalIllness').valueChanges.subscribe((dangerToSelf: any) => {
-                    if (dangerToSelf === '1') {
-                        this.personSearchAddForm.get('mentalIllnessReason').setValidators([Validators.required]);
-                        this.personSearchAddForm.get('mentalIllnessReason').updateValueAndValidity();
-                    } else {
-                        this.personSearchAddForm.get('mentalIllnessReason').clearValidators();
-                        this.personSearchAddForm.get('mentalIllnessReason').updateValueAndValidity();
+                        this.personSearchAddForm.get('mentalillsignReason').clearValidators();
+                        this.personSearchAddForm.get('mentalillsignReason').updateValueAndValidity();
                     }
                 });
             }

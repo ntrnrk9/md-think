@@ -13,17 +13,17 @@
                 <h4 class="site-color">PERSONS ADDED</h4>
             </div>
             <div class="col-md-12" *ngIf="addedPersons?.length!== 0">
-                <div class="person-wrap">
+                <div class="row person-wrap">
                     <div class="col-sm-3" *ngFor="let person of addedPersons; let i=index">
                         <div class="panel panel-default person-panel">
                             <div class="panel-heading">
                                 <!-- <h4>{{person.Firstname}} {{person.Lastname}}</h4> -->
                                 <!-- <h4>{{(person.fullName.length > 20) ? (person.fullName | slice:0:20) + '...' : person.fullName}}</h4>
-                                <span class="designation">
-                                    <mat-select [(ngModel)]="person.Role" disabled>
-                                        <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
-                                    </mat-select>
-                                </span> -->
+    <span class="designation">
+    <mat-select [(ngModel)]="person.Role" disabled>
+    <mat-option *ngFor="let item of roleDropdownItems$ | async" value="{{item.value}}">{{item.text}}</mat-option>
+    </mat-select>
+    </span> -->
                                 <div class="media">
                                     <div class="media-body">
                                         <h4>{{(person.fullName.length > 20) ? (person.fullName | slice:0:20) + '...' : person.fullName}}</h4>
@@ -33,8 +33,11 @@
                                             </mat-select>
                                         </span>
                                     </div>
-                                    <div class="media-right">
-                                        <img src="../../../../../assets/images/profile1.png" class="media-object" />
+                                    <div class="media-right" *ngIf="person.userPhoto">
+                                        <img src="{{person.userPhoto}}" class="media-object" />
+                                    </div>
+                                    <div class="media-right" *ngIf="!person.userPhoto">
+                                        <img src="../../../../../assets/images/female.png" class="media-object" />
                                     </div>
                                 </div>
                             </div>
@@ -57,8 +60,8 @@
                                     <dt>ADDRESSES </dt>
                                     <dd *ngIf="person.fullAddress"> {{(person.fullAddress.length > 25) ? (person.fullAddress | slice:0:25) + '...' : person.fullAddress}}
                                         <!-- {{person.personAddressInput[0].addressDetail[0].address1}} {{person.personAddressInput[0].addressDetail[0].Address2}}
-                                        {{person.personAddressInput[0].addressDetail[0].city}} {{person.personAddressInput[0].addressDetail[0].state}}
-                                        {{person.personAddressInput[0].addressDetail[0].county}} {{person.personAddressInput[0].addressDetail[0].zipCode}} -->
+    {{person.personAddressInput[0].addressDetail[0].city}} {{person.personAddressInput[0].addressDetail[0].state}}
+    {{person.personAddressInput[0].addressDetail[0].county}} {{person.personAddressInput[0].addressDetail[0].zipCode}} -->
                                     </dd>
                                     <dd *ngIf="!person.fullAddress">
                                         N/A
@@ -66,7 +69,7 @@
                                 </dl>
                                 <dl>
                                     <dt>Phone</dt>
-                                    <dd>{{(person.phoneNumber && person.phoneNumber.length !== 0) ? person.phoneNumber[0].phone
+                                    <dd>{{(person.phoneNumber && person.phoneNumber.length !== 0) ? person.phoneNumber[0].contactnumber
                                         : 'N/A'}}</dd>
                                 </dl>
                             </div>
@@ -93,10 +96,10 @@
                 </div>
             </div>
             <!-- <div class="col-md-12" *ngIf="!addedPersons || addedPersons?.length === 0">
-                <div class="person-wrap">
-                    No Persons Added
-                </div>
-            </div> -->
+    <div class="person-wrap">
+    No Persons Added
+    </div>
+    </div> -->
         </div>
     </div>
 </div>
@@ -194,7 +197,7 @@
                                             </mat-select>
                                         </mat-form-field>
                                         <mat-form-field>
-                                            <input type="text" matInput formControlName="stateid" placeholder=" State ID / Drivers License  ">
+                                            <input type="text" matInput formControlName="stateid" placeholder=" State ID / Drivers License ">
                                         </mat-form-field>
                                     </div>
                                     <div class="col-sm-4">
@@ -239,23 +242,41 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="upload-profile">
-                                            <div class="upload-img">
-                                            </div>
                                             <div class="upload-body">
-                                                <div class="before-upload hide">
+                                                <div class="before-upload" *ngIf="isImageHide">
+                                                    <div *ngIf="beofreImageCropeHide">
+                                                        <div class="upload-img" *ngIf="imageChangedEvent">
+                                                            <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1 / 1" [resizeToWidth]="192"
+                                                                format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+                                                                (loadImageFailed)="loadImageFailed()"></image-cropper>
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-right" *ngIf="isDefaultPhoto">
+                                                        <img src="{{userProfile}}" class="media-object" />
+                                                    </div>
                                                     <p>Drop Photo to upload or
                                                         <label class="btn-bs-file btn btn-no-color">
-                                                            <input type="file" /> browse
+                                                            <input type="file" (change)="fileChangeEvent($event)" /> browse
                                                         </label>
                                                         to upload</p>
                                                     <label class="btn-bs-file btn btn-pri">
                                                         <i class="fa fa-cloud-upload" aria-hidden="true"></i>
-                                                        <input type="file" /> UPLOAD
+                                                        <input type="file" (change)="fileChangeEvent($event)" /> UPLOAD
                                                     </label>
                                                 </div>
-                                                <div class="after-upload">
+                                                <div class="after-upload" *ngIf='!isImageHide'>
+                                                    <div *ngIf='afterImageCropeHide'>
+                                                        <div class="upload-img" *ngIf="imageChangedEvent">
+                                                            <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1 / 1" [resizeToWidth]="192"
+                                                                format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+                                                                (loadImageFailed)="loadImageFailed()"></image-cropper>
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-right" *ngIf="isDefaultPhoto">
+                                                        <img src="{{editImagesShow}}" class="media-object" />
+                                                    </div>
                                                     <div class="row">
-                                                        <div class="col-sm-6">
+                                                        <!-- <div class="col-sm-6">
                                                             <p>Photo Uploaded Date:
                                                                 <br>
                                                                 <span class="b-text">07/07/2018 8:36:31</span>
@@ -266,17 +287,16 @@
                                                                 <br>
                                                                 <span class="b-text">DemoScreen</span>
                                                             </p>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <ul class="list-unstyled list-inline upload-edit-icon pull-right">
                                                         <li>
                                                             <a>
-                                                                <i aria-hidden="true" class="fa fa-cloud-upload"></i>
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a>
-                                                                <i aria-hidden="true" class="fa fa-trash"></i>
+                                                                <label class="btn-bs-file btn btn-no-color">
+                                                                    <input type="file" (change)="fileChangeEvent($event)" />
+                                                                    <i aria-hidden="true" class="fa fa-cloud-upload">
+                                                                    </i>
+                                                                </label>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -303,13 +323,13 @@
                             </div>
                             <div id="add-contacts" class="tab-pane fade">
                                 <!-- <div class="row">
-                                    <div class="col-sm-6">
-                                        <h4 class="inner-title">Contact Details</h4>
-                                    </div>
-                                    <div class="col-sm-6 added-adds">
-                                        <h4 class="inner-title">Contacts Added</h4>
-                                    </div>
-                                </div> -->
+    <div class="col-sm-6">
+    <h4 class="inner-title">Contact Details</h4>
+    </div>
+    <div class="col-sm-6 added-adds">
+    <h4 class="inner-title">Contacts Added</h4>
+    </div>
+    </div> -->
                                 <div class="row modal-content-pad modal-height-body">
 
                                     <div class="col-sm-6 border-right">
@@ -391,10 +411,9 @@
                                                         <td>
                                                             {{phoneNumber.contactnumber}}
                                                         </td>
-                                                        <td>
-                                                            {{phoneNumber.contacttype}}
-                                                        </td>
-                                                        <!-- <td>Primary </td> -->
+                                                        <td *ngIf="phoneNumber.contacttype === 'P'">Primary </td>
+                                                        <td *ngIf="phoneNumber.contacttype === 'S'">Secondary </td>
+                                                        <td *ngIf="phoneNumber.contacttype === 'O'">Other </td>
                                                         <td>
                                                             <i class="fa fa-trash text-22" (click)="deletePhone(i)"></i>
                                                         </td>
@@ -429,7 +448,9 @@
                                                         <td>
                                                             {{emailID.mailid}}
                                                         </td>
-                                                        <td>{{emailID.emailType}}</td>
+                                                        <td *ngIf="emailID.mailtype === 'P'">Primary </td>
+                                                        <td *ngIf="emailID.mailtype === 'S'">Secondary </td>
+                                                        <td *ngIf="emailID.mailtype === 'O'">Other </td>
                                                         <td>
                                                             <i class="fa fa-trash text-22" (click)="deleteEmail(i)"></i>
                                                         </td>
@@ -451,15 +472,15 @@
                             </div>
                             <div id="add-address" class="tab-pane fade">
                                 <!-- <div class="row">
-                                    <div class="col-sm-6 ">
-                                        <h4 class="inner-title">Person Address</h4>
-                                    </div>
-                                    <div class="col-sm-6 added-adds">
-                                        <h4 class="inner-title">Address Added</h4>
-                                    </div>
-                                </div> -->
+    <div class="col-sm-6 ">
+    <h4 class="inner-title">Person Address</h4>
+    </div>
+    <div class="col-sm-6 added-adds">
+    <h4 class="inner-title">Address Added</h4>
+    </div>
+    </div> -->
                                 <div class="row modal-height-body">
-                                    <div class="col-sm-5  border-right person-adds" [formGroup]="personAddressForm">
+                                    <div class="col-sm-5 border-right person-adds" [formGroup]="personAddressForm">
                                         <label class="mt-lbl"> Known danger at address?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -476,8 +497,8 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <mat-form-field>
-                                                    <mat-select placeholder="Address Type" formControlName="addresstype">
-                                                        <mat-option *ngFor="let item of this.addresstypeDropdownItems$ | async" value="{{item.text}}">{{item.text}}</mat-option>
+                                                    <mat-select placeholder="Address Type" formControlName="addresstype" id="addressTypeLabel" (change)="changeAddressType($event)">
+                                                        <mat-option *ngFor="let item of this.addresstypeDropdownItems$ | async" value="{{item.value}}-{{item.text}}">{{item.text}}</mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
                                             </div>
@@ -586,11 +607,11 @@
                                             </ul>
                                             <!-- <div class="scroll-tables"> -->
                                             <div class="table-responsive t-height" *ngFor="let address of personAddressInput; let i=index">
-                                                <table class="table table-bordered">
+                                                <table *ngIf="address.activeflag !== 0" [class]="address.knownDangerAddress === 'yes' ? 'table table-bordered danger-header' : 'table table-bordered'">
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                {{address.addresstype}}
+                                                                {{address.addresstypeLabel}}
                                                             </th>
                                                             <th>
                                                                 LIVED IN
@@ -610,12 +631,16 @@
                                                             <td>{{address.startDate ? address.startDate : 'N/A'}} - {{address.endDate
                                                                 ? address.endDate : 'N/A'}}
                                                             </td>
-                                                            <td (click)="deleteAddressInput(i)">
+                                                            <td (click)="deleteAddressInput(address, i)">
                                                                 <i class="fa fa-trash text-22"></i>
                                                             </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                                <p *ngIf="address.knownDangerAddressReason" [class]="address.knownDangerAddress === 'yes' ? 'danger-reason' : ''">
+                                                    <sup>*</sup> Reason:
+                                                    <span>{{address.knownDangerAddressReason}}</span>
+                                                </p>
                                             </div>
                                             <!-- </div> -->
                                         </div>

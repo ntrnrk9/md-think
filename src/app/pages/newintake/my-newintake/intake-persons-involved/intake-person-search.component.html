@@ -25,7 +25,7 @@
                         </li>
                         <li>
                             <a data-toggle="tab" class="notactive" id="reporterrole" href="#reporter-role">
-                                <span  [class]="personRoleTabActive ? 'circle fa fa-pencil completed' : 'circle fa fa-pencil'"></span>
+                                <span [class]="personRoleTabActive ? 'circle fa fa-pencil completed' : 'circle fa fa-pencil'"></span>
                                 <span class="tab-txt">Person role</span>
                             </a>
                         </li>
@@ -162,34 +162,6 @@
                                             [maxSize]="10" [itemsPerPage]="paginationInfo.pageSize"></pagination>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                <div class="col-sm-8 pull-right text-right">
-                                    <div class="tbl-pagination">
-                                        <div class="row-count">
-                                            <span class="mrg-rht10">Rows per page : </span>
-                                            <div class="select-icon disp-inblock">
-                                                <select class="form-control disp-inline width-70 no-mar">
-                                                    <option> 10 </option>
-                                                    <option> 20 </option>
-                                                    <option> 30 </option>
-                                                    <option> 40 </option>
-                                                    <option> 50 </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="total-rows">
-                                            <span>1 - 10 </span> of
-                                            <span>100</span>
-                                        </div>
-                                        <div class="arrow-left">
-                                            <i class="fa fa-angle-left" style="font-size:29px"></i>
-                                        </div>
-                                        <div class="arrow-right">
-                                            <i class="fa fa-angle-right" style="font-size:29px"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                                 <div class="col-sm-12" *ngIf="involvedPersonSearchResponses$ | async; let involvedPersonSearchResponses">
 
                                     <div class="outer">
@@ -252,28 +224,31 @@
                                                                         <th>PREFIX</th>
                                                                         <th>AWOL</th>
                                                                         <th>DOD</th>
-                                                                        <th>ADDRESS 1</th>
-                                                                        <th>ADDRESS 2</th>
+                                                                        <th>ADDRESS</th>
+                                                                        <!-- <th>ADDRESS 2</th>
                                                                         <th>CITY</th>
                                                                         <th>STATE</th>
-                                                                        <th>ZIP</th>
+                                                                        <th>ZIP</th> -->
                                                                         <th>RELATIONS</th>
                                                                         <!-- <th>JURISDICTION</th> -->
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr>
-                                                                        <td class="theme-txt1">-</td>
-                                                                        <td>-</td>
+                                                                        <td class="theme-txt1">{{row?.personid}}</td>
+                                                                        <td>{{row?.alias}}</td>
                                                                         <td>{{row?.suffix}}</td>
                                                                         <td>{{row?.prefx}}</td>
                                                                         <td>-</td>
                                                                         <td>{{row?.dod | date:'MM/dd/yyyy'}}</td>
-                                                                        <td>{{row?.primaryaddress?.split('~')[0]}}</td>
-                                                                        <td>{{row?.primaryaddress?.split('~')[1]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[0]}}, {{row?.primaryaddress?.split('~')[1]}},
+                                                                            {{row?.primaryaddress?.split('~')[2]}}, {{row?.primaryaddress?.split('~')[5]}},
+                                                                            {{row?.primaryaddress?.split('~')[3]}}
+                                                                        </td>
+                                                                        <!-- <td>{{row?.primaryaddress?.split('~')[1]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[2]}}</td>
                                                                         <td>{{row?.primaryaddress?.split('~')[5]}}</td>
-                                                                        <td>{{row?.primaryaddress?.split('~')[3]}}</td>
+                                                                        <td>{{row?.primaryaddress?.split('~')[3]}}</td> -->
                                                                         <td>{{row?.relations}}</td>
                                                                         <!-- <td>{{row?.primaryaddress?.split('~')[4]}}</td> -->
                                                                     </tr>
@@ -283,7 +258,7 @@
                                                                                 <div class="panel panel-default" *ngFor="let action of personDSDSActions$ | async; let i=index;">
                                                                                     <div class="panel-heading">
                                                                                         <h4 class="panel-title collapsed">
-                                                                                            <a href="#collapse-{{rowId}}-{{i}}" data-toggle="collapse" data-parent="#accordion" aria-expanded="false">{{action.daTypeName}}
+                                                                                            <a href="#collapse-{{rowId}}-{{i}}" [ngClass]="action.highLight?'orange':''" data-toggle="collapse" data-parent="#accordion" aria-expanded="false">{{action.daTypeName}}
                                                                                                 <span class="glyphicon pull-right glyphicon-plus more-less"></span>
                                                                                             </a>
                                                                                         </h4>
@@ -317,7 +292,10 @@
                                                                                                             </thead>
                                                                                                             <tbody>
                                                                                                                 <tr *ngFor="let item of action?.daDetails">
-                                                                                                                    <td><a href="javascript:{}" (click)="priorAuditLog(item)">{{item.danumber}}</a></td>
+                                                                                                                    <td>
+                                                                                                                        <a [ngClass]="item.dasubtype === 'Peace Order'?'orange':''" href="javascript:{}"
+                                                                                                                            (click)="priorAuditLog(item)">{{item.danumber}}</a>
+                                                                                                                    </td>
                                                                                                                     <td>{{item.firstname}}
                                                                                                                         ,
                                                                                                                         {{item.lastname}}
@@ -337,7 +315,7 @@
                                                                                                                     </td>
                                                                                                                     <td>{{item.datecompleted}}</td>
                                                                                                                     <td>{{item.status}}</td>
-                                                                                                                    <td>-</td>
+                                                                                                                    <td>{{item.county}}</td>
                                                                                                                     <!-- <td>
                                                                                                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="View">
                                                                                                                                         <i class="fa fa-eye"> </i>
@@ -423,30 +401,30 @@
                                         <label class="mt-lbl"> *Danger to self?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <mat-radio-group formControlName="dangerToSelf">
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason', 'isManditory')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'dangerToSelfReason', 'notManditory')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToSelfReason', 'notManditory')" value="3">Unknown</mat-radio-button>
+                                                <mat-radio-group formControlName="Dangerousself">
+                                                    <mat-radio-button (click)="disabledInput(false,'DangerousselfReason', 'isManditory')" value="yes">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'DangerousselfReason', 'notManditory')" value="no">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'DangerousselfReason', 'notManditory')" value="unknown">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
                                         <mat-form-field class="m-t-10">
-                                            <input type="text" matInput formControlName="dangerToSelfReason" placeholder="Reason">
+                                            <input type="text" matInput formControlName="DangerousselfReason" placeholder="Reason">
                                         </mat-form-field>
 
 
                                         <label class="mt-lbl"> *Danger to worker?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <mat-radio-group formControlName="dangerToWorker">
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason', 'isManditory')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'dangerToWorkerReason', 'notManditory')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'dangerToWorkerReason', 'notManditory')" value="3">Unknown</mat-radio-button>
+                                                <mat-radio-group formControlName="Dangerousworker">
+                                                    <mat-radio-button (click)="disabledInput(false,'DangerousWorkerReason', 'isManditory')" value="yes">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'DangerousWorkerReason', 'notManditory')" value="no">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'DangerousWorkerReason', 'notManditory')" value="unknown">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
                                         <mat-form-field class="m-t-10">
-                                            <input type="text" matInput formControlName="dangerToWorkerReason" placeholder="Reason">
+                                            <input type="text" matInput formControlName="DangerousWorkerReason" placeholder="Reason">
                                         </mat-form-field>
                                     </div>
                                     <div class="col-sm-4">
@@ -454,29 +432,29 @@
                                         <label class="mt-lbl"> *Appearance of mentally impaired?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <mat-radio-group formControlName="mentalImpaired">
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason', 'isManditory')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'mentalImpairedReason', 'notManditory')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalImpairedReason', 'notManditory')" value="3">Unknown</mat-radio-button>
+                                                <mat-radio-group formControlName="mentallyimpaired">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentallyimpairedReason', 'isManditory')" value="yes">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentallyimpairedReason', 'notManditory')" value="no">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentallyimpairedReason', 'notManditory')" value="unknown">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
                                         <mat-form-field class="m-t-10">
-                                            <input type="text" matInput formControlName="mentalImpairedReason" placeholder="Reason">
+                                            <input type="text" matInput formControlName="mentallyimpairedReason" placeholder="Reason">
                                         </mat-form-field>
 
                                         <label class="mt-lbl"> *Signs of mental illness?</label>
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <mat-radio-group formControlName="mentalIllness">
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason', 'isManditory')" value="1">Yes</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(true,'mentalIllnessReason', 'notManditory')" value="2">No</mat-radio-button>
-                                                    <mat-radio-button (click)="disabledInput(false,'mentalIllnessReason', 'notManditory')" value="3">Unknown</mat-radio-button>
+                                                <mat-radio-group formControlName="mentalillsign">
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalillsignReason', 'isManditory')" value="yes">Yes</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(true,'mentalillsignReason', 'notManditory')" value="no">No</mat-radio-button>
+                                                    <mat-radio-button (click)="disabledInput(false,'mentalillsignReason', 'notManditory')" value="unknown">Unknown</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </div>
                                         <mat-form-field class="m-t-10">
-                                            <input type="text" matInput formControlName="mentalIllnessReason" placeholder="Reason">
+                                            <input type="text" matInput formControlName="mentalillsignReason" placeholder="Reason">
                                         </mat-form-field>
                                     </div>
                                 </div>

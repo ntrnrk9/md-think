@@ -1,4 +1,4 @@
-.form-control-size label, {
+.form-control-size label {
     font-size: 14px;
 }
 .digit {
@@ -14,4 +14,15 @@
     margin-top: 10px;
     font-weight: 700;
     font-size: 13px;
+}
+.disposition-1 {
+    box-shadow: 0 0 15px #d0caca;
+    margin-bottom: 20px;
+    display: block;
+    width: 100%;
+    float: left;
+    padding: 20px 0 10px;
+}
+.hideDiv {
+    display: none;
 }

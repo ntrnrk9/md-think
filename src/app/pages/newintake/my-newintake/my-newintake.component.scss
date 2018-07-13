@@ -59,7 +59,8 @@ textarea.form-control {
     color: #2e2f31;
     font-weight: 600;
     background: #fff;
-    padding: 15px;
+    padding: 15px 10px; 
+    font-size: 13.5px;
 }
 .nav-pills > li.active > a,
 .nav-pills > li.active > a:focus,
@@ -550,3 +551,8 @@ h4.h-bg-blue {
 .modal-footer {
     padding: 10px 0 0px !important;
 }
+.h-150 {
+    height: 150px;
+    margin-bottom: 15px;
+}
+.fa-question-circle {font-size: 15px;color: #039be6;margin-left: 5px;}

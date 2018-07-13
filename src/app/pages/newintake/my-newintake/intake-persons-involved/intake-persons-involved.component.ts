@@ -1,24 +1,25 @@
-import { Component, Input, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import value from '*.json';
+import { HttpHeaders } from '@angular/common/http';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { NgxfUploaderService } from 'ngxf-uploader';
 import { Observable } from 'rxjs/Observable';
-import { debounceTime } from 'rxjs/operators';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { Subject } from 'rxjs/Subject';
 
-import { ObjectUtils } from '../../../../@core/common/initializer';
-import { PaginationInfo, DropdownModel, CheckboxModel } from '../../../../@core/entities/common.entities';
+import { ControlUtils } from '../../../../@core/common/control-utils';
+import { AppUser } from '../../../../@core/entities/authDataModel';
+import { CheckboxModel, DropdownModel, PaginationInfo, PaginationRequest } from '../../../../@core/entities/common.entities';
+import { ValidationService } from '../../../../@core/services';
+import { AlertService } from '../../../../@core/services/alert.service';
+import { AuthService } from '../../../../@core/services/auth.service';
 import { CommonHttpService } from '../../../../@core/services/common-http.service';
 import { GenericService } from '../../../../@core/services/generic.service';
-import { InvolvedPersonSearch, InvolvedPersonSearchResponse, SuggestAddress, ValidatedAddress, InvolvedPersonAlias, PersonInvolved } from '../_entities/newintakeModel';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { InvolvedPerson } from '../../../newintake/my-newintake/_entities/newintakeModel';
-import { AlertService } from '../../../../@core/services/alert.service';
-import { ControlUtils } from '../../../../@core/common/control-utils';
-import { Subject } from 'rxjs/Subject';
+import { AppConfig } from '../../../../app.config';
+import { AddressDetails, InvolvedPerson } from '../../../newintake/my-newintake/_entities/newintakeModel';
 import { NewUrlConfig } from '../../newintake-url.config';
-import * as moment from 'moment';
-import { map } from 'rxjs/operator/map';
-import { ValidationService } from '../../../../@core/services';
-import { MatRadioChange } from '@angular/material';
-import value from '*.json';
+import { InvolvedPersonAlias, PersonInvolved, SuggestAddress, UserProfileImage } from '../_entities/newintakeModel';
 
 declare var $: any;
 @Component({
@@ -32,8 +33,14 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
     @Input() addedPersons: InvolvedPerson[] = [];
     @ViewChild('Dangerousself') Dangerousself: any;
     addEditLabel: string;
+    imageChangedEvent: File;
+    croppedImage: File;
+    progress: { percentage: number } = { percentage: 0 };
     errorValidateAddress = false;
     editAliasForm = false;
+    isImageHide: boolean;
+    beofreImageCropeHide = false;
+    afterImageCropeHide = false;
     addressAnalysis = [];
     suggestedAddress: SuggestAddress[];
     addedPersonsSubject$: Subject<InvolvedPerson[]>;
@@ -65,9 +72,26 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
     phoneNumber$: Observable<Array<any>>;
     emailID = ([] = []);
     emailID$: Observable<Array<any>>;
-    constructor(private _formBuilder: FormBuilder, private _personManageService: GenericService<PersonInvolved>, private _commonHttpService: CommonHttpService, private _alertService: AlertService) {}
+    private token: AppUser;
+    userProfilePicture: UserProfileImage;
+    finalImage: File;
+    userProfile: string;
+    isDefaultPhoto = true;
+    editImage = true;
+    editImagesShow: string;
+    addresstypeLabel: string;
+    personAddresses$: Observable<AddressDetails[]>;
+    constructor(
+        private _authService: AuthService,
+        private _formBuilder: FormBuilder,
+        private _personManageService: GenericService<PersonInvolved>,
+        private _commonHttpService: CommonHttpService,
+        private _alertService: AlertService,
+        private _uploadService: NgxfUploaderService
+    ) {}
 
     ngOnInit() {
+        this.token = this._authService.getCurrentUser();
         this.initiateFormGroup();
         this.loadDropDown();
         this.involvedPersonFormGroup.controls['Firstname'].markAsTouched();
@@ -96,6 +120,9 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             }
         });
     }
+    changeAddressType(event) {
+        this.addresstypeLabel = event.value;
+    }
     addPersonAddress() {
         if (this.personAddressForm.dirty && this.personAddressForm.valid) {
             if (this.personAddressForm.value.startDate) {
@@ -120,6 +147,9 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             // } else {
             this.personAddressInput.push(this.personAddressForm.value);
             this.personAddressInput[this.personAddressInput.length - 1].addressid = '';
+            this.personAddressInput[this.personAddressInput.length - 1].addresstypeLabel = this.addresstypeLabel.split('-')[1];
+            this.personAddressInput[this.personAddressInput.length - 1].addresstype = this.addresstypeLabel.split('-')[0];
+            this.personAddressInput[this.personAddressInput.length - 1].activeflag = 1;
             // }
             this.personAddressForm.reset();
             this.personAddressForm.get('address1').setValidators(Validators.required);
@@ -129,20 +159,58 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             this._alertService.warn('Please fill mandatory fields!');
         }
     }
-    deleteAddressInput(i, j) {
-        this.personAddressInput[i].addressDetail.splice(j, 1);
-        if (this.personAddressInput[i].addressDetail.length === 0) {
-            this.personAddressInput.splice(i, 1);
+    deleteAddressInput(modal, index) {
+        if (modal.personaddressid) {
+            this.personAddressInput.map((item) => {
+                if (item.personaddressid === modal.personaddressid) {
+                    item.activeflag = 0;
+                }
+            });
+        } else {
+            this.personAddressInput.splice(index, 1);
         }
     }
     editPerson(modal, index, text) {
+        // if (modal.Pid) {
+        //     const url = NewUrlConfig.EndPoint.Intake.PersonAddressesUrl + '?filter';
+        //     this._commonHttpService
+        //         .getArrayList(
+        //             new PaginationRequest({
+        //                 method: 'get',
+        //                 where: { personid: modal.Pid },
+        //                 include: { relation: 'Personaddresstype', scope: { fields: ['typedescription'] } }
+        //             }),
+        //             url
+        //         )
+        //         .subscribe((result) => {
+        //             if (result && result.length !== 0) {
+        //                 result.map((item) => {
+        //                     item.addresstype = item.personaddresstypekey;
+        //                     item.addresstypeLabel = item.Personaddresstype.typedescription;
+        //                     item.address1 = item.address;
+        //                     item.Address2 = item.address2;
+        //                     item.zipcode = item.zipcode;
+        //                     item.state = item.state;
+        //                     item.city = item.city;
+        //                     item.county = item.country;
+        //                     item.addressid = item.personaddressid;
+        //                 });
+        //                 this.personAddressInput = result;
+        //             }
+        //         });
+        // }
+        this.isImageHide = false;
+        this.afterImageCropeHide = false;
         this.addEditLabel = text;
         this.involvedPerson.index = index;
         (<any>$('#intake-addperson')).modal('show');
         (<any>$('#profile-click')).click();
-        if (modal.personAddressInput) {
-            this.personAddressInput = modal.personAddressInput;
-        }
+        this.personAddressInput = modal.personAddressInput;
+        // if (modal.personAddressInput && modal.personAddressInput.length > 0) {
+        //     modal.personAddressInput.map((item) => {
+        //         this.personAddressInput.push(item);
+        //     });
+        // }
         if (modal.emailID) {
             this.emailID = modal.emailID;
             this.emailID$ = Observable.of(this.emailID);
@@ -151,6 +219,13 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             this.phoneNumber = modal.phoneNumber;
             this.phoneNumber$ = Observable.of(this.phoneNumber);
         }
+        if (modal.userPhoto && modal.userPhoto.length) {
+            this.editImagesShow = modal.userPhoto;
+        } else {
+            this.editImagesShow = '../../../../../assets/images/female.png';
+            this.userProfile = '../../../../../assets/images/female.png';
+        }
+
         this.involvedPersonFormGroup.patchValue({
             Lastname: modal.Lastname,
             Firstname: modal.Firstname,
@@ -253,7 +328,8 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             mentallyimpaired: ['', [Validators.required]],
             mentallyimpairedReason: [''],
             mentalillsign: ['', [Validators.required]],
-            mentalillsignReason: ['']
+            mentalillsignReason: [''],
+            userPhoto: ['']
         });
         this.addAliasForm = this._formBuilder.group({
             AliasFirstName: [''],
@@ -655,7 +731,6 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             )
             .subscribe(
                 (result) => {
-                    console.log(result);
                     this.suggestedAddress = result;
                 },
                 (error) => {
@@ -692,25 +767,29 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
                     item.DobFormatted = 'N/A';
                 }
             });
-            const addressDetail = [];
-            addressDetail.push({
-                addresstype: 'P',
-                address1: involvedPerson.address1,
-                zipcode: involvedPerson.zipCode,
-                state: involvedPerson.state,
-                city: involvedPerson.city,
-                county: involvedPerson.county,
-                addressid: ''
-            });
-            const personAddressInput = [];
-            personAddressInput.push({ addressDetail: addressDetail });
+            // let addressDetail = [];
+            // addressDetail = involvedPerson.personAddressInput;
+            //     {
+            //     addresstype: 'P',
+            //     addresstypeLabel: 'Primary Address',
+            //     address1: involvedPerson.address1,
+            //     zipcode: involvedPerson.zipCode,
+            //     state: involvedPerson.state,
+            //     city: involvedPerson.city,
+            //     county: involvedPerson.county,
+            //     addressid: ''
+            // });
+            // const personAddressInput = [];
+            // personAddressInput.push({ addressDetail: addressDetail });
             this.addedPersons[this.addedPersons.length - 1].phoneNumber = [];
+            this.addedPersons[this.addedPersons.length - 1].Pid = involvedPerson.Pid ? involvedPerson.Pid : '';
             this.addedPersons[this.addedPersons.length - 1].Gender = involvedPerson.Gender ? involvedPerson.Gender : '';
             this.addedPersons[this.addedPersons.length - 1].emailID = [];
-            this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
-            this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(addressDetail);
+            // this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
+            // this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(addressDetail);
             this.addedPersons[this.addedPersons.length - 1].fullName = this.addedPersons[this.addedPersons.length - 1].Firstname + ' ' + this.addedPersons[this.addedPersons.length - 1].Lastname;
-            if (this.addedPersons[this.addedPersons.length - 1].personAddressInput) {
+            this.addedPersons[this.addedPersons.length - 1].userPhoto = involvedPerson.userphoto ? involvedPerson.userphoto : '';
+            if (this.addedPersons[this.addedPersons.length - 1].personAddressInput && this.addedPersons[this.addedPersons.length - 1].personAddressInput.length > 0) {
                 this.addedPersons[this.addedPersons.length - 1].fullAddress =
                     this.addedPersons[this.addedPersons.length - 1].personAddressInput[0].address1 +
                     ' ' +
@@ -763,6 +842,7 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
 
                         this.addedPersons[this.addedPersons.length - 1].personAddressInput = [];
                         this.addedPersons[this.addedPersons.length - 1].personAddressInput = Object.assign(this.personAddressInput);
+                        this.addedPersons[this.addedPersons.length - 1].userPhoto = this.userProfilePicture ? this.userProfilePicture.s3bucketpathname : '';
                         this.addedPersons.map((item) => {
                             if (item.Dob) {
                                 const dob = item.Dob + '';
@@ -815,6 +895,7 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
                     this.addedPersons[this.involvedPerson.index].personAddressInput = [];
                     this.addedPersons[this.involvedPerson.index].personAddressInput = Object.assign(this.personAddressInput);
                     this.addedPersons[this.involvedPerson.index].fullName = this.addedPersons[this.involvedPerson.index].Firstname + ' ' + this.addedPersons[this.involvedPerson.index].Lastname;
+                    this.addedPersons[this.involvedPerson.index].userPhoto = this.userProfilePicture ? this.userProfilePicture.s3bucketpathname : '';
                     if (this.addedPersons[this.involvedPerson.index].personAddressInput && this.addedPersons[this.involvedPerson.index].personAddressInput.length !== 0) {
                         this.addedPersons[this.involvedPerson.index].fullAddress =
                             this.addedPersons[this.involvedPerson.index].personAddressInput[0].address1 +
@@ -911,6 +992,11 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
         this.phoneNumber$ = Observable.empty();
         this.emailID = [];
         this.emailID$ = Observable.empty();
+        this.imageChangedEvent = Object.assign({});
+        this.isDefaultPhoto = true;
+        this.isImageHide = false;
+        this.beofreImageCropeHide = false;
+        this.afterImageCropeHide = false;
     }
 
     confirmDelete(involvedPerson: InvolvedPerson, index) {
@@ -990,11 +1076,13 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
 
     toggleAddPopup(text) {
         this.addEditLabel = text;
+        this.isImageHide = true;
+        this.beofreImageCropeHide = false;
         (<any>$('#intake-addperson')).modal('show');
         (<any>$('#profile-click')).click();
+        this.userProfile = '../../../../../assets/images/female.png';
     }
     navigateNext(modal) {
-        console.log(this.involvedPersonFormGroup.value);
         if (modal === 'contacts') {
             (<any>$('#add-contacts-click')).click();
         }
@@ -1120,5 +1208,60 @@ export class IntakePersonsInvolvedComponent implements OnInit, AfterViewInit {
             this.involvedPersonFormGroup.get('RelationshiptoRA').clearValidators();
             this.involvedPersonFormGroup.get('RelationshiptoRA').updateValueAndValidity();
         }
+    }
+    fileChangeEvent(file: any) {
+        this.beofreImageCropeHide = true;
+        this.afterImageCropeHide = true;
+        this.imageChangedEvent = file;
+        this.isDefaultPhoto = false;
+        this.isImageHide = true;
+    }
+    imageCropped(file: File) {
+        this.progress.percentage = 0;
+        this.croppedImage = file;
+        const imageBase64 = this.croppedImage;
+        const blob = this.dataURItoBlob(imageBase64);
+        this.finalImage = new File([blob], 'image.png');
+        this.saveImage(this.finalImage);
+    }
+    imageLoaded() {}
+    loadImageFailed() {
+        this._alertService.error('Image failed to upload');
+    }
+    dataURItoBlob(dataURI) {
+        const binary = atob(dataURI.split(',')[1]);
+        const array = [];
+        for (let i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], {
+            type: 'image/png'
+        });
+    }
+    saveImage(data: any) {
+        this._uploadService
+            .upload({
+                url: AppConfig.baseUrl + '/' + NewUrlConfig.EndPoint.DSDSAction.Attachment.UploadAttachmentUrl + '?access_token=' + this.token.id + '&srno=userprofile',
+                headers: new HttpHeaders()
+                    .set('access_token', this.token.id)
+                    .set('srno', 'userprofile')
+                    .set('ctype', 'file'),
+                filesKey: ['file'],
+                files: data,
+                process: true
+            })
+            .subscribe(
+                (response) => {
+                    if (response.status) {
+                        this.progress.percentage = response.percent;
+                    }
+                    if (response.status === 1 && response.data) {
+                        this.userProfilePicture = response.data;
+                    }
+                },
+                (err) => {
+                    console.log(err);
+                }
+            );
     }
 }

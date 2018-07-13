@@ -15,8 +15,11 @@
 
       <tbody *ngIf="intakes$ | async; let intakes">
         <tr *ngFor="let item of intakes">
-          <td>
-            <a *ngIf="item?.intakenumber" [routerLink]="['/pages/newintake/my-newintake', item.id]">{{item?.intakenumber}}</a>
+          <td *ngIf="item.reviewstatus !== 'Review'">
+            <a *ngIf="item?.intakenumber" [routerLink]="['/pages/newintake/my-newintake', item.intakenumber]">{{item?.intakenumber}}</a>
+          </td>
+          <td *ngIf="item.reviewstatus === 'Review'">
+            {{item?.intakenumber}}
           </td>
           <td> {{item.datereceived | date:'MM/dd/yyyy'}} </td>
           <td> {{item.timereceived | date:'medium' }} </td>
@@ -24,7 +27,7 @@
             <div [safeHtml]="item.narrative"> </div>
           </td>
           <td> {{item.raname}} </td>
-          <td> Draft</td>
+          <td> {{item.reviewstatus}}</td>
         </tr>
         <tr *ngIf="intakes?.length === 0">
           <td colspan="5">No records found.</td>

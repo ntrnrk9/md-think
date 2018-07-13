@@ -1,11 +1,19 @@
 import { initializeObject } from '../../../../@core/common/initializer';
 import { General, AttachmentIntakes, EvaluationFields, ComplaintTypeCase } from './newintakeSaveModel';
 
+export class UserProfileImage {
+    filename: string;
+    originalfilename: string;
+    mime: string;
+    numberofbytes: number;
+    s3bucketpathname: string;
+}
 export class InvolvedPerson {
     index: number;
     id: string;
     Pid: string;
     Role: string;
+    userPhoto: string;
     Firstname: string;
     Lastname: string;
     Middlename: string;
@@ -62,6 +70,7 @@ export class InvolvedPerson {
     mentalillsign?: string;
     mentalillsignReason: string;
     AliasLastName: string;
+    userProfilePicture: UserProfileImage;
 }
 export class PersonAddress {
     addressType: string;
@@ -115,6 +124,7 @@ export class InvolvedPersonSearch {
     intakeNumber: string;
 }
 export class InvolvedPersonSearchResponse {
+    alias: string;
     personid: string;
     personroleid: string;
     personroletype: string;
@@ -519,6 +529,7 @@ export class Recording {
     Detail?: string;
 }
 export class DaDetails {
+    dasubtype: string;
     danumber: string;
     description: string;
     firstname: string;
@@ -528,6 +539,7 @@ export class DaDetails {
     datecompleted: string;
     status: string;
     intakeserviceid?: string;
+    county: string;
 }
 export class PriorAuditLog {
     danumber: string;
@@ -545,6 +557,7 @@ export class PersonDsdsAction {
     personid?: string;
     daDetails: DaDetails[];
     daTypeName: string;
+    highLight = false;
     constructor(initializer?: PersonDsdsAction) {
         initializeObject(this, initializer);
     }
@@ -794,6 +807,15 @@ export class DispostionOutput {
     DADisposition: string;
     Summary: string;
     ReasonforDelay: string;
+    supStatus: string;
+    supDisposition: string;
+    supComments: string;
+    isDelayed: string;
+}
+export class GeneralNarative {
+  formkey: string;
+  controlindex: number;
+  helptext: string;
 }
 export class IntakePurpose {
     description: string;

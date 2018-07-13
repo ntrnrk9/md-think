@@ -8,11 +8,25 @@
             <input formcontrolname="IntakeNumber" type="hidden">
             <ul class="list-unstyled list-inline">
               <li>
-                <label>Contact Number</label>
+                <label *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('CONTACT NUMBER')">Contact Number
+                </label>
+                <label *ngIf="roleId && roleId.role.name != 'superuser'">Contact Number
+                </label>
+                <span *ngIf="generalResource && generalResource.length >= 1 && generalResource[0]?.helptext.length!=0">
+                  <sup>
+                    <i data-toggle="tooltip" data-placement="top" title="{{generalResource[0]?.helptext}}" class="fa fa-question-circle"></i>
+                  </sup>
+                </span>
                 <p>{{ departmentActionIntakeFormGroup.get('IntakeNumber').value }}</p>
               </li>
               <li>
-                <label>Created Date</label>
+                <label *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('CREATED DATE')">Created Date</label>
+                <label *ngIf="roleId && roleId.role.name != 'superuser'">Created Date</label>
+                <span *ngIf="generalResource && generalResource.length >= 2 && generalResource[1]?.helptext.length!=0">
+                  <sup>
+                    <i data-toggle="tooltip" data-placement="top" title="{{generalResource[1]?.helptext}}" class="fa fa-question-circle"></i>
+                  </sup>
+                </span>
                 <p>{{ departmentActionIntakeFormGroup.get('CreatedDate').value | date:'MM/dd/yyyy - h:mm a'}}</p>
               </li>
               <li>
@@ -37,7 +51,13 @@
               </li>
               <li>
                 <div class="form-group">
-                  <label class="required">Communication</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('COMMUNICATION')">Communication</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name != 'superuser'">Communication</label>
+                  <span *ngIf="generalResource && generalResource.length >= 3 && generalResource[2]?.helptext.length!=0">
+                    <sup>
+                      <i data-toggle="tooltip" data-placement="top" title="{{generalResource[2]?.helptext}}" class="fa fa-question-circle"></i>
+                    </sup>
+                  </span>
                   <div class="select-icon cus-select-width">
                     <ng-select [searchable]="true" [clearable]="false" formControlName="InputSource" class="select-source">
                       <ng-option value=""> Select </ng-option>
@@ -61,18 +81,31 @@
               </li>
               <li>
                 <div class="form-group">
-                  <label class="required">Agency</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('AGENCY')">Agency</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name != 'superuser'">Agency</label>
+                  <span *ngIf="generalResource && generalResource.length >= 4 && generalResource[3]?.helptext.length!=0">
+                    <sup>
+                      <i data-toggle="tooltip" data-placement="top" title="{{generalResource[3]?.helptext}}" class="fa fa-question-circle"></i>
+                    </sup>
+                  </span>
                   <div class="select-icon cus-select-width">
                     <ng-select [searchable]="true" [clearable]="false" formControlName="Agency" (change)="listPurpose($event)" class="select-source">
                       <ng-option value="all"> All of these </ng-option>
-                      <ng-option *ngFor="let item of intakeAgencies$ | async" [value]="item.value">{{item.text}}</ng-option>
+                      <ng-option *ngFor="let item of intakeAgencies$ | async" [value]="item.value">
+                        <b>{{item.value}}</b> - {{(item.text.length > 25)? (item.text| slice:0:25) + '...' : item.text}}</ng-option>
                     </ng-select>
                   </div>
                 </div>
               </li>
               <li>
                 <div class="form-group">
-                  <label class="required">Purpose</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('PURPOSE')">Purpose</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name != 'superuser'">Purpose</label>
+                  <span *ngIf="generalResource && generalResource.length >= 5 && generalResource[4]?.helptext.length!=0">
+                    <sup>
+                      <i data-toggle="tooltip" data-placement="top" title="{{generalResource[4]?.helptext}}" class="fa fa-question-circle"></i>
+                    </sup>
+                  </span>
                   <div class="select-icon cus-select-width">
                     <ng-select [searchable]="true" [clearable]="false" formControlName="Purpose" (change)="listService($event)" class="select-source">
                       <ng-option value=""> Select </ng-option>
@@ -83,7 +116,13 @@
               </li>
               <li>
                 <div class="form-group">
-                  <label class="required">Received Date</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name === 'superuser'" (click)="showResourcePopup('RECEIVED DATE')">Received Date</label>
+                  <label class="required" *ngIf="roleId && roleId.role.name != 'superuser'">Received Date</label>
+                  <span *ngIf="generalResource && generalResource.length >= 6 && generalResource[5]?.helptext.length!=0">
+                    <sup>
+                      <i data-toggle="tooltip" data-placement="top" title="{{generalResource[5]?.helptext}}" class="fa fa-question-circle"></i>
+                    </sup>
+                  </span>
                   <div class="no-pad clsIntake dpnew fm-box-form dd-overflow-inherit" style="width: 180px;">
                     <input class="form-control" formControlName="RecivedDate" placeholder="MM/DD/YYYY" a2e-datetimepicker [options]="{ 'maxDate': null}"
                     />
@@ -123,7 +162,7 @@
             <a data-toggle="tab" data-target="#Evaluation-Fields">EVALUATION FIELDS</a>
           </li>
           <li>
-            <a data-toggle="tab" >Entities</a>
+            <a data-toggle="tab">Entities</a>
           </li>
           <li *ngIf='!djsSelected'>
             <a data-toggle="tab">Service/Sub-type</a>
@@ -213,7 +252,8 @@
             </div>
           </div>
           <div class="tab-pane" id="intake-disposition">
-            <!-- <intake-disposition [timeReceived$]="timeReceived$" [dispositionInput$]="dispositionInput$" [dispositionOutPut$]="dispositionOutPut$" [dispositionRetrive$]="dispositionRetrive$"></intake-disposition> -->
+            <intake-disposition [timeReceived$]="timeReceived$" [dispositionInput$]="dispositionInput$" [dispositionOutPut$]="dispositionOutPut$"
+              [dispositionRetrive$]="dispositionRetrive$"></intake-disposition>
           </div>
           <div class="tab-pane" id="Service">
             <div class="cnt-min-height">
@@ -230,25 +270,38 @@
 
   </form>
 </div>
-<div class="modal fade" id="intake-complaint-pdf1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg custom-wid" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" id="pdf-header-id" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">X</span>
-          </button>
-          <h4 class="modal-title">PDF preview</h4>
-        </div>
-        <div class="modal-body">
-            <div class="text-right big-bot-space right-mspace-15">
-                <button type="button" class="btn-pri" (click)="collectivePdfCreator()" [disabled]="downloadInProgress"> Download </button>
 
-            </div>
-          <pdf-peace-order-appeal-letter [persons]="addedPersons" [general]="general" [evalFields]="evalFields" ></pdf-peace-order-appeal-letter>
-
-
-
+<!-- modal -->
+<div class="modal fade custom-modal" [formGroup]="generalResourceFormGroup" id="save-edit-resource-popup" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h4 class="modal-title"> {{resourcePoplabel}} </h4>
+      </div>
+      <div class="modal-body">
+        <textarea formControlName="helpDescription" class="form-control h-150"></textarea>
+        <div class="text-right big-bot-space right-mspace-15">
+          <button type="button" value="No" class="btn-pri" name="" data-dismiss="modal"> No </button>
+          <button type="button" value="Yes" class="btn-pri" name="" (click)="submitResource(resourcePoplabel)"> Yes </button>
         </div>
       </div>
     </div>
   </div>
+</div>
+<div class="modal fade" id="intake-complaint-pdf1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg custom-wid" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" id="pdf-header-id" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+        <h4 class="modal-title">PDF preview</h4>
+      </div>
+      <div class="modal-body">
+        <div class="text-right big-bot-space right-mspace-15">
+          <button type="button" class="btn-pri" (click)="collectivePdfCreator()" [disabled]="downloadInProgress"> Download </button>
+        </div>
+        <pdf-peace-order-appeal-letter [persons]="addedPersons" [general]="general" [evalFields]="evalFields"></pdf-peace-order-appeal-letter>
+      </div>
+    </div>

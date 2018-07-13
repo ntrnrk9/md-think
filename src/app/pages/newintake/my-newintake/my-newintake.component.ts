@@ -1,24 +1,27 @@
 import { AfterContentInit, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as html2canvas from 'html2canvas';
+import * as jsPDF from 'jspdf';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { Subject } from 'rxjs/Rx';
 
 import { ControlUtils } from '../../../@core/common/control-utils';
 import { ObjectUtils } from '../../../@core/common/initializer';
+import { AppUser } from '../../../@core/entities/authDataModel';
 import { DropdownModel, PaginationRequest } from '../../../@core/entities/common.entities';
+import { GenericService } from '../../../@core/services';
 import { AlertService } from '../../../@core/services/alert.service';
 import { AuthService } from '../../../@core/services/auth.service';
 import { CommonHttpService } from '../../../@core/services/common-http.service';
 import { SpeechRecognizerService } from '../../../shared/modules/web-speech/shared/services/speech-recognizer.service';
 import { NewUrlConfig } from '../newintake-url.config';
-import * as html2canvas from 'html2canvas';
-import * as jsPDF from 'jspdf';
 import {
     CrossReference,
     CrossReferenceSearchResponse,
     DispostionOutput,
+    GeneralNarative,
     IntakeDATypeDetail,
     IntakePurpose,
     IntakeTemporarySaveModel,
@@ -42,6 +45,7 @@ declare var $: any;
 })
 export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContentInit {
     departmentActionIntakeFormGroup: FormGroup;
+    generalResourceFormGroup: FormGroup;
     intakeSourceList$: Observable<DropdownModel[]>;
     intakeCommunication$: Observable<DropdownModel[]>;
     intakeAgencies$: Observable<DropdownModel[]>;
@@ -97,7 +101,11 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     selectedPurpose: DropdownModel;
     selectedAgency: DropdownModel;
     roleValue = false;
-    pdfFiles: { 'fileName': string, 'images': string[] }[] = [];
+    pdfFiles: { fileName: string; images: string[] }[] = [];
+    resourcePoplabel: string;
+    generalResource: GeneralNarative[];
+    roleId: AppUser;
+    submitResourceObject: GeneralNarative;
     downloadInProgress = false;
     @ViewChild(IntakeAttachmentsComponent) intakeAttachment: IntakeAttachmentsComponent;
     @ViewChild(IntakeAssessmentComponent) daAllegaDispo: IntakeAssessmentComponent;
@@ -108,7 +116,8 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         private _authService: AuthService,
         private _alertService: AlertService,
         private _commonHttpService: CommonHttpService,
-        private speechRecognizer: SpeechRecognizerService
+        private speechRecognizer: SpeechRecognizerService,
+        private _genericServiceNarative: GenericService<GeneralNarative>
     ) {
         this.draftId = route.snapshot.params['id'];
     }
@@ -117,6 +126,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         this.buildFormGroup();
         this.loadDroddowns();
         this.loadDefaults();
+        this.listPurpose({ text: '', value: 'all' });
         this.narrativeInputSubject$.subscribe((narrative) => {
             this.addNarrative = narrative;
         });
@@ -129,10 +139,9 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         this.addedIntakeDATypeSubject$.subscribe((intakeDAType) => {
             this.addedIntakeDATypeDetails = intakeDAType;
         });
-        this.dispositionOutPut$.subscribe((disposot) => {
+        this.dispositionRetrive$.subscribe((disposot) => {
             this.disposition = disposot;
         });
-        this.listPurpose({ text: '', value: 'all' });
         this.otherAgencyControlName = this.departmentActionIntakeFormGroup.get('otheragency');
         this.otherAgencyControlName.disable();
         this.evalFieldsInputSubject$.subscribe((evalFileds) => {
@@ -141,26 +150,28 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         this.createdCaseInputSubject$.subscribe((createdCases) => {
             this.createdCases = createdCases;
         });
+        this.roleId = this._authService.getCurrentUser();
+        // console.log(this.roleId);
     }
     ngAfterViewInit() {
         this.populateIntake();
     }
 
     ngAfterContentInit() {
-        $('.btnNext').click(function () {
+        $('.btnNext').click(function() {
             $('.click-triggers > .active')
                 .next('li')
                 .find('a')
                 .trigger('click');
-            console.log('next');
+            // console.log('next');
         });
 
-        $('.btnPrevious').click(function () {
+        $('.btnPrevious').click(function() {
             $('.click-triggers > .active')
                 .prev('li')
                 .find('a')
                 .trigger('click');
-            console.log('prev');
+            // console.log('prev');
         });
     }
 
@@ -181,6 +192,9 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             },
             { validator: this.dateFormat }
         );
+        this.generalResourceFormGroup = this.formBuilder.group({
+            helpDescription: ['']
+        });
     }
     dateFormat(group: FormGroup) {
         if (group.controls.RecivedDate.value !== '' && group.controls.RecivedDate.value !== null) {
@@ -239,10 +253,24 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             }
         });
         this._authService.currentUser.subscribe((userInfo) => {
-            this.departmentActionIntakeFormGroup.patchValue({
-                Author: userInfo.user.userprofile.displayname ? userInfo.user.userprofile.displayname : ''
-            });
+            if (userInfo && userInfo.user) {
+                this.departmentActionIntakeFormGroup.patchValue({
+                    Author: userInfo.user.userprofile.displayname ? userInfo.user.userprofile.displayname : ''
+                });
+            }
         });
+        const resourceURL = 'helptexts/list?filter';
+        this._commonHttpService
+            .getArrayList(
+                {
+                    where: { formkey: 'intake.narrative.general' },
+                    method: 'get'
+                },
+                resourceURL
+            )
+            .subscribe((response) => {
+                this.generalResource = response;
+            });
     }
     changeOtherAgency(event: any) {
         if (event.target.checked) {
@@ -333,7 +361,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     submitIntake(modal: General, appevent: string) {
         this.checkValidation = this.conditionalValidation();
         if (this.checkValidation) {
-            if (this.disposition.intakeserreqstatustypekey === 'Approved') {
+            if (this.disposition.supStatus === 'Approved') {
                 this.approveIntake(modal, appevent);
             } else {
                 this.mainIntake(modal, appevent);
@@ -349,12 +377,12 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             if (appevent !== 'DRAFT') {
                 this.checkValidation = this.conditionalValidation();
             } else {
-                // this.checkValidation = this.conditionalValidation();
                 this.checkValidation = true;
             }
             if (this.checkValidation) {
                 this.general = Object.assign(new General(), modal);
                 this.general.intakeservice = this.intakeservice;
+                this.general.RecivedDate = new Date(modal.RecivedDate).toLocaleString();
                 ObjectUtils.removeEmptyProperties(this.general);
                 const intake = this.mapIntakeScreenInfo(this.general);
                 if (this.evalFields) {
@@ -379,6 +407,15 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
                     status: appevent === 'INTR' ? 'supreview' : '',
                     commenttext: appevent === 'INTR' ? '' : ''
                 };
+                if (this.disposition) {
+                    const role = this._authService.getCurrentUser();
+                    if (role.role.name === 'apcs') {
+                        reviewStatus.commenttext = this.disposition.supComments ? this.disposition.supComments : '';
+                        reviewStatus.status = this.disposition.supStatus;
+                    } else {
+                        reviewStatus.commenttext = this.disposition.comments ? this.disposition.comments : '';
+                    }
+                }
                 if (intake) {
                     const intakeSaveModel = new IntakeTemporarySaveModel({
                         crossReference: this.addedCrossReference,
@@ -430,6 +467,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             if (this.checkValidation) {
                 this.general = Object.assign(new General(), modal);
                 this.general.intakeservice = this.intakeservice;
+                this.general.RecivedDate = new Date(modal.RecivedDate).toLocaleString();
                 ObjectUtils.removeEmptyProperties(this.general);
                 const intake = this.mapIntakeScreenInfo(this.general);
                 const reviewStatus = {
@@ -437,19 +475,13 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
                     status: 'approved',
                     commenttext: ''
                 };
-                if (this.addedPersons.length > 0) {
-                    this.addedPersons.map((item) => {
-                        if (item.Role === 'RA' || item.Role === 'RC' || item.Role === 'CLI') {
-                            this.roleValue = true;
-                        }
-                    });
-                } else {
-                    this._alertService.error('Please add a person.');
-                    return false;
-                }
-                if (this.roleValue === false) {
-                    this._alertService.error('Please add user of role RA/RC/CLI.');
-                    return false;
+                if (this.disposition) {
+                    const role = this._authService.getCurrentUser();
+                    if (role.role.name === 'apcs') {
+                        reviewStatus.commenttext = this.disposition.supComments ? this.disposition.supComments : '';
+                    } else {
+                        reviewStatus.commenttext = this.disposition.comments ? this.disposition.comments : '';
+                    }
                 }
                 this.addedPersons.map((item) => {
                     item.Pid = item.Pid ? item.Pid : '';
@@ -472,15 +504,15 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
                 });
                 const disposition = {
                     personid: '',
-                    Summary: this.disposition.comments ? this.disposition.comments : '',
-                    DAStatus: this.disposition.intakeserreqstatustypekey ? this.disposition.intakeserreqstatustypekey : '',
-                    DADisposition: this.disposition.dispositioncode ? this.disposition.dispositioncode : '',
+                    Summary: this.disposition.supComments ? this.disposition.supComments : '',
+                    DAStatus: this.disposition.supStatus ? this.disposition.supStatus : '',
+                    DADisposition: this.disposition.supDisposition ? this.disposition.supDisposition : '',
+                    ReasonforDelay: this.disposition.reason ? this.disposition.reason : '',
                     DaTypeKey: this.general.Purpose ? this.general.Purpose : '',
                     DasubtypeKey: this.general.Purpose ? this.general.Purpose : '',
                     ServiceRequestNumber: this.departmentActionIntakeFormGroup.get('IntakeNumber').value,
                     CancelReason: '',
-                    CancelDescription: '',
-                    ReasonforDelay: this.disposition.reason
+                    CancelDescription: ''
                 };
                 if (this.addedPersons.length) {
                     disposition.personid = this.addedPersons[0].Pid ? this.addedPersons[0].Pid : '';
@@ -534,7 +566,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         if (role.role.name === 'apcs') {
             this._alertService.success('Intake saved successfully!');
             Observable.timer(500).subscribe(() => {
-                this._router.routeReuseStrategy.shouldReuseRoute = function () {
+                this._router.routeReuseStrategy.shouldReuseRoute = function() {
                     return false;
                 };
                 this._router.navigate(['/pages/cjams-dashboard']);
@@ -542,7 +574,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         } else {
             this._alertService.success('Intake saved successfully!');
             Observable.timer(500).subscribe(() => {
-                this._router.routeReuseStrategy.shouldReuseRoute = function () {
+                this._router.routeReuseStrategy.shouldReuseRoute = function() {
                     return false;
                 };
                 this._router.navigate(['/pages/newintake/new-saveintake']);
@@ -550,14 +582,46 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         }
     }
     conditionalValidation(): boolean {
-        if (this.disposition) {
-            if (!this.disposition.dispositioncode || !this.disposition.intakeserreqstatustypekey) {
+        if (this.addedPersons.length > 0) {
+            this.addedPersons.map((item) => {
+                if (item.Role === 'RA' || item.Role === 'RC' || item.Role === 'CLI') {
+                    this.roleValue = true;
+                }
+            });
+        } else {
+            this._alertService.error('Please add a person to submit intake');
+            return false;
+        }
+        if (this.roleValue === false) {
+            this._alertService.error('Please add user of role RA/RC/CLI.');
+            return false;
+        }
+
+        const roleId = this._authService.getCurrentUser();
+        if (roleId.role.name !== 'apcs') {
+            if (this.disposition) {
+                if (!this.disposition.dispositioncode || !this.disposition.intakeserreqstatustypekey) {
+                    this._alertService.error('Please fill status and disposition');
+                    return false;
+                }
+            } else {
                 this._alertService.error('Please fill status and disposition');
                 return false;
             }
-        } else {
-            this._alertService.error('Please fill status and disposition');
-            return false;
+        } else if (roleId.role.name === 'apcs') {
+            if (this.disposition) {
+                if (!this.disposition.reason && this.disposition.isDelayed) {
+                    this._alertService.error('Please give the reason for delay');
+                    return false;
+                }
+                if (!this.disposition.supDisposition || !this.disposition.supStatus) {
+                    this._alertService.error('Please fill status and disposition');
+                    return false;
+                }
+            } else {
+                this._alertService.error('Please fill status and disposition');
+                return false;
+            }
         }
         if (this.departmentActionIntakeFormGroup.value.isOtherAgency) {
             if (this.departmentActionIntakeFormGroup.value.otheragency === '') {
@@ -574,11 +638,24 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
                 return false;
             }
         }
+        if (this.addedPersons.length > 0) {
+            this.addedPersons.map((item) => {
+                if (item.Role === 'RA' || item.Role === 'RC' || item.Role === 'CLI') {
+                    this.roleValue = true;
+                }
+            });
+        } else {
+            this._alertService.error('Please add a person.');
+            return false;
+        }
+        if ((this.roleValue = false)) {
+            this._alertService.error('Please add user of role RA/RC/CLI.');
+            return false;
+        }
         return true;
     }
 
     getSelectedPurpose(purposeID) {
-
         if (this.purposeList) {
             return this.purposeList.find((puroposeItem) => puroposeItem.intakeservreqtypeid === purposeID);
         }
@@ -586,8 +663,8 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
     }
     checkForDJSSelected(puropose) {
         this.djsSelected = false;
+        // console.log(this.purposeList);
         const selectedPurpose = this.getSelectedPurpose(puropose);
-
         if (selectedPurpose && selectedPurpose.teamtype.teamtypekey === 'DJS') {
             this.djsSelected = true;
             this.purposeInputSubject$.next(selectedPurpose);
@@ -630,60 +707,73 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         this.route.params.subscribe((item) => {
             this.intakeId = item['id'];
             if (this.intakeId) {
-                this._commonHttpService.getSingle({}, NewUrlConfig.EndPoint.Intake.TemporarySavedIntakeUrl + '/' + this.intakeId).subscribe(
-                    (response) => {
-                        this.btnDraft = true;
-                        this.timeReceived$.next(response.timerecieved);
-                        if (response.jsondata) {
-                            const intakeModel = response.jsondata as IntakeTemporarySaveModel;
-                            this.addedCrossReference = intakeModel.crossReference;
-                            this.addedPersons = intakeModel.persons;
-                            this.addedEntities = intakeModel.entities;
-                            this.addedIntakeDATypeDetails = intakeModel.intakeDATypeDetails;
-                            this.recordings = intakeModel.recordings;
-                            this.general = intakeModel.general;
-                            this.reviewstatus = intakeModel.reviewstatus;
-                            this.evalFields = intakeModel.evaluationFields;
-                            this.createdCases = intakeModel.createdCases;
-                            this.evalFieldsOutputSubject$.next(this.evalFields);
-                            this.dispositionOutPut$.next(intakeModel.disposition);
-                            this.createdCaseOuptputSubject$.next(this.createdCases);
-                            this.narrativeDetails.Narrative = this.general.Narrative;
-                            this.narrativeDetails.Firstname = intakeModel.narrative ? intakeModel.narrative[0].Firstname : '';
-                            this.narrativeDetails.Lastname = intakeModel.narrative ? intakeModel.narrative[0].Lastname : '';
-                            this.narrativeDetails.draftId = this.draftId;
-                            this.narrativeDetails.IsAnonymousReporter = this.general.IsAnonymousReporter === true ? true : false;
-                            this.narrativeDetails.IsUnknownReporter = this.general.IsUnknownReporter === true ? true : false;
-                            this.narrativeOutputSubject$.next(this.narrativeDetails);
-                            // if (this.general) {
-                            //     this.disposition.dispositioncode = this.general.dispositioncode !== '' ? this.general.dispositioncode : '';
-                            //     this.disposition.intakeserreqstatustypekey = this.general.intakeserreqstatustypekey !== '' ? this.general.intakeserreqstatustypekey : '';
-                            //     this.dispositionRetrive$.next(this.disposition);
-                            // }
-                            if (this.addedIntakeDATypeDetails.length) {
-                                this.daAllegaDispo.getSavedIntakeAssessmentDetails(this.addedIntakeDATypeDetails, intakeModel.general.IntakeNumber);
+                this._commonHttpService
+                    .create(
+                        {
+                            page: 1,
+                            limit: 10,
+                            where: {
+                                status: 'intake',
+                                intakenumber: this.intakeId
                             }
-                            if (this.general.Agency) {
-                                // this.listPurpose(this.general.Agency);
-                                // this.listService(this.general.Purpose);
-                                this.listPurpose({ text: '', value: this.general.Agency });
-                                this.listService({ text: '', value: this.general.Purpose });
-                                this.intakeservice = this.general.intakeservice;
+                        },
+                        NewUrlConfig.EndPoint.Intake.TemporarySavedIntakeUrl
+                    )
+                    .subscribe(
+                        (response) => {
+                            this.btnDraft = true;
+                            this.timeReceived$.next(response.data[0].timeleft);
+                            if (response.data[0].jsondata) {
+                                const intakeModel = response.data[0].jsondata as IntakeTemporarySaveModel;
+                                this.addedCrossReference = intakeModel.crossReference;
+                                this.addedPersons = intakeModel.persons;
+                                this.addedEntities = intakeModel.entities;
+                                this.addedIntakeDATypeDetails = intakeModel.intakeDATypeDetails;
+                                this.recordings = intakeModel.recordings;
+                                this.general = intakeModel.general;
+                                this.reviewstatus = intakeModel.reviewstatus;
+                                this.evalFields = intakeModel.evaluationFields;
+                                this.createdCases = intakeModel.createdCases;
+                                this.disposition = intakeModel.disposition;
+                                this.evalFieldsOutputSubject$.next(this.evalFields);
+                                this.dispositionOutPut$.next(intakeModel.disposition);
+                                this.createdCaseOuptputSubject$.next(this.createdCases);
+                                this.narrativeDetails.Narrative = this.general.Narrative;
+                                this.narrativeDetails.Firstname = intakeModel.narrative ? intakeModel.narrative[0].Firstname : '';
+                                this.narrativeDetails.Lastname = intakeModel.narrative ? intakeModel.narrative[0].Lastname : '';
+                                this.narrativeDetails.draftId = this.draftId;
+                                this.narrativeDetails.IsAnonymousReporter = this.general.IsAnonymousReporter === true ? true : false;
+                                this.narrativeDetails.IsUnknownReporter = this.general.IsUnknownReporter === true ? true : false;
+                                this.narrativeOutputSubject$.next(this.narrativeDetails);
+                                // if (this.general) {
+                                //     this.disposition.dispositioncode = this.general.dispositioncode !== '' ? this.general.dispositioncode : '';
+                                //     this.disposition.intakeserreqstatustypekey = this.general.intakeserreqstatustypekey !== '' ? this.general.intakeserreqstatustypekey : '';
+                                //     this.dispositionRetrive$.next(this.disposition);
+                                // }
+                                if (this.addedIntakeDATypeDetails.length) {
+                                    this.daAllegaDispo.getSavedIntakeAssessmentDetails(this.addedIntakeDATypeDetails, intakeModel.general.IntakeNumber);
+                                }
+                                if (this.general.Agency) {
+                                    // this.listPurpose(this.general.Agency);
+                                    // this.listService(this.general.Purpose);
+                                    this.listPurpose({ text: '', value: this.general.Agency });
+                                    this.listService({ text: '', value: this.general.Purpose });
+                                    this.intakeservice = this.general.intakeservice;
+                                }
+                                if (this.reviewstatus.appevent === 'INTR') {
+                                    this.saveIntakeBtn = true;
+                                }
+                                this.patchFormGroup(this.general);
+                                ControlUtils.markFormGroupTouched(this.departmentActionIntakeFormGroup);
+                            } else {
+                                this.loadDefaults();
                             }
-                            if (this.reviewstatus.appevent === 'INTR') {
-                                this.saveIntakeBtn = true;
-                            }
-                            this.patchFormGroup(this.general);
-                            ControlUtils.markFormGroupTouched(this.departmentActionIntakeFormGroup);
-                        } else {
+                        },
+                        (error) => {
+                            this._alertService.error('Unable to fetch saved intake details.');
                             this.loadDefaults();
                         }
-                    },
-                    (error) => {
-                        this._alertService.error('Unable to fetch saved intake details.');
-                        this.loadDefaults();
-                    }
-                );
+                    );
             } else {
                 this.loadDefaults();
             }
@@ -693,7 +783,7 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         this.departmentActionIntakeFormGroup.patchValue({
             Source: general.Source ? general.Source : '',
             InputSource: general.InputSource ? general.InputSource : '',
-            RecivedDate: new Date(this.general.RecivedDate),
+            RecivedDate: new Date(this.general.RecivedDate).toLocaleString(),
             CreatedDate: general.CreatedDate ? general.CreatedDate : '',
             Author: general.Author ? general.Author : '',
             IntakeNumber: general.IntakeNumber ? general.IntakeNumber : '',
@@ -709,36 +799,32 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
             this.otherAgencyControlName.enable();
         }
     }
-
-
     collectivePdfCreator() {
         this.downloadInProgress = true;
-        const pdfList = ["Appeal-Letter", "Formal-Action-Letter", "Formal-Action-Letter-Complaint", "Process-Letter"];
-        pdfList.forEach(element => {
+        const pdfList = ['Appeal-Letter', 'Formal-Action-Letter', 'Formal-Action-Letter-Complaint', 'Process-Letter'];
+        pdfList.forEach((element) => {
             this.downloadCasePdf(element);
         });
     }
-
     async downloadCasePdf(element: string) {
         const source = document.getElementById(element);
         const pages = source.getElementsByClassName('pdf-page');
         let pageImages = [];
         for (let i = 0; i < pages.length; i++) {
-            console.log(pages.item(i).getAttribute('data-page-name'));
+            // console.log(pages.item(i).getAttribute('data-page-name'));
             const pageName = pages.item(i).getAttribute('data-page-name');
             const isPageEnd = pages.item(i).getAttribute('data-page-end');
-            await html2canvas(<HTMLElement>pages.item(i),{letterRendering: true}).then((canvas) => {
-                const img = canvas.toDataURL('image/jpeg');
+            await html2canvas(<HTMLElement>pages.item(i)).then((canvas) => {
+                const img = canvas.toDataURL('image/png');
                 pageImages.push(img);
                 if (isPageEnd === 'true') {
-                    this.pdfFiles.push({ 'fileName': pageName, 'images': pageImages });
+                    this.pdfFiles.push({ fileName: pageName, images: pageImages });
                     pageImages = [];
                 }
             });
         }
         this.convertImageToPdf();
     }
-
     convertImageToPdf() {
         this.pdfFiles.forEach((pdfFile) => {
             const doc = new jsPDF();
@@ -753,5 +839,80 @@ export class MyNewintakeComponent implements OnInit, AfterViewInit, AfterContent
         (<any>$('#intake-complaint-pdf1')).modal('hide');
         this.pdfFiles = [];
         this.downloadInProgress = false;
+    }
+    showResourcePopup(labelName) {
+        this.resourcePoplabel = '';
+        if (labelName === 'CONTACT NUMBER') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[0].helptext
+            });
+            // (<any>$('#save-edit-resource-popup')).modal('show');
+        } else if (labelName === 'CREATED DATE') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[1].helptext
+            });
+        } else if (labelName === 'COMMUNICATION') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[2].helptext
+            });
+        } else if (labelName === 'REQUEST FROM OTHER AGENCY') {
+            this.resourcePoplabel = labelName;
+            // this.generalResourceFormGroup.patchValue({
+            //     helpDescription: this.generalResource[3].helptext
+            // });
+        } else if (labelName === 'AGENCY') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[3].helptext
+            });
+        } else if (labelName === 'PURPOSE') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[4].helptext
+            });
+        } else if (labelName === 'RECEIVED DATE') {
+            this.resourcePoplabel = labelName;
+            this.generalResourceFormGroup.patchValue({
+                helpDescription: this.generalResource[5].helptext
+            });
+        }
+        (<any>$('#save-edit-resource-popup')).modal('show');
+    }
+
+    submitResource(resourcePoplabel) {
+        this.submitResourceObject = Object.assign({}, new GeneralNarative());
+        if (this.resourcePoplabel === 'CONTACT NUMBER') {
+            this.submitResourceObject.controlindex = 0;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+            // (<any>$('#save-edit-resource-popup')).modal('show');
+        } else if (this.resourcePoplabel === 'CREATED DATE') {
+            this.submitResourceObject.controlindex = 1;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        } else if (this.resourcePoplabel === 'COMMUNICATION') {
+            this.submitResourceObject.controlindex = 2;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        } else if (this.resourcePoplabel === 'REQUEST FROM OTHER AGENCY') {
+            // this.submitResourceObject.controlindex = 3;
+            // this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        } else if (this.resourcePoplabel === 'AGENCY') {
+            this.submitResourceObject.controlindex = 3;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        } else if (this.resourcePoplabel === 'PURPOSE') {
+            this.submitResourceObject.controlindex = 4;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        } else if (this.resourcePoplabel === 'RECEIVED DATE') {
+            this.submitResourceObject.controlindex = 5;
+            this.submitResourceObject.helptext = this.generalResourceFormGroup.get('helpDescription').value;
+        }
+        const jsonData = Object.assign({}, this.submitResourceObject);
+        const submitResourceURL = 'helptexts/addupdate';
+        this._genericServiceNarative.create(jsonData, submitResourceURL).subscribe((response) => {
+            // console.log(response);
+            (<any>$('#save-edit-resource-popup')).modal('hide');
+            this.loadDefaults();
+        });
     }
 }

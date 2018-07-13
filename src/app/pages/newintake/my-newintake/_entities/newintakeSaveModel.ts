@@ -30,7 +30,7 @@ export class General {
     CreatedDate: Date;
     Source: string;
     Author: string;
-    RecivedDate: Date;
+    RecivedDate: string;
     Time = new Date();
     Narrative: string;
     GroupReason: string[];

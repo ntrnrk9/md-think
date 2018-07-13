@@ -34,7 +34,7 @@ export class NewUrlConfig {
             SendtoSupervisorreviewUrl: 'Intakedastagings/reviewIntake',
             PersonRelativeUrl: 'personrelations',
             PersonAddressesUrl: 'personaddresses',
-            TemporarySavedIntakeUrl: 'Intakedastagings',
+            TemporarySavedIntakeUrl: 'Intakedastagings/listdadetails',
             CompleteIntakeUrl: 'Intakedastagings/completeIntake',
             IntakeServiceRequestsUrl: 'Intakeservicerequests/getdsdsactions',
             MyIntakeListUrl: 'Intakedastagings/listintakeda',

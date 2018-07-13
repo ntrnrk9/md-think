@@ -117,7 +117,7 @@ export class IntakeAssessmentComponent implements OnInit {
         daDetails.map((item) => {
             const savedAssessmentRequest = new IntakeAssessmentRequestIds();
             savedAssessmentRequest.intakeservicerequesttypeid = item.DaTypeKey;
-            // savedAssessmentRequest.intakeservicerequestsubtypeid = item.DasubtypeKey;
+            savedAssessmentRequest.intakeservicerequestsubtypeid = item.DasubtypeKey;
             this.assessmentRequestDetail.push(savedAssessmentRequest);
         });
         this.getAssessmentPage(1);
@@ -127,9 +127,9 @@ export class IntakeAssessmentComponent implements OnInit {
         this.assessmentRequestDetail = [];
         this.token = this._authService.getCurrentUser();
         const assessmentRequest = new IntakeAssessmentRequestIds();
-        assessmentRequest.intakeservicerequesttypeid = model.DaTypeKey;
+        // assessmentRequest.intakeservicerequesttypeid = model.DaTypeKey;
         // assessmentRequest.intakeservicerequestsubtypeid = model.DasubtypeKey;
-        // assessmentRequest.agencycode = model.agencycode;
+        assessmentRequest.agencycode = model.agencycode;
         this.assessmentRequestDetail.push(assessmentRequest);
         this.getAssessmentPage(1);
     }

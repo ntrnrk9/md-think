@@ -8,7 +8,7 @@ const routes: Routes = [
     {
         path: '',
         component: NewintakeComponent,
-        canActivate: [RoleGuard],
+        // canActivate: [RoleGuard],
         children: [
             {
                 path: 'my-newintake',
@@ -19,7 +19,7 @@ const routes: Routes = [
     {
         path: 'new-saveintake',
         component: NewSaveintakeComponent,
-        canActivate: [RoleGuard],
+        // canActivate: [RoleGuard],
         data: {
             title: ['MDTHINK - Saved Intakes'],
             desc: 'Maryland department of human services',

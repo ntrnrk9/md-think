@@ -236,29 +236,28 @@
     </div>
   </div>
   <router-outlet></router-outlet>
-
-  <div class="modal fade in" id="delete-attachment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-dialog-w450" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-            <span aria-hidden="true">X</span>
-          </button>
-          <h4 class="modal-title">Confirm Delete?</h4>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="row text-center">
-                <figure>
-                  <!-- <img src="assets/img/form-letter/delete.png" alt=""> -->
-                  <p>Are you sure you want to delete this attachment?</p>
-                </figure>
-                <div class="col-md-12 text-center">
-                  <div class="btn-group btn-group-re">
-                    <button type="button" class="btn-pri" (click)="deleteAttachment()">Yes</button>
-                    <button type="button" class="btn-bg" data-dismiss="modal">No</button>
-                  </div>
+</div>
+<div class="modal fade in" id="delete-attachment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-dialog-w450" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">X</span>
+        </button>
+        <h4 class="modal-title">Confirm Delete?</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row text-center">
+              <figure>
+                <!-- <img src="assets/img/form-letter/delete.png" alt=""> -->
+                <p>Are you sure you want to delete this attachment?</p>
+              </figure>
+              <div class="col-md-12 text-center">
+                <div class="btn-group btn-group-re">
+                  <button type="button" class="btn-pri" (click)="deleteAttachment()">Yes</button>
+                  <button type="button" class="btn-bg" data-dismiss="modal">No</button>
                 </div>
               </div>
             </div>
@@ -267,4 +266,5 @@
       </div>
     </div>
   </div>
-  <edit-attachment></edit-attachment>
+</div>
+<edit-attachment></edit-attachment>

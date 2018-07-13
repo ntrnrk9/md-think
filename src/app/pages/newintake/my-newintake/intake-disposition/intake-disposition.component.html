@@ -3,12 +3,62 @@
   </div>
   <div action="" class="big-top-space">
     <div class="row textLeft dd-overflow-inherit">
-      <div class="col-sm-8">
-        <div class="row">
-          <div class="col-sm-4 bot-mspace-15">
+
+      <div class="col-sm-8" *ngIf="!supervisorUser">
+        <div class="disposition-1" *ngIf="dispositionFormGroup.value.supStatus !== ''">
+          <div class="hideDiv">
+            <div class="col-sm-4">
+              <label for="" class="required"> Status </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Status" formControlName="supStatus" (change)="supOnChangeTaskStatus($event.value); changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of statusDropdownItems$ | async" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4 no-placeholder">
+              <label for="" class="required"> Supervisor Disposition </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Disposition" disabled="true" formControlName="supDisposition" (change)="changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of supDispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4">
+              <label for="" class="required"> Supervisor Comments </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" disabled matInput placeholder="Leave a Comment">{{dispositionFormGroup.value.supComments}}</textarea>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="" *ngIf="showReason">
+            <div class="col-sm-4">
+              <label for="" class="required"> Reason For Delay </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" disabled matInput placeholder="Leave a Reason">{{dispositionFormGroup.value.reason}}</textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="disposition-2">
+          <div class="col-sm-4">
             <label for="" class="required"> Status </label>
           </div>
-          <div class="col-sm-7 bot-mspace-15">
+          <div class="col-sm-7 no-placeholder">
             <mat-form-field>
               <mat-select placeholder="Select Status" formControlName="intakeserreqstatustypekey" (change)="onChangeTaskStatus($event.value); changeDisp()">
                 <mat-option>None</mat-option>
@@ -16,42 +66,124 @@
               </mat-select>
             </mat-form-field>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4 bot-mspace-15">
-            <label for="" class="required"> Disposition/Recommendation </label>
+          <div class="">
+            <div class="col-sm-4">
+              <label *ngIf="supervisorUser"> Intake/Recommendation </label>
+              <label for="" class="required" *ngIf="!supervisorUser"> Disposition/Recommendation </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Disposition" formControlName="dispositioncode" (change)="changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of dispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
-          <div class="col-sm-7 bot-mspace-15">
-            <mat-form-field>
-              <mat-select placeholder="Select Disposition" formControlName="dispositioncode" (change)="changeDisp()">
-                <mat-option>None</mat-option>
-                <mat-option *ngFor="let status of dispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4 bot-mspace-15">
-            <label for="" class="required"> Comments </label>
-          </div>
-          <div class="col-sm-7 bot-mspace-15 no-placeholder">
-            <mat-form-field>
-              <textarea type="text" formControlName="comments" matInput placeholder="Leave a Comment" (change)="changeDisp()"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="row" *ngIf="supervisorUser && showReason">
-          <div class="col-sm-4 bot-mspace-15">
-            <label for="" class="required"> Reason For Delay </label>
-          </div>
-          <div class="col-sm-7 bot-mspace-15 no-placeholder">
-            <mat-form-field>
-              <textarea type="text" formControlName="reason" matInput placeholder="Leave a Reason" (change)="changeDisp()"></textarea>
-            </mat-form-field>
+          <div class="">
+            <div class="col-sm-4">
+              <label for="" class="required"> Intake Comments </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" formControlName="comments" matInput placeholder="Leave a Comment" (change)="changeDisp()"></textarea>
+              </mat-form-field>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-4" *ngIf="supervisorUser">
+
+      <div class="col-sm-8" *ngIf="supervisorUser">
+        <div class="disposition-1">
+          <div class="hideDiv">
+            <div class="col-sm-4">
+              <label for="" class="required"> Status </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Status" formControlName="intakeserreqstatustypekey" (change)="onChangeTaskStatus($event.value); changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of statusDropdownItems$ | async" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4">
+              <label *ngIf="supervisorUser"> Intake/Recommendation </label>
+              <label for="" class="required" *ngIf="!supervisorUser"> Disposition/Recommendation </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select disabled="true" placeholder="Select Disposition" formControlName="dispositioncode" (change)="changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of dispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4">
+              <label for="" class="required"> Intake Comments </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" matInput disabled placeholder="Leave a Comment">{{dispositionFormGroup.value.comments}}</textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="disposition-2">
+          <div class="">
+            <div class="col-sm-4">
+              <label for="" class="required"> Status </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Status" formControlName="supStatus" (change)="supOnChangeTaskStatus($event.value); changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of statusDropdownItems$ | async" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4 no-placeholder">
+              <label for="" class="required"> Disposition/Recommendation </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <mat-select placeholder="Select Disposition" formControlName="supDisposition" (change)="changeDisp()">
+                  <mat-option>None</mat-option>
+                  <mat-option *ngFor="let status of supDispositionDropDown" value="{{status.value}}">{{status.text}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="">
+            <div class="col-sm-4">
+              <label for="" class="required"> Comments </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" formControlName="supComments" matInput placeholder="Leave a Comment" (change)="changeDisp()"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="" *ngIf="showReason">
+            <div class="col-sm-4">
+              <label for="" class="required"> Reason For Delay </label>
+            </div>
+            <div class="col-sm-7 no-placeholder">
+              <mat-form-field>
+                <textarea type="text" formControlName="reason" matInput placeholder="Leave a Reason" (change)="changeDisp()"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="col-sm-4" *ngIf="supervisorUser">
         <ul class="list-unstyled list-inline pull-right text-left">
           <li>
             <div class="hour">
@@ -72,8 +204,7 @@
             </div>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </div>
-
 </div>
